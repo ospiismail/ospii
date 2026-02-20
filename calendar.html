@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Mobile Calendar</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --surface:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e2e8f0;
+      --selected:#0f172a;
+      --selectedText:#ffffff;
+      --todayRing:#2563eb;
+      --shadow:0 8px 22px rgba(15,23,42,0.05);
+      --radius:14px;
+      --tap:44px;
+      --cellGap: clamp(4px, 1.8vw, 10px);
+      --cellMin: 40px;
+      --cellMax: 56px;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .app{
+      min-height:100vh;
+      padding: clamp(12px, 3.5vw, 20px) clamp(10px, 4vw, 20px) calc(clamp(12px, 3.5vw, 20px) + env(safe-area-inset-bottom));
+      max-width: 520px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .calendarPane{
+      flex: 0 0 auto;
+    }
+    .agendaPane{
+      flex: 0 0 auto;
+      padding: 6px 10px 10px;
+      background: var(--surface);
+    }
+    .addForm{
+      display: grid;
+      gap: 6px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px;
+    }
+    .formRow{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .field{
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 8px;
+      font-size: 13px;
+      font: inherit;
+      background: #fff;
+      color: var(--text);
+    }
+    .formBtn{
+      width: 100%;
+      border: 1px solid var(--selected);
+      background: var(--selected);
+      color: var(--selectedText);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .formHint{
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .agendaList{
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 6px;
+    }
+    .appointment{
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      list-style: none;
+      position: relative;
+      overflow: hidden;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .appointment.card-appointment{
+      border-color: #bfdbfe;
+      box-shadow: 0 0 0 2px rgba(219, 234, 254, 0.55);
+    }
+    .appointment.card-incident{
+      border-color: #fecaca;
+      box-shadow: 0 0 0 2px rgba(254, 226, 226, 0.55);
+    }
+    .appointment.card-contact{
+      border-color: #fed7aa;
+      box-shadow: 0 0 0 2px rgba(255, 237, 213, 0.55);
+    }
+    .deleteAction{
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 92px;
+      border: 0;
+      color: #fff;
+      background: #dc2626;
+      font-size: 13px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      z-index: 1;
+    }
+    .deleteAction.left{ left: 0; }
+    .deleteAction.right{ right: 0; }
+    .deleteAction:active{ filter: brightness(0.95); }
+    .appointment.swiped-left .appointmentLink{ transform: translateX(-92px); }
+    .appointment.swiped-right .appointmentLink{ transform: translateX(92px); }
+    .appointment.dragging .appointmentLink{ transition: none; }
+    .appointment.dragging{
+      border-color: #d1d5db;
+    }
+    .appointmentLink{
+      display: grid;
+      gap: 1px;
+      color: inherit;
+      text-decoration: none;
+      background: var(--surface);
+      padding: 8px 9px;
+      position: relative;
+      z-index: 2;
+      transition: transform 170ms ease;
+      touch-action: pan-y;
+    }
+    .appointmentHead{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .appointmentLead{
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      min-width: 0;
+    }
+    .appointmentTime{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    .appointmentTitle{
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .appointmentNote{
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.25;
+    }
+    .appointmentMeta{
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.25;
+    }
+    .statusBadge{
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 3px 8px;
+      line-height: 1.1;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+    .kindBadge{
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 3px 8px;
+      line-height: 1.1;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+    .kind-appointment{
+      background: #f3f4f6;
+      color: #374151;
+      border-color: #e5e7eb;
+    }
+    .kind-incident{
+      background: #f3f4f6;
+      color: #374151;
+      border-color: #e5e7eb;
+    }
+    .kind-contact{
+      background: #f3f4f6;
+      color: #374151;
+      border-color: #e5e7eb;
+    }
+    .badgeGroup{
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .status-confirmed{
+      background: #ecfdf3;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+    .status-pending{
+      background: #fffbeb;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+    .status-completed{
+      background: #eff6ff;
+      color: #1e3a8a;
+      border-color: #bfdbfe;
+    }
+    .agendaEmpty{
+      color: var(--muted);
+      font-size: 13px;
+      margin: 2px 0 0;
+    }
+    .header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding-top: calc(env(safe-area-inset-top) + 2px);
+      position: sticky;
+      top: 0;
+      background: rgba(248,250,252,0.92);
+      backdrop-filter: blur(8px);
+    }
+    .monthTitle{
+      font-weight: 700;
+      font-size: clamp(16px, 4.5vw, 22px);
+      letter-spacing: 0.2px;
+    }
+    .nav{
+      display:flex;
+      gap:8px;
+    }
+    .addBtn{
+      width: clamp(40px, 11vw, 48px);
+      height: clamp(40px, 11vw, 48px);
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      background: #eff6ff;
+      color: #2563eb;
+      font-size: clamp(24px, 6vw, 28px);
+      line-height: 1;
+      display:grid;
+      place-items:center;
+      user-select:none;
+      padding: 0;
+      font-weight: 500;
+    }
+    .addBtn > span{
+      display:block;
+      line-height:1;
+      transform:translateY(1px);
+    }
+    .addBtn:active{ transform: scale(0.98); }
+    .iconBtn{
+      width: clamp(40px, 11vw, 48px);
+      height: clamp(40px, 11vw, 48px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      font-size: clamp(16px, 4.8vw, 20px);
+      line-height: 1;
+      display:grid;
+      place-items:center;
+      user-select:none;
+      box-shadow: 0 1px 2px rgba(15,23,42,0.05);
+    }
+    .homeBtn{
+      text-decoration: none;
+      color: var(--text);
+    }
+    .iconBtn:active{ transform: scale(0.98); }
+
+    .dow{
+      display:grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: var(--cellGap);
+      margin-top: clamp(10px, 2.8vw, 16px);
+      padding: 0 2px;
+    }
+    .dow div{
+      text-align:center;
+      font-size: clamp(11px, 3vw, 13px);
+      color: var(--muted);
+      padding: 8px 0;
+      user-select:none;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: var(--cellGap);
+      margin-top: 6px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+    .day{
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      min-height: var(--cellMin);
+      max-height: var(--cellMax);
+      border-radius: clamp(10px, 3vw, 14px);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display:grid;
+      place-items:center;
+      font-size: clamp(13px, 3.6vw, 16px);
+      user-select:none;
+      cursor:pointer;
+      padding: 0;
+    }
+    .day.outside{
+      color: #c7cbd3;
+      border-color: transparent;
+      background: transparent;
+    }
+    .day.today{
+      outline: 2px solid var(--todayRing);
+      outline-offset: -2px;
+    }
+    .day.selected{
+      background: var(--selected);
+      color: var(--selectedText);
+      border-color: var(--selected);
+      outline: none;
+    }
+    @media (max-width: 360px){
+      .nav{ gap: 6px; }
+      .dow div{ padding: 6px 0; }
+    }
+    .modalBackdrop{
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.38);
+      display: grid;
+      align-items: end;
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 160ms ease;
+    }
+    .modalBackdrop.open{
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modalSheet{
+      background: #fff;
+      border-radius: 16px 16px 0 0;
+      padding: 10px;
+      max-width: 520px;
+      width: 100%;
+      margin: 0 auto;
+      transform: translateY(100%);
+      transition: transform 160ms ease;
+      border-top: 1px solid var(--border);
+    }
+    .modalBackdrop.open .modalSheet{
+      transform: translateY(0);
+    }
+    .sheetHeader{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .sheetTitle{
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .sheetClose{
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 8px;
+    }
+    .sheetActions{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .formBtnGhost{
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="calendarPane">
+      <div class="header">
+        <div class="monthTitle" id="monthTitle">&mdash;</div>
+        <div class="nav">
+          <a class="iconBtn homeBtn" href="app-home.html" aria-label="Ga naar homepage">&#8962;</a>
+          <button class="addBtn" id="openAddBtn" aria-label="Nieuw item toevoegen"><span aria-hidden="true">+</span></button>
+          <button class="iconBtn" id="prevBtn" aria-label="Previous month">&#8249;</button>
+          <button class="iconBtn" id="nextBtn" aria-label="Next month">&#8250;</button>
+        </div>
+      </div>
+
+      <div class="dow" id="dow"></div>
+      <div class="grid" id="grid" aria-label="Calendar grid"></div>
+    </div>
+
+    <section class="agendaPane" aria-live="polite">
+      <ul class="agendaList" id="agendaList"></ul>
+      <p class="agendaEmpty" id="agendaEmpty">Geen afspraken of gebeurtenissen voor deze dag.</p>
+    </section>
+  </div>
+  <div class="modalBackdrop" id="addModal" aria-hidden="true">
+    <div class="modalSheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <div class="sheetHeader">
+        <h2 class="sheetTitle" id="sheetTitle">Nieuw zorgitem</h2>
+        <button class="sheetClose" id="closeAddBtn" type="button">Sluiten</button>
+      </div>
+      <form class="addForm" id="addForm">
+        <div class="formRow">
+          <input class="field" id="fieldTime" type="time" />
+          <select class="field" id="fieldItemKind">
+            <option value="appointment">Afspraak</option>
+            <option value="incident">Gebeurtenis - Incident</option>
+            <option value="contact">Gebeurtenis - Contactmoment</option>
+          </select>
+        </div>
+        <div class="formRow">
+          <select class="field" id="fieldStatus">
+            <option value="confirmed">Bevestigd</option>
+            <option value="pending">Te plannen</option>
+            <option value="completed">Afgerond</option>
+          </select>
+          <input class="field" id="fieldType" type="text" placeholder="Zorgvorm (bijv. huisarts, fysio)" />
+        </div>
+        <input class="field" id="fieldOrg" type="text" placeholder="Organisatie (bijv. tandarts, ziekenhuis, praktijk)" />
+        <div class="formRow">
+          <input class="field" id="fieldProvider" type="text" placeholder="Zorgverlener" />
+          <input class="field" id="fieldSubject" type="text" placeholder="Onderwerp (bijv. valincident, consult)" />
+        </div>
+        <input class="field" id="fieldNotes" type="text" placeholder="Notities (optioneel)" />
+        <p class="formHint" id="formHint">Nieuw item wordt toegevoegd aan de geselecteerde datum.</p>
+        <div class="sheetActions">
+          <button class="formBtnGhost" id="cancelAddBtn" type="button">Annuleren</button>
+          <button class="formBtn" type="submit">Opslaan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Simple mobile-first month calendar (week starts Monday).
+    const monthTitleEl = document.getElementById("monthTitle");
+    const gridEl = document.getElementById("grid");
+    const dowEl = document.getElementById("dow");
+    const addModalEl = document.getElementById("addModal");
+    const openAddBtnEl = document.getElementById("openAddBtn");
+    const closeAddBtnEl = document.getElementById("closeAddBtn");
+    const cancelAddBtnEl = document.getElementById("cancelAddBtn");
+    const addFormEl = document.getElementById("addForm");
+    const formHintEl = document.getElementById("formHint");
+    const agendaListEl = document.getElementById("agendaList");
+    const agendaEmptyEl = document.getElementById("agendaEmpty");
+    const fieldTimeEl = document.getElementById("fieldTime");
+    const fieldItemKindEl = document.getElementById("fieldItemKind");
+    const fieldStatusEl = document.getElementById("fieldStatus");
+    const fieldOrgEl = document.getElementById("fieldOrg");
+    const fieldTypeEl = document.getElementById("fieldType");
+    const fieldProviderEl = document.getElementById("fieldProvider");
+    const fieldSubjectEl = document.getElementById("fieldSubject");
+    const fieldNotesEl = document.getElementById("fieldNotes");
+
+    const DOW = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    const STORAGE_KEY = "health.appointments.v1";
+    const DEFAULT_APPOINTMENTS = {
+      "2025-08-14": [
+        { time: "10:20", org: "OLVG", careType: "Cardiologie", provider: "Dr. E.G. van Dijk", subject: "Holter-uitslag bespreken", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-09-02": [
+        { time: "08:30", org: "Huisartsenpraktijk West", careType: "Huisarts", provider: "Dr. Smit", subject: "Controle bloeddruk", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-09-18": [
+        { time: "13:10", org: "FysioPlus Rotterdam", careType: "Fysiotherapie", provider: "Mw. Jansen", subject: "Schouderrevalidatie", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-10-07": [
+        { time: "09:45", org: "Tandartspraktijk Centrum", careType: "Tandarts", provider: "Drs. Bakker", subject: "Controle + reiniging", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-10-28": [
+        { time: "14:00", org: "BENU Apotheek", careType: "Apotheek", provider: "Apotheker", subject: "Medicatiebeoordeling", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-11-11": [
+        { time: "11:00", org: "GGZ Rijnmond", careType: "GGZ", provider: "Mw. de Jong", subject: "Intakegesprek", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-11-26": [
+        { time: "16:00", org: "Ergo Zorg", careType: "Ergotherapie", provider: "Dhr. van Leeuwen", subject: "Hulpmiddelenadvies", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-12-10": [
+        { time: "10:00", org: "Dietistenpraktijk Vita", careType: "Dieetiek", provider: "Mw. Vermeer", subject: "Voedingsplan evaluatie", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-12-23": [
+        { time: "09:30", org: "Erasmus MC", careType: "Ziekenhuis", provider: "Dr. Rahimi", subject: "Pre-operatieve screening", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2026-01-06": [
+        { time: "15:20", org: "Huisartsenpost Rijnmond", careType: "Huisartsenpost", provider: "Assistente", subject: "Telefonisch consult", notes: "", itemKind: "contact", status: "completed" }
+      ],
+      "2026-01-20": [
+        { time: "08:50", org: "OLVG", careType: "Cardiologie", provider: "Dr. E.G. van Dijk", subject: "ECG controle", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2026-02-03": [
+        { time: "12:15", org: "Wijkzorg Zuid", careType: "Wijkverpleging", provider: "Verpleegkundige Noor", subject: "Wondcontrole", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2026-02-12": [
+        { time: "08:45", org: "Tandartspraktijk Centrum", careType: "Tandarts", provider: "Drs. Bakker", subject: "Halfjaarlijkse controle", notes: "Rontgenfoto laten maken", itemKind: "appointment", status: "confirmed" },
+        { time: "11:10", org: "Thuis", careType: "Incident", provider: "Zelf", subject: "Valincident in badkamer", notes: "Pijn aan pols, gekoeld en rust genomen", itemKind: "incident", status: "completed" },
+        { time: "14:00", org: "Huisartsenpost Rijnmond", careType: "Telefonisch contact", provider: "Assistente", subject: "Overleg over klachten na val", notes: "Advies: pols laten beoordelen bij aanhoudende pijn", itemKind: "contact", status: "completed" },
+        { time: "16:30", org: "FysioPlus Rotterdam", careType: "Fysiotherapie", provider: "Mw. Jansen", subject: "Herstelconsult enkel", notes: "Oefenschema meegekregen", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-02-18": [
+        { time: "09:00", org: "Erasmus MC", careType: "Ziekenhuis", provider: "Dr. Van Dijk", subject: "Controle na inspanningsklachten", notes: "Nuchter blijven vanaf 07:00", itemKind: "appointment", status: "confirmed" },
+        { time: "14:30", org: "Erasmus MC", careType: "SEH", provider: "Lab-team", subject: "SEH-bezoek na valincident", notes: "Doorverwezen voor controle", itemKind: "incident", status: "completed" }
+      ],
+      "2026-02-20": [
+        { time: "11:00", org: "FysioPlus Rotterdam", careType: "Fysiotherapie", provider: "Mw. Jansen", subject: "Intake voor hersteltraject", notes: "Sportkleding meenemen", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-02-25": [
+        { time: "19:00", org: "Huisartsenpraktijk West", careType: "Huisartsenpost", provider: "Telefonisch contact", subject: "Klachten besproken buiten kantooruren", notes: "Advies gekregen om rust te nemen", itemKind: "contact", status: "completed" }
+      ],
+      "2026-03-05": [
+        { time: "10:40", org: "Tandartspraktijk Centrum", careType: "Tandarts", provider: "Drs. Bakker", subject: "Vulling controle", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-03-19": [
+        { time: "09:10", org: "OLVG", careType: "Cardiologie", provider: "Dr. E.G. van Dijk", subject: "Hartonderzoek", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-04-02": [
+        { time: "13:30", org: "FysioPlus Rotterdam", careType: "Fysiotherapie", provider: "Mw. Jansen", subject: "Evaluatie mobiliteit", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-04-16": [
+        { time: "11:45", org: "Huisartsenpraktijk West", careType: "Huisarts", provider: "Dr. Smit", subject: "Jaarlijkse controle", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-05-08": [
+        { time: "10:00", org: "Erasmus MC", careType: "Ziekenhuis", provider: "Dr. Rahimi", subject: "Poliklinische follow-up", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-05-27": [
+        { time: "15:00", org: "BENU Apotheek", careType: "Apotheek", provider: "Apotheker", subject: "Herhaalmedicatie check", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-06-11": [
+        { time: "09:20", org: "Dietistenpraktijk Vita", careType: "Dieetiek", provider: "Mw. Vermeer", subject: "Controle voedingsschema", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-07-01": [
+        { time: "14:15", org: "GGZ Rijnmond", careType: "GGZ", provider: "Mw. de Jong", subject: "Voortgangsgesprek", notes: "", itemKind: "appointment", status: "pending" }
+      ]
+    };
+    let APPOINTMENTS = loadAppointments();
+    const today = new Date();
+    const todayY = today.getFullYear();
+    const todayM = today.getMonth();
+    const todayD = today.getDate();
+
+    function parseISODate(iso){
+      if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+      const [y, m, d] = iso.split("-").map(Number);
+      const dt = new Date(y, m - 1, d);
+      if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return null;
+      return dt;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedFromUrl = parseISODate(urlParams.get("selected"));
+    const viewFromUrl = parseISODate(urlParams.get("view"));
+
+    let selected = selectedFromUrl || new Date(todayY, todayM, todayD); // Date
+    let view = viewFromUrl
+      ? new Date(viewFromUrl.getFullYear(), viewFromUrl.getMonth(), 1)
+      : new Date(selected.getFullYear(), selected.getMonth(), 1);
+
+    // Monday-start helper: JS getDay() is Sun=0..Sat=6. Convert to Mon=0..Sun=6
+    const monIndex = (jsDay) => (jsDay + 6) % 7;
+
+    function pad2(n){ return String(n).padStart(2,"0"); }
+    function fmtISO(d){
+      return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+    }
+    function getStatusLabel(status){
+      if (status === "confirmed") return "Bevestigd";
+      if (status === "pending") return "Te plannen";
+      if (status === "completed") return "Afgerond";
+      return "Onbekend";
+    }
+    function sortByTime(a, b){
+      return (a.time || "").localeCompare(b.time || "");
+    }
+    function normalizeAppointment(item){
+      const source = item || {};
+      let kind = "appointment";
+      if (source.itemKind === "incident") kind = "incident";
+      else if (source.itemKind === "contact" || source.itemKind === "event") kind = "contact";
+      return {
+        time: source.time || "09:00",
+        org: source.org || source.hospital || "Onbekende organisatie",
+        careType: source.careType || source.department || "Algemene zorg",
+        provider: source.provider || source.doctor || "Onbekende zorgverlener",
+        subject: source.subject || source.reason || "-",
+        notes: source.notes || "",
+        itemKind: kind,
+        status: source.status || "pending"
+      };
+    }
+    function getKindLabel(itemKind){
+      if (itemKind === "incident") return "Incident";
+      if (itemKind === "contact") return "Contactmoment";
+      return "Afspraak";
+    }
+    function cloneDefaultAppointments(){
+      return JSON.parse(JSON.stringify(DEFAULT_APPOINTMENTS));
+    }
+    function loadAppointments(){
+      const fallback = cloneDefaultAppointments();
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return fallback;
+        for (const iso of Object.keys(parsed)){
+          if (!Array.isArray(parsed[iso])) {
+            delete parsed[iso];
+            continue;
+          }
+          parsed[iso] = parsed[iso].map(normalizeAppointment);
+        }
+        const merged = { ...fallback, ...parsed };
+        for (const iso of Object.keys(merged)){
+          merged[iso] = merged[iso].map(normalizeAppointment);
+        }
+        return merged;
+      } catch {
+        return fallback;
+      }
+    }
+    function saveAppointments(){
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(APPOINTMENTS));
+      } catch {
+        // Ignore storage errors to keep UI functional.
+      }
+    }
+    let openSwipeItem = null;
+    function closeSwipeItem(itemEl){
+      itemEl.classList.remove("swiped-left", "swiped-right", "dragging");
+      const link = itemEl.querySelector(".appointmentLink");
+      if (link) link.style.transform = "";
+      if (openSwipeItem === itemEl) openSwipeItem = null;
+    }
+    function openSwipe(itemEl, direction){
+      if (openSwipeItem && openSwipeItem !== itemEl) closeSwipeItem(openSwipeItem);
+      itemEl.classList.remove("swiped-left", "swiped-right");
+      itemEl.classList.add(direction === "right" ? "swiped-right" : "swiped-left");
+      const link = itemEl.querySelector(".appointmentLink");
+      if (link) link.style.transform = "";
+      openSwipeItem = itemEl;
+    }
+    function bindSwipeHandlers(itemEl){
+      const link = itemEl.querySelector(".appointmentLink");
+      if (!link) return;
+
+      const ACTION_WIDTH = 92;
+      let startX = 0;
+      let startY = 0;
+      let deltaX = 0;
+      let swiping = false;
+      let moved = false;
+
+      link.addEventListener("touchstart", (event) => {
+        const touch = event.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+        deltaX = 0;
+        swiping = false;
+        moved = false;
+        itemEl.classList.remove("dragging");
+      }, { passive: true });
+
+      link.addEventListener("touchmove", (event) => {
+        const touch = event.touches[0];
+        const dx = touch.clientX - startX;
+        const dy = touch.clientY - startY;
+
+        if (!swiping){
+          if (Math.abs(dx) < 8) return;
+          if (Math.abs(dx) <= Math.abs(dy)) return;
+          swiping = true;
+          moved = true;
+          itemEl.classList.add("dragging");
+          if (openSwipeItem && openSwipeItem !== itemEl) closeSwipeItem(openSwipeItem);
+        }
+
+        event.preventDefault();
+        deltaX = Math.max(-ACTION_WIDTH, Math.min(ACTION_WIDTH, dx));
+        link.style.transform = `translateX(${deltaX}px)`;
+      }, { passive: false });
+
+      link.addEventListener("touchend", () => {
+        if (!swiping){
+          if (itemEl.classList.contains("swiped-left") || itemEl.classList.contains("swiped-right")){
+            closeSwipeItem(itemEl);
+          }
+          return;
+        }
+
+        itemEl.classList.remove("dragging");
+        link.style.transform = "";
+
+        if (deltaX <= -40){
+          openSwipe(itemEl, "left");
+        } else if (deltaX >= 40){
+          openSwipe(itemEl, "right");
+        } else {
+          closeSwipeItem(itemEl);
+        }
+      });
+
+      link.addEventListener("click", (event) => {
+        const isOpen = itemEl.classList.contains("swiped-left") || itemEl.classList.contains("swiped-right");
+        if (moved || isOpen){
+          event.preventDefault();
+          moved = false;
+          if (isOpen) closeSwipeItem(itemEl);
+        }
+      });
+    }
+    function updateFormHint(){
+      formHintEl.textContent = selected
+        ? `Nieuw item wordt toegevoegd aan ${fmtISO(selected)}.`
+        : "Selecteer eerst een datum in de kalender.";
+    }
+    function openAddModal(){
+      updateFormHint();
+      addModalEl.classList.add("open");
+      addModalEl.setAttribute("aria-hidden", "false");
+      if (!fieldTimeEl.value) fieldTimeEl.value = "09:00";
+      window.setTimeout(() => fieldOrgEl.focus(), 0);
+    }
+    function closeAddModal(){
+      addModalEl.classList.remove("open");
+      addModalEl.setAttribute("aria-hidden", "true");
+    }
+    function renderAgenda(){
+      if (!selected){
+        agendaListEl.innerHTML = "";
+        openSwipeItem = null;
+        agendaEmptyEl.textContent = "Geen afspraken of gebeurtenissen voor deze dag.";
+        agendaEmptyEl.hidden = false;
+        return;
+      }
+
+      const iso = fmtISO(selected);
+      const items = APPOINTMENTS[iso] || [];
+      agendaListEl.innerHTML = "";
+      openSwipeItem = null;
+      updateFormHint();
+
+      if (!items.length){
+        agendaEmptyEl.hidden = false;
+        agendaEmptyEl.textContent = "Geen afspraken of gebeurtenissen voor deze dag.";
+        return;
+      }
+
+      agendaEmptyEl.hidden = true;
+      for (let index = 0; index < items.length; index++){
+        const rawItem = items[index];
+        const item = normalizeAppointment(rawItem);
+        const li = document.createElement("li");
+        li.className = "appointment";
+        li.classList.add(`card-${item.itemKind || "appointment"}`);
+        const deleteLeftBtn = document.createElement("button");
+        deleteLeftBtn.className = "deleteAction left";
+        deleteLeftBtn.type = "button";
+        deleteLeftBtn.textContent = "Verwijder";
+        deleteLeftBtn.setAttribute("aria-label", "Verwijder item");
+
+        const deleteRightBtn = document.createElement("button");
+        deleteRightBtn.className = "deleteAction right";
+        deleteRightBtn.type = "button";
+        deleteRightBtn.textContent = "Verwijder";
+        deleteRightBtn.setAttribute("aria-label", "Verwijder item");
+
+        const link = document.createElement("a");
+        link.className = "appointmentLink";
+
+        const params = new URLSearchParams({
+          date: iso,
+          time: item.time || "",
+          org: item.org || "",
+          careType: item.careType || "",
+          provider: item.provider || "",
+          subject: item.subject || "",
+          notes: item.notes || "",
+          itemKind: item.itemKind || "appointment",
+          status: item.status || "pending",
+          selected: fmtISO(selected),
+          view: fmtISO(new Date(view.getFullYear(), view.getMonth(), 1))
+        });
+        link.href = `appointment.html?${params.toString()}`;
+
+        const head = document.createElement("div");
+        head.className = "appointmentHead";
+
+        const lead = document.createElement("div");
+        lead.className = "appointmentLead";
+
+        const time = document.createElement("div");
+        time.className = "appointmentTime";
+        time.textContent = item.time;
+
+        const title = document.createElement("div");
+        title.className = "appointmentTitle";
+        title.textContent = `- ${item.org || "Organisatie"}`;
+
+        lead.appendChild(time);
+        lead.appendChild(title);
+        head.appendChild(lead);
+        link.appendChild(head);
+
+        const department = document.createElement("div");
+        department.className = "appointmentMeta";
+        department.textContent = `Zorgvorm: ${item.careType || "-"}`;
+        link.appendChild(department);
+
+        const doctor = document.createElement("div");
+        doctor.className = "appointmentMeta";
+        doctor.textContent = `Zorgverlener: ${item.provider || "-"}`;
+        link.appendChild(doctor);
+
+        const reason = document.createElement("div");
+        reason.className = "appointmentNote";
+        reason.textContent = `Onderwerp: ${item.subject || "-"}`;
+        link.appendChild(reason);
+
+        if (item.notes){
+          const notes = document.createElement("div");
+          notes.className = "appointmentNote";
+          notes.textContent = `Notities: ${item.notes}`;
+          link.appendChild(notes);
+        }
+
+        const removeItem = () => {
+          const dayItems = APPOINTMENTS[iso] || [];
+          dayItems.splice(index, 1);
+          APPOINTMENTS[iso] = dayItems;
+          saveAppointments();
+          renderAgenda();
+        };
+
+        deleteLeftBtn.addEventListener("click", removeItem);
+        deleteRightBtn.addEventListener("click", removeItem);
+
+        li.appendChild(deleteLeftBtn);
+        li.appendChild(deleteRightBtn);
+        li.appendChild(link);
+        bindSwipeHandlers(li);
+
+        agendaListEl.appendChild(li);
+      }
+    }
+
+    function renderDOW(){
+      dowEl.innerHTML = "";
+      for (const name of DOW){
+        const el = document.createElement("div");
+        el.textContent = name;
+        dowEl.appendChild(el);
+      }
+    }
+
+    function render(){
+      const y = view.getFullYear();
+      const m = view.getMonth();
+
+      const title = new Intl.DateTimeFormat(undefined, { month: "long", year: "numeric" }).format(view);
+      monthTitleEl.textContent = title;
+
+      gridEl.innerHTML = "";
+
+      const first = new Date(y, m, 1);
+      const last = new Date(y, m + 1, 0);
+      const daysInMonth = last.getDate();
+
+      const startOffset = monIndex(first.getDay()); // how many days from prev month
+      const totalCells = Math.ceil((startOffset + daysInMonth) / 7) * 7;
+
+      // prev month info
+      const prevLast = new Date(y, m, 0);
+      const prevDays = prevLast.getDate();
+
+      for (let cell = 0; cell < totalCells; cell++){
+        const dayBtn = document.createElement("button");
+        dayBtn.type = "button";
+        dayBtn.className = "day";
+
+        let dayNum, cellDate, isOutside = false;
+
+        if (cell < startOffset){
+          // previous month
+          dayNum = prevDays - (startOffset - 1 - cell);
+          cellDate = new Date(y, m - 1, dayNum);
+          isOutside = true;
+        } else if (cell >= startOffset + daysInMonth){
+          // next month
+          dayNum = cell - (startOffset + daysInMonth) + 1;
+          cellDate = new Date(y, m + 1, dayNum);
+          isOutside = true;
+        } else {
+          // current month
+          dayNum = cell - startOffset + 1;
+          cellDate = new Date(y, m, dayNum);
+        }
+
+        dayBtn.textContent = dayNum;
+        dayBtn.dataset.iso = fmtISO(cellDate);
+
+        if (isOutside) dayBtn.classList.add("outside");
+
+        const isToday = (cellDate.getFullYear() === todayY &&
+                         cellDate.getMonth() === todayM &&
+                         cellDate.getDate() === todayD);
+        if (isToday && !isOutside) dayBtn.classList.add("today");
+
+        const isSelected = selected && fmtISO(selected) === fmtISO(cellDate);
+        if (isSelected) dayBtn.classList.add("selected");
+
+        dayBtn.addEventListener("click", () => {
+          // If tapped an outside day, jump to that month (nice mobile behavior)
+          if (isOutside){
+            view = new Date(cellDate.getFullYear(), cellDate.getMonth(), 1);
+          }
+          selected = new Date(cellDate.getFullYear(), cellDate.getMonth(), cellDate.getDate());
+          render();
+        });
+
+        gridEl.appendChild(dayBtn);
+      }
+      renderAgenda();
+    }
+
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      view = new Date(view.getFullYear(), view.getMonth() - 1, 1);
+      render();
+    });
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      view = new Date(view.getFullYear(), view.getMonth() + 1, 1);
+      render();
+    });
+    addFormEl.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!selected) return;
+
+      const iso = fmtISO(selected);
+      const item = {
+        time: fieldTimeEl.value || "09:00",
+        org: fieldOrgEl.value.trim(),
+        careType: fieldTypeEl.value.trim(),
+        provider: fieldProviderEl.value.trim(),
+        subject: fieldSubjectEl.value.trim(),
+        notes: fieldNotesEl.value.trim(),
+        itemKind: fieldItemKindEl.value || "appointment",
+        status: fieldStatusEl.value || "confirmed"
+      };
+
+      if (!APPOINTMENTS[iso]) APPOINTMENTS[iso] = [];
+      APPOINTMENTS[iso].push(normalizeAppointment(item));
+      APPOINTMENTS[iso].sort(sortByTime);
+      saveAppointments();
+
+      fieldTimeEl.value = "";
+      fieldItemKindEl.value = "appointment";
+      fieldOrgEl.value = "";
+      fieldTypeEl.value = "";
+      fieldProviderEl.value = "";
+      fieldSubjectEl.value = "";
+      fieldNotesEl.value = "";
+      fieldStatusEl.value = "confirmed";
+      closeAddModal();
+      renderAgenda();
+    });
+    openAddBtnEl.addEventListener("click", openAddModal);
+    closeAddBtnEl.addEventListener("click", closeAddModal);
+    cancelAddBtnEl.addEventListener("click", closeAddModal);
+    addModalEl.addEventListener("click", (event) => {
+      if (event.target === addModalEl) closeAddModal();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && addModalEl.classList.contains("open")) closeAddModal();
+    });
+
+    renderDOW();
+    updateFormHint();
+    render();
+  </script>
+</body>
+</html>
+
+
+

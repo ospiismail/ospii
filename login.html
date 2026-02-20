@@ -1,0 +1,36 @@
+<!doctype html>
+<!--
+  ospii login pagina (mockup)
+  Submit is demo-only en toont inline melding
+-->
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ospii | Inloggen</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="login">
+  <main class="loginPage shell">
+    <section class="loginCard card" aria-labelledby="loginTitle">
+      <p class="loginLabel">Mockup-login voor demo</p>
+      <h1 id="loginTitle">Inloggen bij ospii</h1>
+
+      <form id="loginForm" class="loginForm" novalidate>
+        <label for="username">Gebruikersnaam</label>
+        <input id="username" name="username" class="input" type="text" autocomplete="username" />
+
+        <label for="password">Wachtwoord</label>
+        <input id="password" name="password" class="input" type="password" autocomplete="current-password" />
+
+        <button type="submit" class="btn btnPrimary full">Inloggen</button>
+      </form>
+
+      <a class="subtleLink" href="#">Wachtwoord vergeten?</a>
+      <p class="formMsg" id="formMsg" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

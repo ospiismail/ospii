@@ -1,0 +1,1761 @@
+﻿<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Gezondheidsoverzicht</title>
+  <script>
+    if (window.sessionStorage.getItem("health.auth.v1") !== "1"){
+      window.location.replace("login.html");
+    }
+  </script>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#667085;
+      --border:#e2e8f0;
+      --borderStrong:#cbd5e1;
+      --primary:#2563eb;
+      --appointment:#2563eb;
+      --appointmentSoft:#eff6ff;
+      --ring:rgba(37,99,235,0.14);
+      --shadow:0 6px 16px rgba(15,23,42,0.05);
+      --shadowPress:0 3px 8px rgba(15,23,42,0.08);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{
+      margin:0;
+      font-family: "SF Pro Text","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      overflow:hidden;
+    }
+    .app{
+      height:100dvh;
+      max-width:none;
+      width:100%;
+      margin:0 auto;
+      padding: clamp(8px, 2.6vw, 14px) clamp(8px, 3vw, 14px) calc(clamp(8px, 2.6vw, 14px) + env(safe-area-inset-bottom));
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      overflow:hidden;
+    }
+    .dashboard{
+      flex:1;
+      min-height:0;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: 0.82fr 1.40fr 1.12fr 0.78fr 1.46fr;
+      gap:8px;
+      align-content:start;
+      grid-template-areas:
+        "appointments voice"
+        "appointments medicatie"
+        "taken documenten"
+        "help team"
+        "calendar calendar";
+    }
+    .hero{
+      padding: 0 2px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .heroLeft{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+    .welcome{
+      margin:0;
+      font-size: clamp(20px, 6.1vw, 26px);
+      line-height:1.15;
+      letter-spacing:0.1px;
+      font-weight:700;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .avatarBtn,
+    .menuBtn{
+      width:42px;
+      height:42px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background:#fff;
+      color:var(--text);
+      display:grid;
+      place-items:center;
+      font-size:20px;
+      line-height:1;
+      padding:0;
+      box-shadow: 0 3px 8px rgba(15,23,42,0.08);
+      cursor:pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+    }
+    .avatarBtn:active,
+    .menuBtn:active{
+      transform: translateY(1px);
+      box-shadow: 0 2px 6px rgba(43,93,179,0.10);
+    }
+    .menuBtn{
+      border-radius:12px;
+      font-size:22px;
+      font-weight:700;
+    }
+    .card{
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 8px;
+      box-shadow: var(--shadow);
+    }
+    .upcomingCard{
+      display: grid;
+      gap: 7px;
+      width: 100%;
+      min-height: 0;
+      align-content: start;
+    }
+    .appointmentTile{
+      grid-area:appointments;
+    }
+    .upcomingTitle{
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.1px;
+      text-transform: none;
+    }
+    .upcomingMain{
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.25;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .upcomingMeta{
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+      display: grid;
+      gap: 5px;
+    }
+    .upcomingLine{
+      padding-left: 12px;
+      color: var(--text);
+    }
+    .upcomingTile{
+      position:relative;
+      overflow:hidden;
+    }
+    .upcomingIcon{
+      position:absolute;
+      right:10px;
+      bottom:10px;
+      width:24px;
+      height:24px;
+      color:#64748b;
+      opacity:0.9;
+      pointer-events:none;
+    }
+    .upcomingIcon svg{
+      width:100%;
+      height:100%;
+      display:block;
+      stroke:currentColor;
+      fill:none;
+      stroke-width:1.45;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+    .quickCard{
+      display:grid;
+      gap:4px;
+      text-align:left;
+      width:100%;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 8px 38px 8px 9px;
+      color:var(--text);
+      font:inherit;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+      cursor:pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease, background 120ms ease;
+    }
+    .quickCard:hover,
+    .quickCard:focus-visible{
+      border-color: #d4dde8;
+    }
+    .quickCard:active{
+      transform: translateY(1px);
+      box-shadow: var(--shadowPress);
+    }
+    .voiceTile{
+      grid-area: voice;
+      border-color:#bfdbfe;
+      background:#f8fbff;
+      width: 100%;
+      justify-self: stretch;
+      align-self: stretch;
+    }
+    .voiceTile .quickHint{
+      color:#6f86a8;
+    }
+    .medicatieTile{ grid-area: medicatie; }
+    .takenTile{
+      grid-area: taken;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+    .tileCount{
+      position:absolute;
+      top:8px;
+      right:8px;
+      min-width:22px;
+      height:22px;
+      padding:0 6px;
+      border-radius:999px;
+      border:1.5px solid var(--borderStrong);
+      background:#eef4ff;
+      color:var(--primary);
+      font-size:11px;
+      font-weight:700;
+      display:grid;
+      place-items:center;
+      line-height:1;
+    }
+    .tileCount[hidden]{
+      display:none;
+    }
+    .documentenTile{ grid-area: documenten; }
+    .helpTile{
+      grid-area: help;
+      padding-top: 6px;
+      padding-bottom: 6px;
+      border-color:#bfdbfe;
+      background:#f8fbff;
+    }
+    .helpTile .quickHint{
+      color:#6f86a8;
+    }
+    .teamTile{ grid-area: team; }
+    .quickTitlePrimary{
+      margin:0;
+      font-size:16px;
+      font-weight:600;
+      color:var(--primary);
+    }
+    .quickTitle{
+      margin:0;
+      font-size:14px;
+      line-height:1.2;
+      font-weight:700;
+      letter-spacing:0;
+      color:#1f2937;
+      text-transform: none;
+    }
+    .quickTitleBlue{
+      color:var(--primary);
+    }
+    .quickHint{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.3;
+    }
+    .tileIcon{
+      position:absolute;
+      right:10px;
+      bottom:8px;
+      width:22px;
+      height:22px;
+      color:#64748b;
+      opacity:0.82;
+      pointer-events:none;
+    }
+    .voiceTile .tileIcon,
+    .helpTile .tileIcon{
+      color:var(--primary);
+      opacity:0.9;
+    }
+    .tileIcon svg{
+      width:100%;
+      height:100%;
+      display:block;
+      stroke:currentColor;
+      fill:none;
+      stroke-width:1.45;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+    .voiceWave{
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      gap:2px;
+    }
+    .voiceWave span{
+      width:1.5px;
+      background:currentColor;
+      border-radius:2px;
+      opacity:0.95;
+    }
+    .voiceWave span:nth-child(1){ height:8px; }
+    .voiceWave span:nth-child(2){ height:14px; }
+    .voiceWave span:nth-child(3){ height:18px; }
+    .voiceWave span:nth-child(4){ height:12px; }
+    .voiceWave span:nth-child(5){ height:20px; }
+    .voiceWave span:nth-child(6){ height:10px; }
+    .calendarWidget{
+      width: 100%;
+      max-width: none;
+      grid-area: calendar;
+      cursor: pointer;
+    }
+    .miniMonth{
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:4px;
+      font-weight:600;
+    }
+    .miniDOW{
+      display:grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap:4px;
+      margin-bottom:2px;
+    }
+    .miniDOW div{
+      text-align:center;
+      font-size:10px;
+      color:var(--muted);
+      padding:2px 0;
+    }
+    .miniGrid{
+      display:grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap:4px;
+    }
+    .miniDay{
+      height: 26px;
+      border:1.5px solid var(--border);
+      border-radius:8px;
+      display:grid;
+      place-items:center;
+      text-decoration:none;
+      color:var(--text);
+      font-size:11px;
+      background:#fbfdff;
+      transition: transform 100ms ease, box-shadow 100ms ease;
+    }
+    .miniDay:active{
+      transform: translateY(1px);
+    }
+    .miniDay.outside{
+      color:#b6bec9;
+      border-color: transparent;
+      background: transparent;
+    }
+    .miniDay.hasAppointment{
+      border-color: var(--appointment);
+      background: var(--appointmentSoft);
+      font-weight:700;
+      box-shadow: 0 0 0 1px var(--ring);
+    }
+    .miniDay.today{
+      outline:2px solid var(--primary);
+      outline-offset:-2px;
+    }
+    .quickCard:focus-visible,
+    .avatarBtn:focus-visible,
+    .menuBtn:focus-visible,
+    .miniDay:focus-visible,
+    .calendarWidget:focus-visible,
+    #upcomingCard:focus-visible{
+      outline: 2px solid var(--primary);
+      outline-offset: 1px;
+    }
+    .voiceTile::after,
+    .helpTile::after{ content:none; }
+    .welcomeOverlay{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.32);
+      display:grid;
+      place-items:center;
+      padding:16px;
+      z-index:40;
+    }
+    .welcomeOverlay[hidden]{
+      display:none;
+    }
+    .welcomeCard{
+      width:min(420px, 100%);
+      border:1px solid var(--border);
+      border-radius:16px;
+      background:#fff;
+      box-shadow:0 16px 36px rgba(15,23,42,0.18);
+      padding:14px;
+      display:grid;
+      gap:10px;
+      text-align:center;
+    }
+    .welcomeTitle{
+      margin:0;
+      font-size:20px;
+      line-height:1.3;
+      font-weight:700;
+      color:var(--text);
+    }
+    .welcomeBtn{
+      width:100%;
+      border:1px solid var(--primary);
+      border-radius:10px;
+      background:var(--primary);
+      color:#fff;
+      font-size:14px;
+      font-weight:600;
+      padding:10px;
+      cursor:pointer;
+    }
+    .sideMenuOverlay{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.22);
+      z-index:45;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 160ms ease;
+    }
+    .sideMenuOverlay.open{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .sideMenu{
+      position:absolute;
+      top:0;
+      right:0;
+      width:min(300px, 86vw);
+      height:100%;
+      background:#fff;
+      border-left:1px solid var(--border);
+      box-shadow:-10px 0 24px rgba(15,23,42,0.12);
+      transform:translateX(100%);
+      transition:transform 180ms ease;
+      padding:calc(12px + env(safe-area-inset-top)) 12px 12px;
+      display:grid;
+      align-content:start;
+      gap:10px;
+    }
+    .sideMenuOverlay.open .sideMenu{
+      transform:translateX(0);
+    }
+    .sideMenuTitle{
+      margin:0;
+      font-size:16px;
+      font-weight:700;
+      color:var(--text);
+    }
+    .sideMenuItem{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+      color:var(--text);
+      text-align:left;
+      padding:10px;
+      display:grid;
+      gap:2px;
+      font:inherit;
+      cursor:pointer;
+    }
+    .sideMenuItem strong{
+      font-size:14px;
+      line-height:1.2;
+      font-weight:700;
+      color:var(--text);
+    }
+    .sideMenuItem span{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.3;
+    }
+    .healthOverlay{
+      position:fixed;
+      inset:0;
+      background:#f8fafc;
+      z-index:50;
+      display:grid;
+      grid-template-rows:auto 1fr;
+      transform:translateY(100%);
+      transition:transform 220ms ease;
+      pointer-events:none;
+    }
+    .healthOverlay.open{
+      transform:translateY(0);
+      pointer-events:auto;
+    }
+    .healthHead{
+      padding:calc(8px + env(safe-area-inset-top)) 12px 8px;
+      display:grid;
+      grid-template-columns:42px 1fr 42px;
+      align-items:center;
+      gap:10px;
+      border-bottom:1px solid var(--border);
+      background:rgba(248,250,252,0.94);
+      backdrop-filter:blur(8px);
+    }
+    .healthBack{
+      width:42px;
+      height:42px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+      color:var(--text);
+      font-size:20px;
+      line-height:1;
+      padding:0;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      box-shadow:0 1px 2px rgba(15,23,42,0.05);
+    }
+    .healthAddBtn{
+      width:42px;
+      height:42px;
+      border:1px solid #bfdbfe;
+      border-radius:12px;
+      background:#eff6ff;
+      color:var(--primary);
+      font-size:28px;
+      font-weight:500;
+      line-height:1;
+      padding:0;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      box-shadow:0 1px 2px rgba(15,23,42,0.05);
+    }
+    .healthAddBtn > span{
+      display:block;
+      transform:translateY(1px);
+    }
+    .healthTitle{
+      margin:0;
+      font-size:20px;
+      line-height:1.2;
+      font-weight:700;
+      letter-spacing:0.1px;
+    }
+    .healthSub{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .healthContent{
+      overflow:auto;
+      padding:10px 12px calc(18px + env(safe-area-inset-bottom));
+      display:grid;
+      gap:10px;
+      align-content:start;
+    }
+    .rangeTabs{
+      display:flex;
+      gap:6px;
+      padding:0 12px 2px;
+    }
+    .rangeBtn{
+      border:1px solid var(--border);
+      border-radius:999px;
+      background:#fff;
+      color:#334155;
+      font-size:12px;
+      font-weight:600;
+      padding:5px 11px;
+      cursor:pointer;
+    }
+    .rangeBtn.active{
+      border-color:#bfdbfe;
+      background:#eff6ff;
+      color:#1d4ed8;
+    }
+    .metricCard{
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:12px;
+      display:grid;
+      gap:8px;
+    }
+    .metricTop{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .metricName{
+      margin:0;
+      font-size:15px;
+      font-weight:700;
+      color:var(--text);
+      line-height:1.25;
+    }
+    .metricValue{
+      margin:0;
+      font-size:14px;
+      font-weight:700;
+      color:#1d4ed8;
+      white-space:nowrap;
+    }
+    .plot{
+      border:1px solid #dbe7ff;
+      border-radius:10px;
+      background:linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+      padding:4px;
+    }
+    .plotSvg{
+      width:100%;
+      height:86px;
+      display:block;
+    }
+    .plotGrid{
+      stroke:#dbeafe;
+      stroke-width:1;
+    }
+    .plotAxis{
+      fill:#64748b;
+      font-size:9px;
+      font-weight:600;
+      letter-spacing:.02em;
+    }
+    .plotArea{
+      fill:url(#plotFillBlue);
+      opacity:.85;
+    }
+    .plotLine{
+      fill:none;
+      stroke:#2563eb;
+      stroke-width:2.6;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+    .plotLine.teal{ stroke:#0ea5a6; }
+    .plotLine.violet{ stroke:#6366f1; }
+    .plotLine.green{ stroke:#16a34a; }
+    .plotLine.orange{ stroke:#ea580c; }
+    .plotLine.pink{ stroke:#db2777; }
+    .plotArea.teal{ fill:url(#plotFillTeal); }
+    .plotArea.violet{ fill:url(#plotFillViolet); }
+    .plotArea.green{ fill:url(#plotFillGreen); }
+    .plotArea.orange{ fill:url(#plotFillOrange); }
+    .plotArea.pink{ fill:url(#plotFillPink); }
+    .metricHint{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .metricTopActions{
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .metricIconBtn{
+      width:26px;
+      height:26px;
+      border:1px solid var(--border);
+      border-radius:8px;
+      background:#fff;
+      color:#475569;
+      font-size:13px;
+      line-height:1;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+    }
+    .metricIconBtn.delete{
+      color:#b91c1c;
+      border-color:#fecaca;
+      background:#fef2f2;
+    }
+    .customMetrics{
+      display:grid;
+      gap:10px;
+    }
+    .metricModalBackdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.35);
+      display:grid;
+      align-items:end;
+      z-index:60;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 160ms ease;
+    }
+    .metricModalBackdrop.open{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .metricModalSheet{
+      background:#fff;
+      border-top:1px solid var(--border);
+      border-radius:16px 16px 0 0;
+      max-width:520px;
+      width:100%;
+      margin:0 auto;
+      padding:10px;
+      transform:translateY(100%);
+      transition:transform 160ms ease;
+      display:grid;
+      gap:8px;
+    }
+    .metricModalBackdrop.open .metricModalSheet{
+      transform:translateY(0);
+    }
+    .metricSheetHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    }
+    .metricSheetTitle{
+      margin:0;
+      font-size:15px;
+      font-weight:700;
+    }
+    .metricCloseBtn{
+      border:1px solid var(--border);
+      border-radius:8px;
+      background:#fff;
+      color:var(--text);
+      font-size:13px;
+      font-weight:600;
+      padding:6px 8px;
+      cursor:pointer;
+    }
+    .metricForm{
+      display:grid;
+      gap:6px;
+    }
+    .metricRow{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+    }
+    .metricField{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:8px;
+      background:#fff;
+      color:var(--text);
+      font:inherit;
+      font-size:13px;
+      padding:8px 9px;
+    }
+    .metricActions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+      margin-top:2px;
+    }
+    .metricBtnGhost,.metricBtnPrimary{
+      border-radius:8px;
+      font-size:13px;
+      font-weight:600;
+      padding:8px;
+      cursor:pointer;
+    }
+    .metricBtnGhost{
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--text);
+    }
+    .metricBtnPrimary{
+      border:1px solid var(--primary);
+      background:var(--primary);
+      color:#fff;
+    }
+    .customEmpty{
+      border:1px dashed var(--border);
+      border-radius:12px;
+      background:#fff;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+      padding:10px;
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div class="heroLeft">
+        <button class="avatarBtn" id="avatarBtn" type="button" aria-label="Profiel">&#128100;</button>
+        <h1 class="welcome" id="welcomeText">Welkom</h1>
+      </div>
+      <button class="menuBtn" id="menuBtn" type="button" aria-label="Menu">&#9776;</button>
+    </section>
+
+    <section class="dashboard" aria-label="Dashboard">
+      <section class="card upcomingCard appointmentTile upcomingTile" id="upcomingCard">
+        <h2 class="upcomingTitle">Afspraken</h2>
+        <p class="upcomingMain" id="upcomingMain">Geen geplande afspraak</p>
+        <div class="upcomingMeta" id="upcomingMeta">Voeg een afspraak toe via de kalender.</div>
+        <span class="upcomingIcon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect>
+            <path d="M8 3.5v4"></path>
+            <path d="M16 3.5v4"></path>
+            <path d="M3.5 10h17"></path>
+          </svg>
+        </span>
+      </section>
+
+      <button class="quickCard voiceTile" id="voiceTile" type="button" aria-label="Spreek in">
+        <p class="quickTitle quickTitleBlue">Inspreken</p>
+        <span class="tileIcon voiceWave" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </span>
+      </button>
+      <button class="quickCard medicatieTile" id="medicationTile" type="button" aria-label="Medicatie">
+        <p class="quickTitle">Medicatie</p>
+        <p class="quickHint" id="medicationSummary">Geen medicatie bijna op</p>
+        <span class="tileIcon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <ellipse cx="12" cy="6.5" rx="6.5" ry="2.8"></ellipse>
+            <path d="M5.5 6.5v10c0 1.5 2.9 2.8 6.5 2.8s6.5-1.3 6.5-2.8v-10"></path>
+            <path d="M5.5 11.5c0 1.5 2.9 2.8 6.5 2.8s6.5-1.3 6.5-2.8"></path>
+          </svg>
+        </span>
+      </button>
+      <button class="quickCard takenTile" id="todoTile" type="button" aria-label="Taken">
+        <p class="quickTitle">Te doen</p>
+        <p class="quickHint" id="todoSummary">Geen openstaande taken</p>
+        <span class="tileIcon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <rect x="5.5" y="5.5" width="13" height="15" rx="2.2"></rect>
+            <path d="M9 3.5h6"></path>
+          </svg>
+        </span>
+      </button>
+      <button class="quickCard documentenTile" id="documentsTile" type="button" aria-label="Documenten">
+        <p class="quickTitle">Documenten</p>
+        <p class="quickHint" id="documentsSummary">Geen openstaande facturen</p>
+        <span class="tileIcon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M7 3.5h7l4 4v13H7z"></path>
+            <path d="M14 3.5v4h4"></path>
+            <path d="M9.5 12.5h5"></path>
+            <path d="M9.5 16h5"></path>
+          </svg>
+        </span>
+      </button>
+      <button class="quickCard helpTile" id="helpTile" type="button" aria-label="Hulp">
+        <p class="quickTitle quickTitleBlue">Stel je vraag</p>
+        <span class="tileIcon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M5 6.5h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H11l-4 3v-3H5a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2z"></path>
+            <circle cx="9" cy="11.5" r="0.8"></circle>
+            <circle cx="12" cy="11.5" r="0.8"></circle>
+            <circle cx="15" cy="11.5" r="0.8"></circle>
+          </svg>
+        </span>
+      </button>
+      <button class="quickCard teamTile" id="teamTile" type="button" aria-label="Team">
+        <p class="quickTitle">Mijn zorgteam</p>
+        <span class="tileIcon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <circle cx="8.5" cy="9" r="2.6"></circle>
+            <circle cx="15.5" cy="9" r="2.6"></circle>
+            <path d="M3.5 18c0-2.3 2.1-4 4.9-4"></path>
+            <path d="M20.5 18c0-2.3-2.1-4-4.9-4"></path>
+            <path d="M8.5 18c0-2.4 1.6-4.1 3.5-4.1s3.5 1.7 3.5 4.1"></path>
+          </svg>
+        </span>
+      </button>
+
+      <section class="card calendarWidget" id="calendarWidget" role="link" aria-label="Open kalender" tabindex="0">
+        <div class="miniMonth" id="miniMonth">-</div>
+        <div class="miniDOW" id="miniDOW"></div>
+        <div class="miniGrid" id="miniGrid"></div>
+      </section>
+    </section>
+  </main>
+  <div class="welcomeOverlay" id="welcomeOverlay" hidden>
+    <div class="welcomeCard" role="dialog" aria-modal="true" aria-labelledby="welcomeMessage">
+      <p class="welcomeTitle" id="welcomeMessage">Welkom in de testomgeving van ospii.</p>
+      <button class="welcomeBtn" id="closeWelcomeBtn" type="button">Doorgaan</button>
+    </div>
+  </div>
+  <div class="sideMenuOverlay" id="sideMenuOverlay" aria-hidden="true">
+    <aside class="sideMenu" role="dialog" aria-label="Menu">
+      <p class="sideMenuTitle">Menu</p>
+      <button class="sideMenuItem" id="openDashboardBtn" type="button">
+        <strong>Dashboard</strong>
+        <span>Trendlijnen van je gezondheid</span>
+      </button>
+      <button class="sideMenuItem" id="openSmartwatchBtn" type="button">
+        <strong>Smartwatch</strong>
+        <span>Koppel en beheer je wearable</span>
+      </button>
+      <button class="sideMenuItem" id="openTimelineBtn" type="button">
+        <strong>Tijdlijn</strong>
+        <span>Chronologisch overzicht van je zorg</span>
+      </button>
+    </aside>
+  </div>
+  <section class="healthOverlay" id="healthOverlay" aria-hidden="true">
+    <header class="healthHead">
+      <button class="healthBack" id="closeHealthBtn" type="button" aria-label="Terug">&#8249;</button>
+      <div>
+        <h2 class="healthTitle">Dashboard</h2>
+        <p class="healthSub">Overzicht van metingen door de tijd</p>
+      </div>
+      <button class="healthAddBtn" id="openMetricBtn" type="button" aria-label="Nieuwe metric toevoegen"><span aria-hidden="true">+</span></button>
+    </header>
+    <nav class="rangeTabs" aria-label="Tijdsfilter">
+      <button class="rangeBtn" type="button" data-range="7">7d</button>
+      <button class="rangeBtn active" type="button" data-range="30">30d</button>
+      <button class="rangeBtn" type="button" data-range="180">6m</button>
+    </nav>
+    <main class="healthContent">
+      <article class="metricCard">
+        <div class="metricTop"><p class="metricName">Gewicht</p><p class="metricValue">74,8 kg</p></div>
+        <div class="plot"><svg class="plotSvg" viewBox="0 0 320 86" aria-hidden="true"><defs><linearGradient id="plotFillBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#93c5fd"/><stop offset="100%" stop-color="#dbeafe"/></linearGradient></defs><path class="plotGrid" d="M8 16H312 M8 34H312 M8 52H312 M8 70H312"/><path class="plotArea" d="M8 28 L42 30 L76 32 L110 36 L144 40 L178 44 L212 49 L246 54 L280 58 L312 63 L312 78 L8 78 Z"/><path class="plotLine" d="M8 28 L42 30 L76 32 L110 36 L144 40 L178 44 L212 49 L246 54 L280 58 L312 63"/><text class="plotAxis" x="10" y="11">kg</text><text class="plotAxis" x="286" y="82">tijd</text></svg></div>
+        <p class="metricHint">Daling van 1,6 kg in 8 weken.</p>
+      </article>
+      <article class="metricCard">
+        <div class="metricTop"><p class="metricName">Hartslag (rust)</p><p class="metricValue">67 bpm</p></div>
+        <div class="plot"><svg class="plotSvg" viewBox="0 0 320 86" aria-hidden="true"><defs><linearGradient id="plotFillTeal" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#67e8f9"/><stop offset="100%" stop-color="#ccfbf1"/></linearGradient></defs><path class="plotGrid" d="M8 16H312 M8 34H312 M8 52H312 M8 70H312"/><path class="plotArea teal" d="M8 45 L42 43 L76 41 L110 42 L144 44 L178 46 L212 47 L246 49 L280 51 L312 52 L312 78 L8 78 Z"/><path class="plotLine teal" d="M8 45 L42 43 L76 41 L110 42 L144 44 L178 46 L212 47 L246 49 L280 51 L312 52"/><text class="plotAxis" x="10" y="11">bpm</text><text class="plotAxis" x="286" y="82">tijd</text></svg></div>
+        <p class="metricHint">Stabiel patroon, lichte verbetering.</p>
+      </article>
+      <article class="metricCard">
+        <div class="metricTop"><p class="metricName">Bloeddruk</p><p class="metricValue">124/79</p></div>
+        <div class="plot"><svg class="plotSvg" viewBox="0 0 320 86" aria-hidden="true"><defs><linearGradient id="plotFillViolet" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a5b4fc"/><stop offset="100%" stop-color="#e0e7ff"/></linearGradient></defs><path class="plotGrid" d="M8 16H312 M8 34H312 M8 52H312 M8 70H312"/><path class="plotArea violet" d="M8 24 L42 27 L76 29 L110 31 L144 33 L178 35 L212 36 L246 38 L280 40 L312 41 L312 78 L8 78 Z"/><path class="plotLine violet" d="M8 24 L42 27 L76 29 L110 31 L144 33 L178 35 L212 36 L246 38 L280 40 L312 41"/><text class="plotAxis" x="10" y="11">mmHg</text><text class="plotAxis" x="286" y="82">tijd</text></svg></div>
+        <p class="metricHint">Gemiddelde onder controle de afgelopen maand.</p>
+      </article>
+      <article class="metricCard">
+        <div class="metricTop"><p class="metricName">Saturatie</p><p class="metricValue">97%</p></div>
+        <div class="plot"><svg class="plotSvg" viewBox="0 0 320 86" aria-hidden="true"><defs><linearGradient id="plotFillGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#86efac"/><stop offset="100%" stop-color="#dcfce7"/></linearGradient></defs><path class="plotGrid" d="M8 16H312 M8 34H312 M8 52H312 M8 70H312"/><path class="plotArea green" d="M8 20 L42 18 L76 19 L110 17 L144 18 L178 19 L212 17 L246 18 L280 16 L312 17 L312 78 L8 78 Z"/><path class="plotLine green" d="M8 20 L42 18 L76 19 L110 17 L144 18 L178 19 L212 17 L246 18 L280 16 L312 17"/><text class="plotAxis" x="10" y="11">SpO2%</text><text class="plotAxis" x="286" y="82">tijd</text></svg></div>
+        <p class="metricHint">Geen opvallende dalingen gemeten.</p>
+      </article>
+      <article class="metricCard">
+        <div class="metricTop"><p class="metricName">Slaap</p><p class="metricValue">6u 52m</p></div>
+        <div class="plot"><svg class="plotSvg" viewBox="0 0 320 86" aria-hidden="true"><defs><linearGradient id="plotFillOrange" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fdba74"/><stop offset="100%" stop-color="#ffedd5"/></linearGradient></defs><path class="plotGrid" d="M8 16H312 M8 34H312 M8 52H312 M8 70H312"/><path class="plotArea orange" d="M8 58 L42 53 L76 55 L110 43 L144 39 L178 36 L212 40 L246 37 L280 35 L312 38 L312 78 L8 78 Z"/><path class="plotLine orange" d="M8 58 L42 53 L76 55 L110 43 L144 39 L178 36 L212 40 L246 37 L280 35 L312 38"/><text class="plotAxis" x="10" y="11">uren</text><text class="plotAxis" x="286" y="82">tijd</text></svg></div>
+        <p class="metricHint">Gemiddeld +34 min vergeleken met vorige week.</p>
+      </article>
+      <article class="metricCard">
+        <div class="metricTop"><p class="metricName">Conditie</p><p class="metricValue">7.300 stappen</p></div>
+        <div class="plot"><svg class="plotSvg" viewBox="0 0 320 86" aria-hidden="true"><defs><linearGradient id="plotFillPink" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f9a8d4"/><stop offset="100%" stop-color="#fce7f3"/></linearGradient></defs><path class="plotGrid" d="M8 16H312 M8 34H312 M8 52H312 M8 70H312"/><path class="plotArea pink" d="M8 62 L42 58 L76 53 L110 47 L144 42 L178 38 L212 43 L246 35 L280 31 L312 28 L312 78 L8 78 Z"/><path class="plotLine pink" d="M8 62 L42 58 L76 53 L110 47 L144 42 L178 38 L212 43 L246 35 L280 31 L312 28"/><text class="plotAxis" x="10" y="11">stappen</text><text class="plotAxis" x="286" y="82">tijd</text></svg></div>
+        <p class="metricHint">Activiteit stijgt geleidelijk.</p>
+      </article>
+      <article class="metricCard">
+        <div class="metricTop"><p class="metricName">Stressniveau</p><p class="metricValue">Laag-matig</p></div>
+        <div class="plot"><svg class="plotSvg" viewBox="0 0 320 86" aria-hidden="true"><path class="plotGrid" d="M8 16H312 M8 34H312 M8 52H312 M8 70H312"/><path class="plotArea" d="M8 30 L42 35 L76 39 L110 43 L144 47 L178 50 L212 48 L246 53 L280 57 L312 60 L312 78 L8 78 Z"/><path class="plotLine" d="M8 30 L42 35 L76 39 L110 43 L144 47 L178 50 L212 48 L246 53 L280 57 L312 60"/><text class="plotAxis" x="10" y="11">score</text><text class="plotAxis" x="286" y="82">tijd</text></svg></div>
+        <p class="metricHint">Lichte afname na vaste slaaproutine.</p>
+      </article>
+      <section class="customMetrics" id="customMetricsList"></section>
+      <p class="customEmpty" id="customMetricsEmpty">Nog geen eigen metrics toegevoegd.</p>
+    </main>
+  </section>
+  <div class="metricModalBackdrop" id="metricModal" aria-hidden="true">
+    <div class="metricModalSheet" role="dialog" aria-modal="true" aria-labelledby="metricSheetTitle">
+      <div class="metricSheetHead">
+        <h3 class="metricSheetTitle" id="metricSheetTitle">Nieuwe metric</h3>
+        <button class="metricCloseBtn" id="closeMetricBtn" type="button">Sluiten</button>
+      </div>
+      <form class="metricForm" id="metricForm">
+        <div class="metricRow">
+          <input class="metricField" id="metricName" type="text" placeholder="Naam (bijv. Glucose)" required />
+          <input class="metricField" id="metricUnit" type="text" placeholder="Y-as unit (bijv. mmol/L)" />
+        </div>
+        <div class="metricRow">
+          <input class="metricField" id="metricValue" type="text" placeholder="Huidige waarde (bijv. 5.8)" />
+          <input class="metricField" id="metricColor" type="color" value="#2563eb" aria-label="Lijnkleur" />
+        </div>
+        <input class="metricField" id="metricSeries" type="text" placeholder="Tijdreeks (10 waarden, komma gescheiden)" />
+        <input class="metricField" id="metricHint" type="text" placeholder="Hint/interpretatie (optioneel)" />
+        <div class="metricActions">
+          <button class="metricBtnGhost" id="cancelMetricBtn" type="button">Annuleren</button>
+          <button class="metricBtnPrimary" type="submit">Toevoegen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "health.appointments.v1";
+    const MEDICATION_STORAGE_KEY = "health.medications.v1";
+    const DEFAULT_MEDICATIONS = [
+      { status: "current" },
+      { status: "current" },
+      { status: "past" },
+      { status: "past" }
+    ];
+    const DOW = ["Ma","Di","Wo","Do","Vr","Za","Zo"];
+    const today = new Date();
+    const todayY = today.getFullYear();
+    const todayM = today.getMonth();
+    const todayD = today.getDate();
+
+    const DEFAULT_ITEMS = {
+      "2026-02-12": [
+        { time: "08:45", itemKind: "appointment" },
+        { time: "11:10", itemKind: "incident" },
+        { time: "14:00", itemKind: "contact" },
+        { time: "16:30", itemKind: "appointment" }
+      ],
+      "2026-02-18": [
+        {
+          time: "09:00",
+          itemKind: "appointment",
+          careType: "Ziekenhuis",
+          org: "Erasmus MC",
+          provider: "Dr. Van Dijk",
+          subject: "Controle na inspanningsklachten"
+        },
+        {
+          time: "14:30",
+          itemKind: "incident",
+          careType: "SEH",
+          org: "Erasmus MC",
+          provider: "Lab-team",
+          subject: "SEH-bezoek na valincident"
+        }
+      ],
+      "2026-02-20": [
+        {
+          time: "11:00",
+          itemKind: "appointment",
+          careType: "Fysiotherapie",
+          org: "FysioPlus Rotterdam",
+          provider: "Mw. Jansen",
+          subject: "Intake voor hersteltraject"
+        }
+      ],
+      "2026-02-25": [
+        {
+          time: "19:00",
+          itemKind: "contact",
+          careType: "Huisartsenpost",
+          org: "Huisartsenpraktijk West",
+          provider: "Telefonisch contact",
+          subject: "Klachten besproken buiten kantooruren"
+        }
+      ]
+    };
+    const FORCE_DEMO_UPCOMING = false;
+    const DEMO_UPCOMING = {
+      iso: "2026-03-09",
+      item: {
+        time: "09:00",
+        careType: "Cardiologie",
+        org: "Grand River Ziekenhuis",
+        provider: "Dr. Van Dijk",
+        subject: "Vervolgcontrole hartonderzoek"
+      }
+    };
+
+    function pad2(n){ return String(n).padStart(2, "0"); }
+    function fmtISO(y, m, d){ return `${y}-${pad2(m + 1)}-${pad2(d)}`; }
+    function monIndex(jsDay){ return (jsDay + 6) % 7; }
+    function getPatientName(){
+      try {
+        const saved = window.localStorage.getItem("health.patientName.v1");
+        if (saved && saved.trim()) return saved.trim();
+      } catch {
+        // Ignore storage errors and use fallback.
+      }
+      return "";
+    }
+    function renderWelcome(){
+      const el = document.getElementById("welcomeText");
+      if (!el) return;
+      const name = getPatientName();
+      el.textContent = name ? `Welkom ${name}` : "Welkom";
+    }
+    function showLoginWelcomeOnce(){
+      try{
+        if (window.sessionStorage.getItem("health.justLoggedIn.v1") !== "1") return;
+        window.sessionStorage.removeItem("health.justLoggedIn.v1");
+      } catch {
+        return;
+      }
+      const name = getPatientName() || "gebruiker";
+      const msgEl = document.getElementById("welcomeMessage");
+      const overlayEl = document.getElementById("welcomeOverlay");
+      if (msgEl){
+        msgEl.textContent = `Welkom ${name} in de testomgeving van ospii.`;
+      }
+      if (overlayEl){
+        overlayEl.hidden = false;
+      }
+    }
+    function fmtDateShort(dateObj){
+      return new Intl.DateTimeFormat("nl-NL", {
+        day: "numeric",
+        month: "short"
+      }).format(dateObj);
+    }
+    function parseEventDateTime(iso, time){
+      const date = parseISODate(iso);
+      if (!date) return null;
+      const m = /^(\d{1,2}):(\d{2})$/.exec(time || "");
+      const hh = m ? Number(m[1]) : 9;
+      const mm = m ? Number(m[2]) : 0;
+      const dt = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hh, mm, 0, 0);
+      return Number.isNaN(dt.getTime()) ? null : dt;
+    }
+    function parseISODate(iso){
+      if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+      const [y, m, d] = iso.split("-").map(Number);
+      const dt = new Date(y, m - 1, d);
+      if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return null;
+      return dt;
+    }
+
+    function normalizeKind(item){
+      const kind = (item && item.itemKind) || "appointment";
+      if (kind === "incident") return "incident";
+      if (kind === "contact" || kind === "event") return "contact";
+      return "appointment";
+    }
+
+    function loadItems(){
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (!raw) return DEFAULT_ITEMS;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return DEFAULT_ITEMS;
+        return { ...DEFAULT_ITEMS, ...parsed };
+      } catch {
+        return DEFAULT_ITEMS;
+      }
+    }
+    function countOpenTodos(){
+      try {
+        const raw = window.localStorage.getItem("health.todos.v1");
+        if (!raw) return 0;
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return 0;
+        let count = 0;
+        for (const item of parsed){
+          if (!item || item.completedAt) continue;
+          count++;
+        }
+        return count;
+      } catch {
+        return 0;
+      }
+    }
+    function countCurrentMedications(){
+      try {
+        const raw = window.localStorage.getItem(MEDICATION_STORAGE_KEY);
+        if (!raw){
+          return DEFAULT_MEDICATIONS.filter((item) => item.status !== "past").length;
+        }
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)){
+          return DEFAULT_MEDICATIONS.filter((item) => item.status !== "past").length;
+        }
+        let count = 0;
+        for (const item of parsed){
+          if (!item) continue;
+          if (item.status === "past") continue;
+          count++;
+        }
+        return count;
+      } catch {
+        return DEFAULT_MEDICATIONS.filter((item) => item.status !== "past").length;
+      }
+    }
+    function countLowStockMedications(){
+      const LOW_STOCK_THRESHOLD = 7;
+      const defaults = [
+        { status: "current", unitsLeft: 12 },
+        { status: "current", unitsLeft: 21 },
+        { status: "past", unitsLeft: 0 },
+        { status: "past", unitsLeft: 0 }
+      ];
+      try {
+        const raw = window.localStorage.getItem(MEDICATION_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : defaults;
+        const meds = Array.isArray(parsed) ? parsed : defaults;
+        let count = 0;
+        for (const med of meds){
+          if (!med || med.status === "past") continue;
+          const unitsLeft = Number(med.unitsLeft);
+          if (Number.isFinite(unitsLeft) && unitsLeft <= LOW_STOCK_THRESHOLD) count++;
+        }
+        return count;
+      } catch {
+        return 0;
+      }
+    }
+    function countOpenInvoices(){
+      const defaults = [
+        { category: "facturen", paymentStatus: "unpaid" },
+        { category: "facturen", paymentStatus: "paid" },
+        { category: "brieven" },
+        { category: "verslagen" }
+      ];
+      try {
+        const raw = window.localStorage.getItem("health.documents.v1");
+        const parsed = raw ? JSON.parse(raw) : defaults;
+        const docs = Array.isArray(parsed) ? parsed : defaults;
+        let count = 0;
+        for (const doc of docs){
+          if (!doc || doc.category !== "facturen") continue;
+          if ((doc.paymentStatus || "unpaid") !== "paid") count++;
+        }
+        return count;
+      } catch {
+        return 1;
+      }
+    }
+    function renderTodoCount(){
+      const el = document.getElementById("todoSummary");
+      if (!el) return;
+      const count = countOpenTodos();
+      if (count <= 0){
+        el.textContent = "Geen openstaande taken";
+        return;
+      }
+      if (count === 1){
+        el.textContent = "1 openstaande taak";
+        return;
+      }
+      el.textContent = `${count} openstaande taken`;
+    }
+    function renderMedicationCount(){
+      const el = document.getElementById("medicationSummary");
+      if (!el) return;
+      const count = countLowStockMedications();
+      if (count <= 0){
+        el.textContent = "Geen medicatie bijna op";
+        return;
+      }
+      if (count === 1){
+        el.textContent = "1 medicatie bijna op";
+        return;
+      }
+      el.textContent = `${count} medicaties bijna op`;
+    }
+    function renderDocumentsSummary(){
+      const el = document.getElementById("documentsSummary");
+      if (!el) return;
+      const count = countOpenInvoices();
+      if (count <= 0){
+        el.textContent = "Geen openstaande facturen";
+        return;
+      }
+      if (count === 1){
+        el.textContent = "1 openstaande factuur";
+        return;
+      }
+      el.textContent = `${count} openstaande facturen`;
+    }
+
+    function dayHasAppointment(iso, itemsByDate){
+      const items = itemsByDate[iso] || [];
+      for (const item of items){
+        if (normalizeKind(item) === "appointment") return true;
+      }
+      return false;
+    }
+    function getNextAppointment(itemsByDate){
+      const now = new Date();
+      let best = null;
+      for (const iso of Object.keys(itemsByDate)){
+        const items = itemsByDate[iso];
+        if (!Array.isArray(items)) continue;
+        for (const item of items){
+          if (normalizeKind(item) !== "appointment") continue;
+          const dt = parseEventDateTime(iso, item.time || "09:00");
+          if (!dt) continue;
+          if (dt < now) continue;
+          if (!best || dt < best.dt){
+            best = { iso, dt, item };
+          }
+        }
+      }
+      return best;
+    }
+    function renderNextAppointmentCard(){
+      const itemsByDate = loadItems();
+      const next = getNextAppointment(itemsByDate);
+      const titleEl = document.getElementById("upcomingMain");
+      const metaEl = document.getElementById("upcomingMeta");
+      const cardEl = document.getElementById("upcomingCard");
+      const nextItem = FORCE_DEMO_UPCOMING
+        ? {
+            iso: DEMO_UPCOMING.iso,
+            dt: parseEventDateTime(DEMO_UPCOMING.iso, DEMO_UPCOMING.item.time),
+            item: DEMO_UPCOMING.item
+          }
+        : next;
+
+      if (!nextItem){
+        titleEl.textContent = "Geen geplande afspraak";
+        metaEl.textContent = "Voeg een afspraak toe via de kalender.";
+      } else {
+        const time = nextItem.item.time || `${pad2(nextItem.dt.getHours())}:${pad2(nextItem.dt.getMinutes())}`;
+        const dateLabel = fmtDateShort(nextItem.dt);
+        const careType = nextItem.item.careType || "Afspraak";
+        const org = nextItem.item.org || "Onbekende organisatie";
+        const provider = nextItem.item.provider || "Onbekende zorgverlener";
+        const subject = nextItem.item.subject || nextItem.item.reason || "-";
+
+        titleEl.textContent = `${dateLabel} - ${time}`;
+        metaEl.innerHTML =
+          `<div class=\"upcomingLine\">${careType}</div>` +
+          `<div class=\"upcomingLine\">${org}</div>` +
+          `<div class=\"upcomingLine\">${provider}</div>` +
+          `<div class=\"upcomingLine\">${subject}</div>`;
+      }
+
+      const targetUrl = "appointments.html";
+      cardEl.setAttribute("role", "link");
+      cardEl.setAttribute("tabindex", "0");
+      cardEl.onclick = () => { window.location.href = targetUrl; };
+      cardEl.onkeydown = (event) => {
+        if (event.key === "Enter" || event.key === " "){
+          event.preventDefault();
+          window.location.href = targetUrl;
+        }
+      };
+    }
+
+    function renderMiniCalendar(){
+      const miniMonthEl = document.getElementById("miniMonth");
+      const miniDowEl = document.getElementById("miniDOW");
+      const miniGridEl = document.getElementById("miniGrid");
+      const itemsByDate = loadItems();
+      const view = new Date(todayY, todayM, 1);
+      const y = view.getFullYear();
+      const m = view.getMonth();
+
+      miniMonthEl.textContent = new Intl.DateTimeFormat("nl-NL", { month: "long", year: "numeric" }).format(view);
+
+      miniDowEl.innerHTML = "";
+      for (const name of DOW){
+        const el = document.createElement("div");
+        el.textContent = name;
+        miniDowEl.appendChild(el);
+      }
+
+      miniGridEl.innerHTML = "";
+      const first = new Date(y, m, 1);
+      const daysInMonth = new Date(y, m + 1, 0).getDate();
+      const startOffset = monIndex(first.getDay());
+      const totalCells = Math.ceil((startOffset + daysInMonth) / 7) * 7;
+      const prevDays = new Date(y, m, 0).getDate();
+
+      for (let cell = 0; cell < totalCells; cell++){
+        let dayNum;
+        let cellDate;
+        let outside = false;
+
+        if (cell < startOffset){
+          dayNum = prevDays - (startOffset - 1 - cell);
+          cellDate = new Date(y, m - 1, dayNum);
+          outside = true;
+        } else if (cell >= startOffset + daysInMonth){
+          dayNum = cell - (startOffset + daysInMonth) + 1;
+          cellDate = new Date(y, m + 1, dayNum);
+          outside = true;
+        } else {
+          dayNum = cell - startOffset + 1;
+          cellDate = new Date(y, m, dayNum);
+        }
+
+        const iso = fmtISO(cellDate.getFullYear(), cellDate.getMonth(), cellDate.getDate());
+        const a = document.createElement("a");
+        a.className = "miniDay";
+        a.textContent = dayNum;
+        a.href = `calendar.html?selected=${iso}&view=${fmtISO(y, m, 1)}`;
+
+        if (outside) a.classList.add("outside");
+        if (!outside && dayHasAppointment(iso, itemsByDate)) a.classList.add("hasAppointment");
+        if (!outside && cellDate.getFullYear() === todayY && cellDate.getMonth() === todayM && cellDate.getDate() === todayD){
+          a.classList.add("today");
+        }
+
+        miniGridEl.appendChild(a);
+      }
+    }
+
+    const widgetEl = document.getElementById("calendarWidget");
+    const avatarBtnEl = document.getElementById("avatarBtn");
+    const todoTileEl = document.getElementById("todoTile");
+    const medicationTileEl = document.getElementById("medicationTile");
+    const documentsTileEl = document.getElementById("documentsTile");
+    const teamTileEl = document.getElementById("teamTile");
+    const voiceTileEl = document.getElementById("voiceTile");
+    const helpTileEl = document.getElementById("helpTile");
+    const welcomeOverlayEl = document.getElementById("welcomeOverlay");
+    const closeWelcomeBtnEl = document.getElementById("closeWelcomeBtn");
+    const menuBtnEl = document.getElementById("menuBtn");
+    const sideMenuOverlayEl = document.getElementById("sideMenuOverlay");
+    const openDashboardBtnEl = document.getElementById("openDashboardBtn");
+    const openSmartwatchBtnEl = document.getElementById("openSmartwatchBtn");
+    const openTimelineBtnEl = document.getElementById("openTimelineBtn");
+    const healthOverlayEl = document.getElementById("healthOverlay");
+    const closeHealthBtnEl = document.getElementById("closeHealthBtn");
+    const openMetricBtnEl = document.getElementById("openMetricBtn");
+    const metricModalEl = document.getElementById("metricModal");
+    const closeMetricBtnEl = document.getElementById("closeMetricBtn");
+    const cancelMetricBtnEl = document.getElementById("cancelMetricBtn");
+    const metricFormEl = document.getElementById("metricForm");
+    const metricNameEl = document.getElementById("metricName");
+    const metricUnitEl = document.getElementById("metricUnit");
+    const metricValueEl = document.getElementById("metricValue");
+    const metricColorEl = document.getElementById("metricColor");
+    const metricSeriesEl = document.getElementById("metricSeries");
+    const metricHintEl = document.getElementById("metricHint");
+    const customMetricsListEl = document.getElementById("customMetricsList");
+    const customMetricsEmptyEl = document.getElementById("customMetricsEmpty");
+    const rangeBtnEls = Array.from(document.querySelectorAll(".rangeBtn"));
+    const CUSTOM_METRICS_KEY = "health.custom.metrics.v1";
+    let activeRange = 30;
+    let editingMetricId = null;
+    function logoutToLogin(){
+      try{
+        window.sessionStorage.removeItem("health.auth.v1");
+        window.sessionStorage.removeItem("health.justLoggedIn.v1");
+      } catch {}
+      window.location.replace("login.html");
+    }
+    function showAiToolNotice(){
+      window.alert("Deze functie is in deze browserdemo nog niet beschikbaar.");
+    }
+    function openMenu(){
+      sideMenuOverlayEl.classList.add("open");
+      sideMenuOverlayEl.setAttribute("aria-hidden", "false");
+    }
+    function closeMenu(){
+      sideMenuOverlayEl.classList.remove("open");
+      sideMenuOverlayEl.setAttribute("aria-hidden", "true");
+    }
+    function openHealthDashboard(){
+      closeMenu();
+      healthOverlayEl.classList.add("open");
+      healthOverlayEl.setAttribute("aria-hidden", "false");
+    }
+    function openSmartwatchPage(){
+      closeMenu();
+      window.location.href = "smartwatch.html";
+    }
+    function openTimelinePage(){
+      closeMenu();
+      window.location.href = "timeline.html";
+    }
+    function closeHealthDashboard(){
+      healthOverlayEl.classList.remove("open");
+      healthOverlayEl.setAttribute("aria-hidden", "true");
+    }
+    function parseSeries(raw){
+      const items = String(raw || "")
+        .split(",")
+        .map((v) => Number(v.trim()))
+        .filter((v) => Number.isFinite(v));
+      if (items.length >= 2) return items.slice(0, 10);
+      return [48, 50, 52, 49, 47, 45, 43, 41, 39, 37];
+    }
+    function normalizeMetric(item){
+      const i = item || {};
+      const series = parseSeries(i.series);
+      return {
+        id: i.id || `cm-${Math.random().toString(36).slice(2, 9)}`,
+        name: i.name || "Nieuwe metric",
+        unit: i.unit || "unit",
+        value: i.value || "-",
+        color: /^#[0-9a-fA-F]{6}$/.test(i.color || "") ? i.color : "#2563eb",
+        hint: i.hint || "Eigen meting",
+        series
+      };
+    }
+    function loadCustomMetrics(){
+      try{
+        const raw = window.localStorage.getItem(CUSTOM_METRICS_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed.map(normalizeMetric);
+      } catch {
+        return [];
+      }
+    }
+    function saveCustomMetrics(items){
+      try{
+        window.localStorage.setItem(CUSTOM_METRICS_KEY, JSON.stringify(items.map(normalizeMetric)));
+      } catch {}
+    }
+    function pointsFromSeries(series){
+      const min = Math.min(...series);
+      const max = Math.max(...series);
+      const span = Math.max(1, max - min);
+      const x0 = 8;
+      const x1 = 312;
+      const y0 = 16;
+      const y1 = 70;
+      return series.map((val, idx) => {
+        const x = x0 + ((x1 - x0) * idx) / (series.length - 1);
+        const t = (val - min) / span;
+        const y = y1 - t * (y1 - y0);
+        return [Math.round(x), Math.round(y)];
+      });
+    }
+    function rangePointCount(range){
+      if (range === 7) return 4;
+      if (range === 30) return 7;
+      return 10;
+    }
+    function seriesForRange(series, range){
+      const clean = Array.isArray(series) ? series : [];
+      const take = Math.max(2, Math.min(clean.length, rangePointCount(range)));
+      return clean.slice(clean.length - take);
+    }
+    function rangeLabel(range){
+      if (range === 7) return "7d";
+      if (range === 30) return "30d";
+      return "6m";
+    }
+    function applyRangeToBuiltInPlots(range){
+      const builtInSvgs = Array.from(document.querySelectorAll(".healthContent > article.metricCard .plotSvg"));
+      const viewBox =
+        range === 7 ? "180 0 140 86" :
+        range === 30 ? "96 0 224 86" :
+        "0 0 320 86";
+      for (const svg of builtInSvgs){
+        svg.setAttribute("viewBox", viewBox);
+        const labels = svg.querySelectorAll(".plotAxis");
+        if (labels.length >= 2){
+          labels[1].textContent = rangeLabel(range);
+        }
+      }
+    }
+    function setRange(range){
+      activeRange = range === 7 || range === 180 ? range : 30;
+      for (const btn of rangeBtnEls){
+        btn.classList.toggle("active", Number(btn.dataset.range) === activeRange);
+      }
+      applyRangeToBuiltInPlots(activeRange);
+      renderCustomMetrics();
+    }
+    function renderCustomMetrics(){
+      if (!customMetricsListEl || !customMetricsEmptyEl) return;
+      const metrics = loadCustomMetrics();
+      if (!metrics.length){
+        customMetricsListEl.innerHTML = "";
+        customMetricsEmptyEl.hidden = false;
+        return;
+      }
+      customMetricsEmptyEl.hidden = true;
+      customMetricsListEl.innerHTML = metrics.map((metric) => {
+        const filteredSeries = seriesForRange(metric.series, activeRange);
+        const points = pointsFromSeries(filteredSeries);
+        const line = points.map((p) => `${p[0]} ${p[1]}`).join(" L");
+        const area = `M${points[0][0]} ${points[0][1]} L${points.slice(1).map((p) => `${p[0]} ${p[1]}`).join(" L")} L312 78 L8 78 Z`;
+        const rgbHex = metric.color.toLowerCase();
+        return `<article class="metricCard">
+          <div class="metricTop"><p class="metricName">${metric.name}</p><div class="metricTopActions"><p class="metricValue">${metric.value}</p><button class="metricIconBtn" type="button" data-action="edit" data-id="${metric.id}" aria-label="Bewerk metric">&#9998;</button><button class="metricIconBtn delete" type="button" data-action="delete" data-id="${metric.id}" aria-label="Verwijder metric">&#10005;</button></div></div>
+          <div class="plot">
+            <svg class="plotSvg" viewBox="0 0 320 86" aria-hidden="true">
+              <path class="plotGrid" d="M8 16H312 M8 34H312 M8 52H312 M8 70H312"></path>
+              <path class="plotArea" d="${area}" style="fill:${rgbHex};opacity:.18;"></path>
+              <path class="plotLine" d="M${line}" style="stroke:${rgbHex};"></path>
+              <text class="plotAxis" x="10" y="11">${metric.unit}</text>
+              <text class="plotAxis" x="286" y="82">${rangeLabel(activeRange)}</text>
+            </svg>
+          </div>
+          <p class="metricHint">${metric.hint}</p>
+        </article>`;
+      }).join("");
+    }
+    function openMetricModal(metric){
+      const m = metric || null;
+      editingMetricId = m ? m.id : null;
+      metricNameEl.value = m ? m.name : "";
+      metricUnitEl.value = m ? m.unit : "";
+      metricValueEl.value = m ? m.value : "";
+      metricColorEl.value = m ? m.color : "#2563eb";
+      metricSeriesEl.value = m ? m.series.join(", ") : "";
+      metricHintEl.value = m ? m.hint : "";
+      metricModalEl.classList.add("open");
+      metricModalEl.setAttribute("aria-hidden", "false");
+      window.setTimeout(() => metricNameEl.focus(), 0);
+    }
+    function closeMetricModal(){
+      editingMetricId = null;
+      metricModalEl.classList.remove("open");
+      metricModalEl.setAttribute("aria-hidden", "true");
+    }
+    widgetEl.addEventListener("click", (event) => {
+      if (event.target.closest(".miniDay")) return;
+      window.location.href = "calendar.html";
+    });
+    widgetEl.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " "){
+        event.preventDefault();
+        window.location.href = "calendar.html";
+      }
+    });
+    if (todoTileEl){
+      todoTileEl.addEventListener("click", () => {
+        window.location.href = "todo.html";
+      });
+    }
+    if (medicationTileEl){
+      medicationTileEl.addEventListener("click", () => {
+        window.location.href = "medicatie.html";
+      });
+    }
+    if (documentsTileEl){
+      documentsTileEl.addEventListener("click", () => {
+        window.location.href = "documenten.html";
+      });
+    }
+    if (teamTileEl){
+      teamTileEl.addEventListener("click", () => {
+        window.location.href = "zorgteam.html";
+      });
+    }
+    if (voiceTileEl){
+      voiceTileEl.addEventListener("click", showAiToolNotice);
+    }
+    if (helpTileEl){
+      helpTileEl.addEventListener("click", () => {
+        window.location.href = "zorgchat.html";
+      });
+    }
+    if (menuBtnEl){
+      menuBtnEl.addEventListener("click", openMenu);
+    }
+    if (sideMenuOverlayEl){
+      sideMenuOverlayEl.addEventListener("click", (event) => {
+        if (event.target === sideMenuOverlayEl) closeMenu();
+      });
+    }
+    if (openDashboardBtnEl){
+      openDashboardBtnEl.addEventListener("click", openHealthDashboard);
+    }
+    if (openSmartwatchBtnEl){
+      openSmartwatchBtnEl.addEventListener("click", openSmartwatchPage);
+    }
+    if (openTimelineBtnEl){
+      openTimelineBtnEl.addEventListener("click", openTimelinePage);
+    }
+    if (closeHealthBtnEl){
+      closeHealthBtnEl.addEventListener("click", closeHealthDashboard);
+    }
+    if (openMetricBtnEl){
+      openMetricBtnEl.addEventListener("click", () => openMetricModal());
+    }
+    if (closeMetricBtnEl){
+      closeMetricBtnEl.addEventListener("click", closeMetricModal);
+    }
+    if (cancelMetricBtnEl){
+      cancelMetricBtnEl.addEventListener("click", closeMetricModal);
+    }
+    if (metricModalEl){
+      metricModalEl.addEventListener("click", (event) => {
+        if (event.target === metricModalEl) closeMetricModal();
+      });
+    }
+    if (metricFormEl){
+      metricFormEl.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const name = metricNameEl.value.trim();
+        if (!name) return;
+        const metrics = loadCustomMetrics();
+        const payload = normalizeMetric({
+          id: editingMetricId || `cm-${Date.now().toString(36)}`,
+          name,
+          unit: metricUnitEl.value.trim() || "unit",
+          value: metricValueEl.value.trim() || "-",
+          color: metricColorEl.value,
+          series: metricSeriesEl.value,
+          hint: metricHintEl.value.trim() || "Eigen meting"
+        });
+        if (editingMetricId){
+          const idx = metrics.findIndex((m) => m.id === editingMetricId);
+          if (idx >= 0) metrics[idx] = payload;
+          else metrics.push(payload);
+        } else {
+          metrics.push(payload);
+        }
+        saveCustomMetrics(metrics);
+        closeMetricModal();
+        renderCustomMetrics();
+      });
+    }
+    if (customMetricsListEl){
+      customMetricsListEl.addEventListener("click", (event) => {
+        const btn = event.target.closest("button[data-action][data-id]");
+        if (!btn) return;
+        const id = btn.dataset.id;
+        const metrics = loadCustomMetrics();
+        if (btn.dataset.action === "delete"){
+          const next = metrics.filter((m) => m.id !== id);
+          saveCustomMetrics(next);
+          renderCustomMetrics();
+          return;
+        }
+        if (btn.dataset.action === "edit"){
+          const target = metrics.find((m) => m.id === id);
+          if (!target) return;
+          openMetricModal(target);
+        }
+      });
+    }
+    for (const btn of rangeBtnEls){
+      btn.addEventListener("click", () => {
+        setRange(Number(btn.dataset.range));
+      });
+    }
+    if (avatarBtnEl){
+      avatarBtnEl.addEventListener("click", logoutToLogin);
+    }
+    if (closeWelcomeBtnEl){
+      closeWelcomeBtnEl.addEventListener("click", () => {
+        welcomeOverlayEl.hidden = true;
+      });
+    }
+    if (welcomeOverlayEl){
+      welcomeOverlayEl.addEventListener("click", (event) => {
+        if (event.target === welcomeOverlayEl) welcomeOverlayEl.hidden = true;
+      });
+    }
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      closeMenu();
+      closeHealthDashboard();
+      closeMetricModal();
+    });
+
+    renderWelcome();
+    showLoginWelcomeOnce();
+    renderMiniCalendar();
+    renderNextAppointmentCard();
+    renderTodoCount();
+    renderMedicationCount();
+    renderDocumentsSummary();
+    setRange(30);
+  </script>
+</body>
+</html>

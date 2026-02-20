@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Te doen</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --surface:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --primary:#2563eb;
+      --soft:#f1f5f9;
+      --shadow:0 8px 22px rgba(15,23,42,0.05);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .app{
+      min-height:100vh;
+      max-width:520px;
+      margin:0 auto;
+      padding:10px 12px calc(18px + env(safe-area-inset-bottom));
+      display:grid;
+      gap:2px;
+      align-content:start;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:4;
+      padding-top:calc(4px + env(safe-area-inset-top));
+      background:rgba(248,250,252,0.92);
+      backdrop-filter:blur(8px);
+      display:grid;
+      grid-template-columns:42px 1fr 42px;
+      align-items:start;
+      gap:10px;
+    }
+    .backBtn,.addBtn{
+      width:42px;
+      height:42px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      color:var(--text);
+      text-decoration:none;
+      display:grid;
+      place-items:center;
+      box-shadow:0 1px 2px rgba(15,23,42,0.05);
+      font-size:20px;
+      line-height:1;
+      padding:0;
+      cursor:pointer;
+    }
+    .backBtn{ font-size:20px; }
+    .addBtn{
+      border-color:#bfdbfe;
+      background:#eff6ff;
+      color:var(--primary);
+      font-size:28px;
+      font-weight:500;
+    }
+    .addBtn > span{
+      display:block;
+      line-height:1;
+      transform:translateY(1px);
+    }
+    .title{
+      margin:0;
+      font-size:22px;
+      line-height:1.2;
+      font-weight:700;
+      letter-spacing:0.1px;
+    }
+    .subtitle{
+      margin:2px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+    .section{
+      display:grid;
+      gap:6px;
+    }
+    .count{
+      font-size:11px;
+      font-weight:700;
+      color:var(--text);
+      background:var(--soft);
+      border-radius:999px;
+      min-width:24px;
+      height:22px;
+      padding:0 8px;
+      display:grid;
+      place-items:center;
+      border:1px solid var(--line);
+    }
+    .list{
+      margin:0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:8px;
+    }
+    .item{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--surface);
+      box-shadow:var(--shadow);
+    }
+    .item.done{
+      opacity:0.72;
+      background:#fcfdff;
+      box-shadow:none;
+      border-color:#e8edf5;
+    }
+    .taskBtn{
+      width:100%;
+      border:0;
+      background:transparent;
+      padding:10px;
+      display:grid;
+      grid-template-columns:30px 1fr auto;
+      gap:8px;
+      align-items:start;
+      text-align:left;
+      color:inherit;
+      font:inherit;
+      cursor:pointer;
+    }
+    .check{
+      width:24px;
+      height:24px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      display:grid;
+      place-items:center;
+      margin-top:1px;
+      font-size:12px;
+      line-height:1;
+      color:transparent;
+      background:#fff;
+      font-weight:700;
+    }
+    .item.done .check{
+      border-color:#93c5fd;
+      background:#dbeafe;
+      color:#1d4ed8;
+    }
+    .main{
+      min-width:0;
+      display:grid;
+      gap:2px;
+    }
+    .taskTitle{
+      margin:0;
+      font-size:15px;
+      line-height:1.3;
+      font-weight:700;
+      color:var(--text);
+      word-break:break-word;
+    }
+    .taskSub{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+      word-break:break-word;
+    }
+    .ownerChips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      padding-top:2px;
+    }
+    .ownerChip{
+      font-size:11px;
+      font-weight:700;
+      border-radius:999px;
+      padding:3px 9px;
+      line-height:1.25;
+      border:1px solid transparent;
+      white-space:nowrap;
+      max-width:100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .ownerChip.added{
+      color:#c2410c;
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+    .ownerChip.picked{
+      color:#166534;
+      background:#f0fdf4;
+      border-color:#bbf7d0;
+    }
+    .meta{
+      margin:0;
+      font-size:11px;
+      color:#92400e;
+      align-self:center;
+      white-space:nowrap;
+    }
+    .item.done .meta{
+      color:#64748b;
+    }
+    .empty{
+      margin:0;
+      border:1px dashed var(--line);
+      border-radius:12px;
+      padding:10px;
+      font-size:13px;
+      color:var(--muted);
+      background:#fff;
+      text-align:center;
+    }
+    .modalBackdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.32);
+      display:grid;
+      align-items:end;
+      z-index:20;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 150ms ease;
+    }
+    .modalBackdrop.open{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .modalSheet{
+      background:#fff;
+      border-top:1px solid var(--line);
+      border-radius:16px 16px 0 0;
+      max-width:520px;
+      width:100%;
+      margin:0 auto;
+      padding:10px;
+      transform:translateY(100%);
+      transition:transform 150ms ease;
+    }
+    .modalBackdrop.open .modalSheet{ transform:translateY(0); }
+    .sheetHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:8px;
+    }
+    .sheetHeader h3{
+      margin:0;
+      font-size:16px;
+      font-weight:700;
+    }
+    .closeBtn{
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:#fff;
+      color:var(--text);
+      padding:6px 8px;
+      font-size:13px;
+      font-weight:600;
+    }
+    .form{
+      display:grid;
+      gap:6px;
+    }
+    .field{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:9px;
+      font:inherit;
+      font-size:14px;
+      color:var(--text);
+      background:#fff;
+    }
+    .actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+      margin-top:2px;
+    }
+    .btnGhost,.btnPrimary{
+      border-radius:8px;
+      padding:9px;
+      font-size:14px;
+      font-weight:600;
+    }
+    .btnGhost{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+    }
+    .btnPrimary{
+      border:1px solid var(--primary);
+      background:var(--primary);
+      color:#fff;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="backBtn" href="app-home.html" aria-label="Terug">&#8249;</a>
+      <div>
+        <h1 class="title">Te doen</h1>
+        <p class="subtitle">Openstaande en recent afgehandelde zorgtaken</p>
+      </div>
+      <button class="addBtn" id="openAddBtn" type="button" aria-label="Nieuwe taak"><span aria-hidden="true">+</span></button>
+    </header>
+
+    <section class="section">
+      <span class="count" id="openCount" style="justify-self:end;">0</span>
+      <ul class="list" id="openList"></ul>
+      <p class="empty" id="openEmpty">Geen openstaande taken.</p>
+    </section>
+
+    <section class="section">
+      <span class="count" id="doneCount" style="justify-self:end;">0</span>
+      <ul class="list" id="doneList"></ul>
+      <p class="empty" id="doneEmpty">Nog geen recent afgehandelde taken.</p>
+    </section>
+  </main>
+
+  <div class="modalBackdrop" id="addModal" aria-hidden="true">
+    <div class="modalSheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <div class="sheetHeader">
+        <h3 id="sheetTitle">Nieuwe taak</h3>
+        <button class="closeBtn" id="closeAddBtn" type="button">Sluiten</button>
+      </div>
+      <form class="form" id="addForm">
+        <input class="field" id="fieldTitle" type="text" placeholder="Taak (bijv. Bellen naar huisarts)" required />
+        <input class="field" id="fieldNote" type="text" placeholder="Notitie (optioneel)" />
+        <input class="field" id="fieldAddedBy" type="text" placeholder="Toegevoegd door (bijv. Mantelzorger Sanne)" />
+        <input class="field" id="fieldPickedBy" type="text" placeholder="Opgepakt door (optioneel)" />
+        <div class="actions">
+          <button class="btnGhost" id="cancelAddBtn" type="button">Annuleren</button>
+          <button class="btnPrimary" type="submit">Opslaan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "health.todos.v1";
+    const RECENT_DAYS = 14;
+    const DEFAULT_TODOS = [
+      { id: "t1", title: "Bellen naar huisarts voor afspraak", note: "Huisartsenpraktijk West", addedBy: "Sanne (mantelzorger)", pickedBy: "", createdAt: "2026-02-10T09:00:00.000Z", completedAt: null },
+      { id: "t2", title: "Brief opsturen naar verzekeraar", note: "Met verwijzing en bijlage", addedBy: "Ismail", pickedBy: "", createdAt: "2026-02-12T10:30:00.000Z", completedAt: null },
+      { id: "t3", title: "Herhaalrecept aanvragen", note: "", addedBy: "Jan (mantelzorger)", pickedBy: "Ismail", createdAt: "2026-02-01T08:00:00.000Z", completedAt: "2026-02-15T08:45:00.000Z" }
+    ];
+
+    const openListEl = document.getElementById("openList");
+    const doneListEl = document.getElementById("doneList");
+    const openEmptyEl = document.getElementById("openEmpty");
+    const doneEmptyEl = document.getElementById("doneEmpty");
+    const openCountEl = document.getElementById("openCount");
+    const doneCountEl = document.getElementById("doneCount");
+    const addModalEl = document.getElementById("addModal");
+    const openAddBtnEl = document.getElementById("openAddBtn");
+    const closeAddBtnEl = document.getElementById("closeAddBtn");
+    const cancelAddBtnEl = document.getElementById("cancelAddBtn");
+    const addFormEl = document.getElementById("addForm");
+    const fieldTitleEl = document.getElementById("fieldTitle");
+    const fieldNoteEl = document.getElementById("fieldNote");
+    const fieldAddedByEl = document.getElementById("fieldAddedBy");
+    const fieldPickedByEl = document.getElementById("fieldPickedBy");
+
+    function escapeHtml(v){
+      return String(v || "").replace(/[&<>"']/g, (ch) => (
+        ch === "&" ? "&amp;" :
+        ch === "<" ? "&lt;" :
+        ch === ">" ? "&gt;" :
+        ch === '"' ? "&quot;" : "&#39;"
+      ));
+    }
+    function nowIso(){ return new Date().toISOString(); }
+    function daysAgo(days){
+      const d = new Date();
+      d.setDate(d.getDate() - days);
+      return d;
+    }
+    function normalizeTodo(raw){
+      const item = raw || {};
+      return {
+        id: item.id || `t-${Math.random().toString(36).slice(2, 9)}`,
+        title: String(item.title || "").trim() || "Onbenoemde taak",
+        note: String(item.note || "").trim(),
+        addedBy: String(item.addedBy || "").trim(),
+        pickedBy: String(item.pickedBy || "").trim(),
+        createdAt: item.createdAt || nowIso(),
+        completedAt: item.completedAt || null
+      };
+    }
+    function loadTodos(){
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (!raw) return DEFAULT_TODOS.map(normalizeTodo);
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return DEFAULT_TODOS.map(normalizeTodo);
+        return parsed.map(normalizeTodo);
+      } catch {
+        return DEFAULT_TODOS.map(normalizeTodo);
+      }
+    }
+    function saveTodos(items){
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      } catch {
+        // Keep UI usable when storage is blocked.
+      }
+    }
+    function cleanupDone(items){
+      const cut = daysAgo(RECENT_DAYS).getTime();
+      return items.filter((item) => {
+        if (!item.completedAt) return true;
+        const doneMs = new Date(item.completedAt).getTime();
+        if (Number.isNaN(doneMs)) return false;
+        return doneMs >= cut;
+      });
+    }
+    function relativeCompleted(iso){
+      const done = new Date(iso);
+      if (Number.isNaN(done.getTime())) return "Afgerond";
+      const now = new Date();
+      const d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const d1 = new Date(done.getFullYear(), done.getMonth(), done.getDate());
+      const dayDiff = Math.round((d0 - d1) / 86400000);
+      if (dayDiff === 0) return "Afgerond vandaag";
+      if (dayDiff === 1) return "Afgerond gisteren";
+      return `Afgerond ${new Intl.DateTimeFormat("nl-NL",{ day:"numeric", month:"short" }).format(done)}`;
+    }
+    function render(){
+      const items = cleanupDone(loadTodos());
+      saveTodos(items);
+
+      const openItems = items
+        .filter((item) => !item.completedAt)
+        .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      const doneItems = items
+        .filter((item) => item.completedAt)
+        .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+
+      openListEl.innerHTML = openItems.map((item) => {
+        const sub = item.note || "Openstaand";
+        const addedBy = item.addedBy || "Ismail";
+        const pickedBy = item.pickedBy || "Ismail";
+        return `<li class="item">
+          <button class="taskBtn" type="button" data-action="done" data-id="${item.id}" aria-label="Markeer als afgerond">
+            <span class="check">&#10003;</span>
+            <span class="main">
+              <span class="taskTitle">${escapeHtml(item.title)}</span>
+              <span class="taskSub">${escapeHtml(sub)}</span>
+              <span class="ownerChips">
+                <span class="ownerChip added" title="Toegevoegd door">${escapeHtml(addedBy)}</span>
+                <span class="ownerChip picked" title="Opgepakt door">${escapeHtml(pickedBy)}</span>
+              </span>
+            </span>
+            <span class="meta">Open</span>
+          </button>
+        </li>`;
+      }).join("");
+
+      doneListEl.innerHTML = doneItems.map((item) => {
+        const sub = relativeCompleted(item.completedAt);
+        const addedBy = item.addedBy || "Ismail";
+        const pickedBy = item.pickedBy || "Ismail";
+        return `<li class="item done">
+          <button class="taskBtn" type="button" data-action="reopen" data-id="${item.id}" aria-label="Zet terug naar open">
+            <span class="check">&#10003;</span>
+            <span class="main">
+              <span class="taskTitle">${escapeHtml(item.title)}</span>
+              <span class="taskSub">${escapeHtml(sub)}</span>
+              <span class="ownerChips">
+                <span class="ownerChip added" title="Toegevoegd door">${escapeHtml(addedBy)}</span>
+                <span class="ownerChip picked" title="Opgepakt door">${escapeHtml(pickedBy)}</span>
+              </span>
+            </span>
+            <span class="meta">Klaar</span>
+          </button>
+        </li>`;
+      }).join("");
+
+      openEmptyEl.hidden = openItems.length > 0;
+      doneEmptyEl.hidden = doneItems.length > 0;
+      openCountEl.textContent = String(openItems.length);
+      doneCountEl.textContent = String(doneItems.length);
+    }
+    function updateStatus(id, completed, pickedByName){
+      const items = loadTodos();
+      const next = items.map((item) => {
+        if (item.id !== id) return item;
+        if (completed){
+          const pickedBy = String(pickedByName || item.pickedBy || "").trim();
+          return { ...item, completedAt: nowIso(), pickedBy };
+        }
+        return { ...item, completedAt: null, pickedBy: "" };
+      });
+      saveTodos(next);
+      render();
+    }
+    function openAddModal(){
+      addModalEl.classList.add("open");
+      addModalEl.setAttribute("aria-hidden", "false");
+      window.setTimeout(() => fieldTitleEl.focus(), 0);
+    }
+    function closeAddModal(){
+      addModalEl.classList.remove("open");
+      addModalEl.setAttribute("aria-hidden", "true");
+    }
+
+    openListEl.addEventListener("click", (event) => {
+      const btn = event.target.closest("button[data-action='done']");
+      if (!btn) return;
+      const who = window.prompt("Wie heeft deze taak opgepakt?", "") || "";
+      updateStatus(btn.dataset.id, true, who);
+    });
+    doneListEl.addEventListener("click", (event) => {
+      const btn = event.target.closest("button[data-action='reopen']");
+      if (!btn) return;
+      updateStatus(btn.dataset.id, false);
+    });
+
+    addFormEl.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const title = fieldTitleEl.value.trim();
+      if (!title) return;
+      const items = loadTodos();
+      items.push(normalizeTodo({
+        id: `t-${Date.now().toString(36)}`,
+        title,
+        note: fieldNoteEl.value.trim(),
+        addedBy: fieldAddedByEl.value.trim(),
+        pickedBy: fieldPickedByEl.value.trim(),
+        createdAt: nowIso(),
+        completedAt: null
+      }));
+      saveTodos(items);
+      fieldTitleEl.value = "";
+      fieldNoteEl.value = "";
+      fieldAddedByEl.value = "";
+      fieldPickedByEl.value = "";
+      closeAddModal();
+      render();
+    });
+
+    openAddBtnEl.addEventListener("click", openAddModal);
+    closeAddBtnEl.addEventListener("click", closeAddModal);
+    cancelAddBtnEl.addEventListener("click", closeAddModal);
+    addModalEl.addEventListener("click", (event) => {
+      if (event.target === addModalEl) closeAddModal();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && addModalEl.classList.contains("open")) closeAddModal();
+    });
+
+    render();
+  </script>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Afspraken</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --surface:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e2e8f0;
+      --soft:#f1f5f9;
+      --shadow:0 8px 22px rgba(15,23,42,0.05);
+      --primary:#2563eb;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .app{
+      min-height:100vh;
+      max-width:520px;
+      margin:0 auto;
+      padding:10px 12px calc(18px + env(safe-area-inset-bottom));
+      display:grid;
+      gap:14px;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:4;
+      padding-top:calc(4px + env(safe-area-inset-top));
+      background:rgba(248,250,252,0.92);
+      backdrop-filter:blur(8px);
+      display:grid;
+      grid-template-columns:42px 1fr auto;
+      align-items:start;
+      gap:10px;
+    }
+    .backBtn,.addBtn{
+      width:42px;
+      height:42px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:#fff;
+      color:var(--text);
+      text-decoration:none;
+      box-shadow:0 1px 2px rgba(15,23,42,0.05);
+      font-size:20px;
+      line-height:1;
+      padding:0;
+    }
+    .addBtn{
+      border-color:#bfdbfe;
+      background:#eff6ff;
+      color:var(--primary);
+      font-size:28px;
+      font-weight:500;
+    }
+    .addBtn > span{
+      display:block;
+      line-height:1;
+      transform:translateY(1px);
+    }
+    .heading{
+      min-width:0;
+    }
+    .title{
+      margin:0;
+      font-size:22px;
+      font-weight:700;
+      letter-spacing:0.1px;
+    }
+    .subtitle{
+      margin:2px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+    .actions{
+      display:grid;
+      gap:6px;
+      justify-items:end;
+    }
+    .filterWrap{
+      display:grid;
+      gap:3px;
+    }
+    .filterTitle{
+      margin:0;
+      font-size:11px;
+      color:var(--muted);
+      font-weight:700;
+      letter-spacing:0.12px;
+      text-transform:uppercase;
+      text-align:right;
+    }
+    .filterSelect{
+      width:150px;
+      height:32px;
+      border:1px solid var(--border);
+      border-radius:8px;
+      background:#fff;
+      color:var(--text);
+      font:inherit;
+      font-size:15px;
+      padding:4px 8px;
+      line-height:1.2;
+    }
+    .content{
+      display:grid;
+      gap:14px;
+      min-height:0;
+    }
+    .dayGroup{
+      display:grid;
+      gap:8px;
+    }
+    .dayLabel{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:0.14px;
+      padding:0 2px;
+    }
+    .list{
+      margin:0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:10px;
+    }
+    .item{
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:var(--surface);
+      box-shadow:var(--shadow);
+    }
+    .item.past{
+      opacity:0.66;
+      background:#fcfdff;
+      box-shadow:none;
+      border-color:#e8edf5;
+    }
+    .item.past .careType{
+      background:#f8fafc;
+      color:#64748b;
+    }
+    .item.past .org{
+      color:#334155;
+    }
+    .item.past .meta,
+    .item.past .time{
+      color:#94a3b8;
+    }
+    .itemLink{
+      text-decoration:none;
+      color:inherit;
+      display:grid;
+      gap:6px;
+      padding:12px;
+    }
+    .lineTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .time{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+      letter-spacing:0.08px;
+    }
+    .careType{
+      font-size:11px;
+      color:var(--text);
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:3px 9px;
+      background:var(--soft);
+      font-weight:600;
+      white-space:nowrap;
+    }
+    .org{
+      margin:0;
+      font-size:15px;
+      font-weight:700;
+      line-height:1.3;
+    }
+    .metaStack{
+      border-left:2px solid var(--soft);
+      padding-left:8px;
+      display:grid;
+      gap:2px;
+    }
+    .meta{
+      margin:0;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .ownerChips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      padding-top:2px;
+    }
+    .ownerChip{
+      font-size:11px;
+      font-weight:700;
+      border-radius:999px;
+      padding:3px 9px;
+      line-height:1.25;
+      border:1px solid transparent;
+      white-space:nowrap;
+      max-width:100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .ownerChip.created{
+      color:#c2410c;
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+    .ownerChip.attending{
+      color:#166534;
+      background:#f0fdf4;
+      border-color:#bbf7d0;
+    }
+    .empty{
+      border:1px dashed var(--border);
+      border-radius:12px;
+      padding:12px;
+      color:var(--muted);
+      font-size:14px;
+      text-align:center;
+      background:#fff;
+    }
+    .modalBackdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.38);
+      display:grid;
+      align-items:end;
+      z-index:20;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 160ms ease;
+    }
+    .modalBackdrop.open{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .modalSheet{
+      background:#fff;
+      border-radius:16px 16px 0 0;
+      padding:10px;
+      max-width:520px;
+      width:100%;
+      margin:0 auto;
+      transform:translateY(100%);
+      transition:transform 160ms ease;
+      border-top:1px solid var(--border);
+    }
+    .modalBackdrop.open .modalSheet{
+      transform:translateY(0);
+    }
+    .sheetHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .sheetTitle{
+      margin:0;
+      font-size:15px;
+      font-weight:700;
+    }
+    .sheetClose{
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--text);
+      border-radius:8px;
+      font-size:13px;
+      font-weight:600;
+      padding:6px 8px;
+    }
+    .addForm{
+      display:grid;
+      gap:6px;
+    }
+    .formRow{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+    }
+    .field{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:7px 8px;
+      font-size:13px;
+      font:inherit;
+      background:#fff;
+      color:var(--text);
+    }
+    .sheetActions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+      margin-top:2px;
+    }
+    .btnGhost,.btnPrimary{
+      width:100%;
+      border-radius:8px;
+      padding:8px;
+      font-size:13px;
+      font-weight:600;
+    }
+    .btnGhost{
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--text);
+    }
+    .btnPrimary{
+      border:1px solid var(--primary);
+      background:var(--primary);
+      color:#fff;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="backBtn" href="app-home.html" aria-label="Terug naar home">&#8249;</a>
+      <div class="heading">
+        <h1 class="title">Afspraken</h1>
+        <p class="subtitle">Alle afspraken uit je kalender</p>
+      </div>
+      <div class="actions">
+        <button class="addBtn" id="openAddBtn" aria-label="Nieuwe afspraak toevoegen"><span aria-hidden="true">+</span></button>
+        <div class="filterWrap">
+          <p class="filterTitle">Filter</p>
+          <select class="filterSelect" id="typeFilter">
+            <option value="all">Alle zorgtypes</option>
+            <option value="huisarts">Huisarts</option>
+            <option value="huisartsenpost">Huisartsenpost</option>
+            <option value="tandarts">Tandarts</option>
+            <option value="fysiotherapie">Fysiotherapie</option>
+            <option value="ziekenhuis">Ziekenhuis</option>
+            <option value="seh">SEH / Spoed</option>
+            <option value="cardiologie">Cardiologie</option>
+            <option value="apotheek">Apotheek</option>
+            <option value="ggz">GGZ</option>
+            <option value="wijkverpleging">Wijkverpleging</option>
+            <option value="ergotherapie">Ergotherapie</option>
+            <option value="dietiek">Dieetiek</option>
+            <option value="overig">Overig</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <section id="content" class="content"></section>
+  </main>
+
+  <div class="modalBackdrop" id="addModal" aria-hidden="true">
+    <div class="modalSheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <div class="sheetHeader">
+        <h2 class="sheetTitle" id="sheetTitle">Nieuwe afspraak</h2>
+        <button class="sheetClose" id="closeAddBtn" type="button">Sluiten</button>
+      </div>
+      <form class="addForm" id="addForm">
+        <div class="formRow">
+          <input class="field" id="fieldDate" type="date" required />
+          <input class="field" id="fieldTime" type="time" />
+        </div>
+        <div class="formRow">
+          <input class="field" id="fieldType" type="text" placeholder="Zorgvorm (bijv. huisarts)" />
+          <input class="field" id="fieldOrg" type="text" placeholder="Organisatie" />
+        </div>
+        <div class="formRow">
+          <input class="field" id="fieldProvider" type="text" placeholder="Zorgverlener" />
+          <input class="field" id="fieldSubject" type="text" placeholder="Onderwerp" />
+        </div>
+        <input class="field" id="fieldNotes" type="text" placeholder="Notities (optioneel)" />
+        <div class="formRow">
+          <input class="field" id="fieldCreatedBy" type="text" placeholder="Aangemaakt door (bijv. mantelzorger)" />
+          <input class="field" id="fieldAttendingBy" type="text" placeholder="Gaat/Is gegaan (naam)" />
+        </div>
+        <div class="sheetActions">
+          <button class="btnGhost" id="cancelAddBtn" type="button">Annuleren</button>
+          <button class="btnPrimary" type="submit">Opslaan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "health.appointments.v1";
+    const DEFAULT_ITEMS = {
+      "2025-08-14": [
+        { time: "10:20", org: "OLVG", careType: "Cardiologie", provider: "Dr. E.G. van Dijk", subject: "Holter-uitslag bespreken", notes: "", createdBy: "Sanne (mantelzorger)", attendingBy: "Ismail", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-09-02": [
+        { time: "08:30", org: "Huisartsenpraktijk West", careType: "Huisarts", provider: "Dr. Smit", subject: "Controle bloeddruk", notes: "", createdBy: "Ismail", attendingBy: "Ismail", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-09-18": [
+        { time: "13:10", org: "FysioPlus Rotterdam", careType: "Fysiotherapie", provider: "Mw. Jansen", subject: "Schouderrevalidatie", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-10-07": [
+        { time: "09:45", org: "Tandartspraktijk Centrum", careType: "Tandarts", provider: "Drs. Bakker", subject: "Controle + reiniging", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-10-28": [
+        { time: "14:00", org: "BENU Apotheek", careType: "Apotheek", provider: "Apotheker", subject: "Medicatiebeoordeling", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-11-11": [
+        { time: "11:00", org: "GGZ Rijnmond", careType: "GGZ", provider: "Mw. de Jong", subject: "Intakegesprek", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-11-26": [
+        { time: "16:00", org: "Ergo Zorg", careType: "Ergotherapie", provider: "Dhr. van Leeuwen", subject: "Hulpmiddelenadvies", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-12-10": [
+        { time: "10:00", org: "Dietistenpraktijk Vita", careType: "Dieetiek", provider: "Mw. Vermeer", subject: "Voedingsplan evaluatie", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2025-12-23": [
+        { time: "09:30", org: "Erasmus MC", careType: "Ziekenhuis", provider: "Dr. Rahimi", subject: "Pre-operatieve screening", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2026-01-06": [
+        { time: "15:20", org: "Huisartsenpost Rijnmond", careType: "Huisartsenpost", provider: "Assistente", subject: "Telefonisch consult", notes: "", itemKind: "contact", status: "completed" }
+      ],
+      "2026-01-20": [
+        { time: "08:50", org: "OLVG", careType: "Cardiologie", provider: "Dr. E.G. van Dijk", subject: "ECG controle", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2026-02-03": [
+        { time: "12:15", org: "Wijkzorg Zuid", careType: "Wijkverpleging", provider: "Verpleegkundige Noor", subject: "Wondcontrole", notes: "", itemKind: "appointment", status: "completed" }
+      ],
+      "2026-02-12": [
+        { time: "08:45", org: "Tandartspraktijk Centrum", careType: "Tandarts", provider: "Drs. Bakker", subject: "Halfjaarlijkse controle", notes: "Rontgenfoto laten maken", createdBy: "Jan (mantelzorger)", attendingBy: "Ismail", itemKind: "appointment", status: "confirmed" },
+        { time: "11:10", org: "Thuis", careType: "Incident", provider: "Zelf", subject: "Valincident in badkamer", notes: "Pijn aan pols, gekoeld en rust genomen", itemKind: "incident", status: "completed" },
+        { time: "14:00", org: "Huisartsenpost Rijnmond", careType: "Telefonisch contact", provider: "Assistente", subject: "Overleg over klachten na val", notes: "Advies: pols laten beoordelen bij aanhoudende pijn", itemKind: "contact", status: "completed" },
+        { time: "16:30", org: "FysioPlus Rotterdam", careType: "Fysiotherapie", provider: "Mw. Jansen", subject: "Herstelconsult enkel", notes: "Oefenschema meegekregen", createdBy: "Ismail", attendingBy: "Ismail", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-02-18": [
+        { time: "09:00", org: "Erasmus MC", careType: "Ziekenhuis", provider: "Dr. Van Dijk", subject: "Controle na inspanningsklachten", notes: "Nuchter blijven vanaf 07:00", createdBy: "Sanne (mantelzorger)", attendingBy: "Ismail", itemKind: "appointment", status: "confirmed" },
+        { time: "14:30", org: "Erasmus MC", careType: "SEH", provider: "Lab-team", subject: "SEH-bezoek na valincident", notes: "Doorverwezen voor controle", itemKind: "incident", status: "completed" }
+      ],
+      "2026-02-20": [
+        { time: "11:00", org: "FysioPlus Rotterdam", careType: "Fysiotherapie", provider: "Mw. Jansen", subject: "Intake voor hersteltraject", notes: "Sportkleding meenemen", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-02-25": [
+        { time: "19:00", org: "Huisartsenpraktijk West", careType: "Huisartsenpost", provider: "Telefonisch contact", subject: "Klachten besproken buiten kantooruren", notes: "Advies gekregen om rust te nemen", itemKind: "contact", status: "completed" }
+      ],
+      "2026-03-05": [
+        { time: "10:40", org: "Tandartspraktijk Centrum", careType: "Tandarts", provider: "Drs. Bakker", subject: "Vulling controle", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-03-19": [
+        { time: "09:10", org: "OLVG", careType: "Cardiologie", provider: "Dr. E.G. van Dijk", subject: "Hartonderzoek", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-04-02": [
+        { time: "13:30", org: "FysioPlus Rotterdam", careType: "Fysiotherapie", provider: "Mw. Jansen", subject: "Evaluatie mobiliteit", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-04-16": [
+        { time: "11:45", org: "Huisartsenpraktijk West", careType: "Huisarts", provider: "Dr. Smit", subject: "Jaarlijkse controle", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-05-08": [
+        { time: "10:00", org: "Erasmus MC", careType: "Ziekenhuis", provider: "Dr. Rahimi", subject: "Poliklinische follow-up", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-05-27": [
+        { time: "15:00", org: "BENU Apotheek", careType: "Apotheek", provider: "Apotheker", subject: "Herhaalmedicatie check", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-06-11": [
+        { time: "09:20", org: "Dietistenpraktijk Vita", careType: "Dieetiek", provider: "Mw. Vermeer", subject: "Controle voedingsschema", notes: "", itemKind: "appointment", status: "pending" }
+      ],
+      "2026-07-01": [
+        { time: "14:15", org: "GGZ Rijnmond", careType: "GGZ", provider: "Mw. de Jong", subject: "Voortgangsgesprek", notes: "", itemKind: "appointment", status: "pending" }
+      ]
+    };
+
+    const contentEl = document.getElementById("content");
+    const topbarEl = document.querySelector(".topbar");
+    const typeFilterEl = document.getElementById("typeFilter");
+    const addModalEl = document.getElementById("addModal");
+    const openAddBtnEl = document.getElementById("openAddBtn");
+    const closeAddBtnEl = document.getElementById("closeAddBtn");
+    const cancelAddBtnEl = document.getElementById("cancelAddBtn");
+    const addFormEl = document.getElementById("addForm");
+    const fieldDateEl = document.getElementById("fieldDate");
+    const fieldTimeEl = document.getElementById("fieldTime");
+    const fieldTypeEl = document.getElementById("fieldType");
+    const fieldOrgEl = document.getElementById("fieldOrg");
+    const fieldProviderEl = document.getElementById("fieldProvider");
+    const fieldSubjectEl = document.getElementById("fieldSubject");
+    const fieldNotesEl = document.getElementById("fieldNotes");
+    const fieldCreatedByEl = document.getElementById("fieldCreatedBy");
+    const fieldAttendingByEl = document.getElementById("fieldAttendingBy");
+
+    function pad2(n){ return String(n).padStart(2, "0"); }
+    function esc(v){
+      return String(v || "").replace(/[&<>"']/g, (ch) => (
+        ch === "&" ? "&amp;" :
+        ch === "<" ? "&lt;" :
+        ch === ">" ? "&gt;" :
+        ch === '"' ? "&quot;" : "&#39;"
+      ));
+    }
+    function parseIsoDate(iso){
+      if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+      const [y, m, d] = iso.split("-").map(Number);
+      const dt = new Date(y, m - 1, d);
+      if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return null;
+      return dt;
+    }
+    function fmtDateDay(iso){
+      const d = parseIsoDate(iso);
+      if (!d) return iso;
+      return new Intl.DateTimeFormat("nl-NL", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }).format(d);
+    }
+    function cloneDefaults(){
+      return JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+    }
+    function normalizeAppointment(item){
+      const source = item || {};
+      let kind = "appointment";
+      if (source.itemKind === "incident") kind = "incident";
+      else if (source.itemKind === "contact" || source.itemKind === "event") kind = "contact";
+      return {
+        time: source.time || "09:00",
+        org: source.org || source.hospital || "Onbekende organisatie",
+        careType: source.careType || source.department || "Algemene zorg",
+        provider: source.provider || source.doctor || "Onbekende zorgverlener",
+        subject: source.subject || source.reason || "-",
+        notes: source.notes || "",
+        createdBy: source.createdBy || "Ismail",
+        attendingBy: source.attendingBy || "Ismail",
+        itemKind: kind,
+        status: source.status || "pending"
+      };
+    }
+    function loadItems(){
+      const fallback = cloneDefaults();
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return fallback;
+        for (const iso of Object.keys(parsed)){
+          if (!Array.isArray(parsed[iso])){
+            delete parsed[iso];
+            continue;
+          }
+          parsed[iso] = parsed[iso].map(normalizeAppointment);
+        }
+        const merged = { ...fallback, ...parsed };
+        for (const iso of Object.keys(merged)){
+          merged[iso] = merged[iso].map(normalizeAppointment);
+        }
+        return merged;
+      } catch {
+        return fallback;
+      }
+    }
+    function saveItems(items){
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      } catch {
+        // Keep UI usable when storage is unavailable.
+      }
+    }
+    function classifyType(careType, org, subject){
+      const txt = `${careType || ""} ${org || ""} ${subject || ""}`.toLowerCase();
+      if (txt.includes("huisartsenpost")) return "huisartsenpost";
+      if (txt.includes("huisarts")) return "huisarts";
+      if (txt.includes("tandarts")) return "tandarts";
+      if (txt.includes("fysio")) return "fysiotherapie";
+      if (txt.includes("ziekenhuis")) return "ziekenhuis";
+      if (txt.includes("seh") || txt.includes("spoed")) return "seh";
+      if (txt.includes("cardio")) return "cardiologie";
+      if (txt.includes("apotheek")) return "apotheek";
+      if (txt.includes("ggz")) return "ggz";
+      if (txt.includes("wijkverpleging")) return "wijkverpleging";
+      if (txt.includes("ergo")) return "ergotherapie";
+      if (txt.includes("dieet")) return "dietiek";
+      return "overig";
+    }
+    function appointmentRows(itemsByDate){
+      const out = [];
+      for (const iso of Object.keys(itemsByDate)){
+        const items = itemsByDate[iso];
+        if (!Array.isArray(items)) continue;
+        for (const rawItem of items){
+          const item = normalizeAppointment(rawItem);
+          if (item.itemKind !== "appointment") continue;
+          const dateObj = parseIsoDate(iso);
+          if (!dateObj) continue;
+          const [hh, mm] = (item.time || "09:00").split(":").map(Number);
+          const dt = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), hh || 9, mm || 0, 0);
+          out.push({
+            iso,
+            dt,
+            time: item.time || "09:00",
+            careType: item.careType || "Afspraak",
+            org: item.org || "Onbekende organisatie",
+            provider: item.provider || "Onbekende zorgverlener",
+            subject: item.subject || "-",
+            notes: item.notes || "",
+            createdBy: item.createdBy || "",
+            attendingBy: item.attendingBy || "",
+            typeKey: classifyType(item.careType, item.org, item.subject)
+          });
+        }
+      }
+      out.sort((a, b) => a.dt - b.dt);
+      return out;
+    }
+    function applyFilters(rows){
+      const typeValue = typeFilterEl.value;
+      return rows.filter((row) => typeValue === "all" || row.typeKey === typeValue);
+    }
+    function openAddModal(){
+      const now = new Date();
+      fieldDateEl.value = `${now.getFullYear()}-${pad2(now.getMonth()+1)}-${pad2(now.getDate())}`;
+      if (!fieldTimeEl.value) fieldTimeEl.value = "09:00";
+      addModalEl.classList.add("open");
+      addModalEl.setAttribute("aria-hidden", "false");
+      window.setTimeout(() => fieldTypeEl.focus(), 0);
+    }
+    function closeAddModal(){
+      addModalEl.classList.remove("open");
+      addModalEl.setAttribute("aria-hidden", "true");
+    }
+    function scrollToInitialAnchor(){
+      const nextEl = document.getElementById("nextUpcoming");
+      const fallbackEl = document.getElementById("latestPast");
+      const anchorEl = nextEl || fallbackEl;
+      if (!anchorEl) return;
+      const headerOffset = topbarEl ? topbarEl.getBoundingClientRect().height + 8 : 0;
+      const absoluteTop = window.scrollY + anchorEl.getBoundingClientRect().top;
+      const targetTop = Math.max(0, absoluteTop - headerOffset);
+      window.scrollTo({ top: targetTop, behavior: "auto" });
+    }
+    function render(){
+      const rows = applyFilters(appointmentRows(loadItems()));
+      if (!rows.length){
+        contentEl.innerHTML = '<p class="empty">Geen afspraken voor de gekozen filters.</p>';
+        window.scrollTo({ top: 0, behavior: "auto" });
+        return;
+      }
+
+      const now = new Date();
+      let html = "";
+      let openGroup = false;
+      let currentIso = "";
+      let markedNextUpcoming = false;
+      let latestPastIndex = -1;
+
+      for (let i = rows.length - 1; i >= 0; i--){
+        if (rows[i].dt < now){
+          latestPastIndex = i;
+          break;
+        }
+      }
+
+      for (let i = 0; i < rows.length; i++){
+        const item = rows[i];
+        if (item.iso !== currentIso){
+          if (openGroup) html += "</ul></section>";
+          currentIso = item.iso;
+          openGroup = true;
+          html += `<section class="dayGroup"><h2 class="dayLabel">${fmtDateDay(item.iso)}</h2><ul class="list">`;
+        }
+
+        const viewIso = `${item.dt.getFullYear()}-${pad2(item.dt.getMonth()+1)}-01`;
+        const q = new URLSearchParams({
+          date: item.iso,
+          time: item.time,
+          org: item.org,
+          careType: item.careType,
+          provider: item.provider,
+          subject: item.subject,
+          notes: item.notes,
+          createdBy: item.createdBy,
+          attendingBy: item.attendingBy,
+          itemKind: "appointment",
+          status: "confirmed",
+          selected: item.iso,
+          view: viewIso
+        }).toString();
+        const upcomingAttr = (!markedNextUpcoming && item.dt >= now) ? ' id="nextUpcoming"' : "";
+        const latestPastAttr = (!markedNextUpcoming && i === latestPastIndex) ? ' id="latestPast"' : "";
+        if (!markedNextUpcoming && item.dt >= now) markedNextUpcoming = true;
+
+        const pastClass = item.dt < now ? " past" : "";
+        const createdBy = item.createdBy || "Ismail";
+        const attendingBy = item.attendingBy || "Ismail";
+        html += `<li class="item${pastClass}"><a class="itemLink" href="appointment.html?${q}"${upcomingAttr}${latestPastAttr}>`;
+        html += `<div class="lineTop"><span class="time">${item.time}</span><span class="careType">${item.careType}</span></div>`;
+        html += `<p class="org">${item.org}</p>`;
+        html += `<div class="metaStack"><p class="meta">${item.provider}</p><p class="meta">${item.subject}</p><div class="ownerChips"><span class="ownerChip created" title="Aangemaakt door">${esc(createdBy)}</span><span class="ownerChip attending" title="Gaat/is gegaan">${esc(attendingBy)}</span></div></div>`;
+        html += `</a></li>`;
+      }
+      if (openGroup) html += "</ul></section>";
+
+      contentEl.innerHTML = html;
+      window.requestAnimationFrame(scrollToInitialAnchor);
+    }
+
+    addFormEl.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!fieldDateEl.value) return;
+      const iso = fieldDateEl.value;
+      const newItem = normalizeAppointment({
+        time: fieldTimeEl.value || "09:00",
+        careType: fieldTypeEl.value.trim() || "Algemene zorg",
+        org: fieldOrgEl.value.trim() || "Onbekende organisatie",
+        provider: fieldProviderEl.value.trim() || "Onbekende zorgverlener",
+        subject: fieldSubjectEl.value.trim() || "-",
+        notes: fieldNotesEl.value.trim(),
+        createdBy: fieldCreatedByEl.value.trim(),
+        attendingBy: fieldAttendingByEl.value.trim(),
+        itemKind: "appointment",
+        status: "confirmed"
+      });
+
+      const items = loadItems();
+      if (!items[iso]) items[iso] = [];
+      items[iso].push(newItem);
+      items[iso].sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+      saveItems(items);
+
+      fieldDateEl.value = "";
+      fieldTimeEl.value = "";
+      fieldTypeEl.value = "";
+      fieldOrgEl.value = "";
+      fieldProviderEl.value = "";
+      fieldSubjectEl.value = "";
+      fieldNotesEl.value = "";
+      fieldCreatedByEl.value = "";
+      fieldAttendingByEl.value = "";
+      closeAddModal();
+      render();
+    });
+
+    openAddBtnEl.addEventListener("click", openAddModal);
+    closeAddBtnEl.addEventListener("click", closeAddModal);
+    cancelAddBtnEl.addEventListener("click", closeAddModal);
+    addModalEl.addEventListener("click", (event) => {
+      if (event.target === addModalEl) closeAddModal();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && addModalEl.classList.contains("open")) closeAddModal();
+    });
+    typeFilterEl.addEventListener("change", render);
+
+    render();
+  </script>
+</body>
+</html>
+
+
+
+

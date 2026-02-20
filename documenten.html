@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Documenten</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --surface:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --soft:#f1f5f9;
+      --primary:#2563eb;
+      --shadow:0 8px 22px rgba(15,23,42,0.05);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .app{
+      min-height:100vh;
+      max-width:520px;
+      margin:0 auto;
+      padding:10px 12px calc(18px + env(safe-area-inset-bottom));
+      display:grid;
+      gap:14px;
+      align-content:start;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:4;
+      background:rgba(248,250,252,0.92);
+      backdrop-filter:blur(8px);
+      display:grid;
+      grid-template-columns:42px 1fr 42px;
+      gap:10px;
+      align-items:start;
+      padding-top:calc(4px + env(safe-area-inset-top));
+    }
+    .backBtn,.addBtn{
+      width:42px;
+      height:42px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:#fff;
+      color:var(--text);
+      text-decoration:none;
+      font-size:20px;
+      line-height:1;
+      padding:0;
+      cursor:pointer;
+      box-shadow:0 1px 2px rgba(15,23,42,0.05);
+    }
+    .addBtn{
+      font-size:28px;
+      font-weight:500;
+      color:var(--primary);
+      border-color:#bfdbfe;
+      background:#eff6ff;
+    }
+    .addBtn > span{
+      display:block;
+      line-height:1;
+      transform:translateY(1px);
+    }
+    .title{
+      margin:0;
+      font-size:22px;
+      line-height:1.2;
+      font-weight:700;
+      letter-spacing:0.1px;
+    }
+    .subtitle{
+      margin:2px 0 0;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .tabs{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      background:#eef2f7;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:4px;
+      gap:4px;
+    }
+    .tab{
+      border:0;
+      background:transparent;
+      border-radius:8px;
+      padding:8px 6px;
+      font-size:13px;
+      font-weight:600;
+      color:var(--muted);
+    }
+    .tab.active{
+      background:#fff;
+      color:var(--text);
+      box-shadow:0 1px 2px rgba(15,23,42,0.08);
+    }
+    .list{
+      margin:0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:12px;
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--surface);
+      padding:12px;
+      display:grid;
+      gap:6px;
+      box-shadow:var(--shadow);
+    }
+    .row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .titleLine{
+      margin:0;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.3;
+    }
+    .amount{
+      margin:0;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.2;
+      white-space:nowrap;
+    }
+    .meta{
+      margin:0;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .ownerChips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      padding-top:2px;
+    }
+    .ownerChip{
+      font-size:11px;
+      font-weight:700;
+      border-radius:999px;
+      padding:3px 9px;
+      line-height:1.25;
+      border:1px solid transparent;
+      white-space:nowrap;
+      max-width:100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .ownerChip.added{
+      color:#c2410c;
+      background:#fff7ed;
+      border-color:#fed7aa;
+    }
+    .status{
+      margin:0;
+      font-size:13px;
+      font-weight:600;
+    }
+    .status.unpaid{ color:#92400e; }
+    .status.paid{ color:#166534; }
+    .chevron{
+      margin-left:auto;
+      color:#9ca3af;
+      font-size:30px;
+      line-height:0.8;
+    }
+    .subcard{
+      margin-top:4px;
+      border:1px solid #e9eef5;
+      border-radius:10px;
+      background:#f8fbff;
+      padding:10px;
+      display:grid;
+      gap:2px;
+      grid-template-columns:34px 1fr auto;
+      align-items:center;
+      column-gap:10px;
+    }
+    .docIcon{
+      width:34px;
+      height:34px;
+      border:1px solid #d1d5db;
+      border-radius:8px;
+      display:grid;
+      place-items:center;
+      color:#64748b;
+      font-size:18px;
+    }
+    .subTitle{
+      margin:0;
+      font-size:14px;
+      font-weight:700;
+    }
+    .subMeta{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .empty{
+      border:1px dashed #d1d5db;
+      border-radius:12px;
+      background:#fff;
+      color:var(--muted);
+      padding:12px;
+      font-size:14px;
+      text-align:center;
+    }
+    .hiddenFileInput{ display:none; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="backBtn" href="app-home.html" aria-label="Terug">&#8249;</a>
+      <div>
+        <h1 class="title">Documenten</h1>
+        <p class="subtitle">Facturen, brieven en verslagen</p>
+      </div>
+      <button class="addBtn" id="uploadBtn" type="button" aria-label="Upload documenten"><span aria-hidden="true">+</span></button>
+    </header>
+
+    <nav class="tabs" aria-label="Documenttabbladen">
+      <button class="tab active" type="button" data-tab="facturen">Facturen</button>
+      <button class="tab" type="button" data-tab="brieven">Brieven</button>
+      <button class="tab" type="button" data-tab="verslagen">Verslagen</button>
+    </nav>
+
+    <ul class="list" id="docList"></ul>
+    <p class="empty" id="emptyMsg">Nog geen documenten in deze categorie.</p>
+
+    <input class="hiddenFileInput" id="fileInput" type="file" multiple />
+  </main>
+
+  <script>
+    const STORAGE_KEY = "health.documents.v1";
+    const DEFAULT_DOCS = [
+      { id:"d1", name:"Cardiologisch consult", date:"2026-02-12", amount:100, paymentStatus:"unpaid", mime:"application/pdf", size:184120, addedAt:"2026-02-12T10:12:00.000Z", category:"facturen", addedBy:"Sanne (mantelzorger)" },
+      { id:"d2", name:"Rontgenonderzoek", date:"2026-02-10", amount:200, paymentStatus:"paid", mime:"application/pdf", size:128211, addedAt:"2026-02-10T08:22:00.000Z", category:"facturen", addedBy:"Ismail" },
+      { id:"d3", name:"Verwijsbrief huisarts", date:"2026-02-09", mime:"application/pdf", size:98211, addedAt:"2026-02-11T08:30:00.000Z", category:"brieven", addedBy:"Jan (mantelzorger)" },
+      { id:"d4", name:"Controleverslag cardiologie", date:"2026-02-18", mime:"application/pdf", size:242120, addedAt:"2026-02-18T15:15:00.000Z", category:"verslagen", linked:"Verslag.pdf", addedBy:"Ismail" }
+    ];
+
+    const tabEls = Array.from(document.querySelectorAll(".tab"));
+    const docListEl = document.getElementById("docList");
+    const emptyMsgEl = document.getElementById("emptyMsg");
+    const uploadBtnEl = document.getElementById("uploadBtn");
+    const fileInputEl = document.getElementById("fileInput");
+    let activeTab = "facturen";
+    let pendingAddedBy = "";
+
+    function esc(v){
+      return String(v || "").replace(/[&<>"']/g, (ch) => (
+        ch === "&" ? "&amp;" :
+        ch === "<" ? "&lt;" :
+        ch === ">" ? "&gt;" :
+        ch === '"' ? "&quot;" : "&#39;"
+      ));
+    }
+    function normalize(item){
+      const i = item || {};
+      const c = i.category === "brieven" || i.category === "verslagen" ? i.category : "facturen";
+      return {
+        id: i.id || `d-${Math.random().toString(36).slice(2,9)}`,
+        name: i.name || "Onbekend document",
+        date: i.date || "",
+        amount: Number(i.amount) || 0,
+        paymentStatus: i.paymentStatus === "paid" ? "paid" : "unpaid",
+        mime: i.mime || "application/octet-stream",
+        size: Number(i.size) || 0,
+        addedAt: i.addedAt || new Date().toISOString(),
+        category: c,
+        linked: i.linked || "",
+        addedBy: i.addedBy || ""
+      };
+    }
+    function loadDocs(){
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (!raw) return DEFAULT_DOCS.map(normalize);
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return DEFAULT_DOCS.map(normalize);
+        return parsed.map(normalize);
+      } catch {
+        return DEFAULT_DOCS.map(normalize);
+      }
+    }
+    function saveDocs(items){
+      try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items.map(normalize))); } catch {}
+    }
+    function formatDate(dateIso){
+      if (!dateIso) return "-";
+      const d = new Date(dateIso.length <= 10 ? `${dateIso}T00:00:00` : dateIso);
+      if (Number.isNaN(d.getTime())) return "-";
+      return new Intl.DateTimeFormat("nl-NL", { day:"numeric", month:"long", year:"numeric" }).format(d);
+    }
+    function formatMoney(amount){
+      return new Intl.NumberFormat("nl-NL", { style:"currency", currency:"EUR" }).format(amount || 0);
+    }
+    function renderCard(doc){
+      if (activeTab === "facturen"){
+        const addedBy = esc(doc.addedBy || "Onbekend");
+        return `<li class="card">
+          <div class="row">
+            <p class="titleLine">${esc(doc.name)}</p>
+            <p class="amount">${formatMoney(doc.amount)}</p>
+          </div>
+          <p class="meta">${formatDate(doc.date || doc.addedAt)}</p>
+          <p class="ownerChips"><span class="ownerChip added" title="Toegevoegd door">${addedBy}</span></p>
+          <div class="row">
+            <p class="status ${doc.paymentStatus}">${doc.paymentStatus === "paid" ? "Betaald" : "Onbetaald"}</p>
+            <span class="chevron">&#8250;</span>
+          </div>
+        </li>`;
+      }
+      if (activeTab === "verslagen"){
+        const addedBy = esc(doc.addedBy || "Onbekend");
+        return `<li class="card">
+          <div class="row">
+            <p class="titleLine">${esc(doc.name)}</p>
+            <span class="chevron">&#8250;</span>
+          </div>
+          <p class="meta">${formatDate(doc.date || doc.addedAt)}</p>
+          <p class="ownerChips"><span class="ownerChip added" title="Toegevoegd door">${addedBy}</span></p>
+          <div class="subcard">
+            <div class="docIcon">&#128196;</div>
+            <div>
+              <p class="subTitle">${esc(doc.linked || doc.name)}</p>
+              <p class="subMeta">${formatDate(doc.date || doc.addedAt)}</p>
+            </div>
+            <span class="chevron" style="font-size:30px;">&#8250;</span>
+          </div>
+        </li>`;
+      }
+      const addedBy = esc(doc.addedBy || "Onbekend");
+      return `<li class="card">
+        <div class="row">
+          <p class="titleLine">${esc(doc.name)}</p>
+          <span class="chevron">&#8250;</span>
+        </div>
+        <p class="meta">${formatDate(doc.date || doc.addedAt)}</p>
+        <p class="ownerChips"><span class="ownerChip added" title="Toegevoegd door">${addedBy}</span></p>
+      </li>`;
+    }
+    function render(){
+      const docs = loadDocs()
+        .filter((d) => d.category === activeTab)
+        .sort((a,b) => new Date(b.addedAt) - new Date(a.addedAt));
+      docListEl.innerHTML = docs.map(renderCard).join("");
+      emptyMsgEl.hidden = docs.length > 0;
+    }
+    function setTab(tab){
+      activeTab = tab;
+      for (const t of tabEls){
+        t.classList.toggle("active", t.dataset.tab === tab);
+      }
+      render();
+    }
+    for (const t of tabEls){
+      t.addEventListener("click", () => setTab(t.dataset.tab));
+    }
+    uploadBtnEl.addEventListener("click", () => {
+      const who = window.prompt("Wie heeft dit document toegevoegd?", "") || "";
+      pendingAddedBy = who.trim();
+      fileInputEl.click();
+    });
+    fileInputEl.addEventListener("change", () => {
+      const files = Array.from(fileInputEl.files || []);
+      if (!files.length) return;
+      const docs = loadDocs();
+      for (const f of files){
+        docs.push(normalize({
+          id:`d-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,6)}`,
+          name:f.name,
+          mime:f.type || "application/octet-stream",
+          size:f.size || 0,
+          addedAt:new Date().toISOString(),
+          date:new Date().toISOString().slice(0,10),
+          category:activeTab,
+          paymentStatus:"unpaid",
+          linked:f.name,
+          addedBy: pendingAddedBy
+        }));
+      }
+      saveDocs(docs);
+      fileInputEl.value = "";
+      pendingAddedBy = "";
+      render();
+    });
+    render();
+  </script>
+</body>
+</html>
+
+
+
+

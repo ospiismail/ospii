@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Tijdlijn</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --surface:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --primary:#2563eb;
+      --shadow:0 8px 22px rgba(15,23,42,0.05);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .app{
+      min-height:100vh;
+      max-width:520px;
+      margin:0 auto;
+      padding:10px 12px calc(18px + env(safe-area-inset-bottom));
+      display:grid;
+      gap:14px;
+      align-content:start;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:4;
+      padding-top:calc(4px + env(safe-area-inset-top));
+      background:rgba(248,250,252,0.92);
+      backdrop-filter:blur(8px);
+      display:grid;
+      grid-template-columns:42px 1fr 42px;
+      gap:10px;
+      align-items:start;
+    }
+    .backBtn{
+      width:42px;
+      height:42px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:#fff;
+      color:var(--text);
+      text-decoration:none;
+      box-shadow:0 1px 2px rgba(15,23,42,0.05);
+      font-size:20px;
+      line-height:1;
+      padding:0;
+    }
+    .title{
+      margin:0;
+      font-size:22px;
+      line-height:1.2;
+      font-weight:700;
+      letter-spacing:0.1px;
+    }
+    .subtitle{
+      margin:2px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+    .month{
+      display:grid;
+      gap:8px;
+    }
+    .filters{
+      display:flex;
+      gap:8px;
+      overflow:auto;
+      padding:2px 0 2px;
+      scrollbar-width:none;
+    }
+    .filters::-webkit-scrollbar{ display:none; }
+    .filterBtn{
+      border:1px solid var(--line);
+      background:#fff;
+      color:#334155;
+      border-radius:999px;
+      padding:7px 11px;
+      font-size:12px;
+      font-weight:700;
+      white-space:nowrap;
+      cursor:pointer;
+    }
+    .filterBtn.active{
+      border-color:#bfdbfe;
+      background:#eff6ff;
+      color:#1d4ed8;
+    }
+    .monthTitle{
+      margin:0;
+      padding:6px 2px 0;
+      color:#475569;
+      font-size:12px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:0.16px;
+    }
+    .timelineList{
+      margin:0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:0;
+    }
+    .entry{
+      display:grid;
+      grid-template-columns:30px 1fr;
+      gap:10px;
+      position:relative;
+    }
+    .entry:last-child .rail{
+      background:linear-gradient(var(--line), transparent);
+    }
+    .lineCol{
+      position:relative;
+      min-height:84px;
+    }
+    .rail{
+      position:absolute;
+      left:14px;
+      top:0;
+      bottom:0;
+      width:2px;
+      background:var(--line);
+    }
+    .dot{
+      position:absolute;
+      left:8px;
+      top:18px;
+      width:14px;
+      height:14px;
+      border-radius:999px;
+      border:2px solid #fff;
+      box-shadow:0 0 0 1px #cbd5e1;
+      background:#94a3b8;
+    }
+    .dot.appointment{ background:#2563eb; box-shadow:0 0 0 1px #bfdbfe; }
+    .dot.incident{ background:#dc2626; box-shadow:0 0 0 1px #fecaca; }
+    .dot.contact{ background:#d97706; box-shadow:0 0 0 1px #fed7aa; }
+    .dot.hospital{ background:#7c3aed; box-shadow:0 0 0 1px #ddd6fe; }
+    .card{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--surface);
+      box-shadow:var(--shadow);
+      padding:10px 12px;
+      margin:6px 0;
+      display:grid;
+      gap:4px;
+      text-decoration:none;
+      color:inherit;
+    }
+    .row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .name{
+      margin:0;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.25;
+    }
+    .time{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+      white-space:nowrap;
+      padding-top:1px;
+    }
+    .meta{
+      margin:0;
+      font-size:13px;
+      color:#334155;
+      line-height:1.35;
+    }
+    .kind{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:600;
+    }
+    .empty{
+      border:1px dashed var(--line);
+      border-radius:12px;
+      padding:12px;
+      color:var(--muted);
+      font-size:14px;
+      text-align:center;
+      background:#fff;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="backBtn" href="app-home.html" aria-label="Terug naar home">&#8249;</a>
+      <div>
+        <h1 class="title">Tijdlijn</h1>
+        <p class="subtitle">Alle afspraken, gebeurtenissen en ziekenhuisbezoeken</p>
+      </div>
+      <div></div>
+    </header>
+
+    <nav class="filters" id="filterBar" aria-label="Filter tijdlijn">
+      <button class="filterBtn active" type="button" data-filter="all">Alles</button>
+      <button class="filterBtn" type="button" data-filter="appointment">Afspraken</button>
+      <button class="filterBtn" type="button" data-filter="incident">Incidenten</button>
+      <button class="filterBtn" type="button" data-filter="contact">Contact</button>
+      <button class="filterBtn" type="button" data-filter="hospital">Ziekenhuis</button>
+    </nav>
+    <section id="timelineContent"></section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "health.appointments.v1";
+    const filterBarEl = document.getElementById("filterBar");
+    const filterButtons = Array.from(filterBarEl.querySelectorAll(".filterBtn"));
+    const DEFAULT_ITEMS = {
+      "2026-02-12": [
+        { time: "08:45", org: "Tandartspraktijk Centrum", careType: "Tandarts", provider: "Drs. Bakker", subject: "Halfjaarlijkse controle", notes: "Rontgenfoto laten maken", itemKind: "appointment", status: "confirmed" },
+        { time: "11:10", org: "Thuis", careType: "Incident", provider: "Zelf", subject: "Valincident in badkamer", notes: "Pijn aan pols", itemKind: "incident", status: "completed" },
+        { time: "14:00", org: "Huisartsenpost Rijnmond", careType: "Telefonisch contact", provider: "Assistente", subject: "Overleg over klachten na val", notes: "", itemKind: "contact", status: "completed" }
+      ],
+      "2026-02-18": [
+        { time: "09:00", org: "Erasmus MC", careType: "Ziekenhuis", provider: "Dr. Van Dijk", subject: "Controle na inspanningsklachten", notes: "", itemKind: "appointment", status: "confirmed" },
+        { time: "14:30", org: "Erasmus MC", careType: "SEH", provider: "SEH team", subject: "SEH-bezoek na valincident", notes: "", itemKind: "incident", status: "completed" }
+      ],
+      "2026-03-19": [
+        { time: "09:10", org: "OLVG", careType: "Cardiologie", provider: "Dr. E.G. van Dijk", subject: "Hartonderzoek", notes: "", itemKind: "appointment", status: "pending" }
+      ]
+    };
+
+    const contentEl = document.getElementById("timelineContent");
+    let activeFilter = "all";
+
+    function esc(v){
+      return String(v || "").replace(/[&<>"']/g, (ch) => (
+        ch === "&" ? "&amp;" :
+        ch === "<" ? "&lt;" :
+        ch === ">" ? "&gt;" :
+        ch === '"' ? "&quot;" : "&#39;"
+      ));
+    }
+    function parseIsoDate(iso){
+      if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+      const [y, m, d] = iso.split("-").map(Number);
+      const dt = new Date(y, m - 1, d);
+      if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return null;
+      return dt;
+    }
+    function normalizeItem(item){
+      const source = item || {};
+      let kind = "appointment";
+      if (source.itemKind === "incident") kind = "incident";
+      else if (source.itemKind === "contact" || source.itemKind === "event") kind = "contact";
+      return {
+        time: source.time || "",
+        org: source.org || source.hospital || "Onbekende organisatie",
+        careType: source.careType || source.department || "Zorg",
+        provider: source.provider || source.doctor || "",
+        subject: source.subject || source.reason || "",
+        notes: source.notes || "",
+        itemKind: kind,
+        status: source.status || "pending"
+      };
+    }
+    function loadItems(){
+      const fallback = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return fallback;
+        const cleaned = {};
+        for (const iso of Object.keys(parsed)){
+          if (!Array.isArray(parsed[iso])) continue;
+          cleaned[iso] = parsed[iso].map(normalizeItem);
+        }
+        return Object.keys(cleaned).length ? cleaned : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+    function getDotClass(item){
+      const txt = `${item.careType} ${item.org} ${item.subject}`.toLowerCase();
+      if (txt.includes("ziekenhuis") || txt.includes("seh") || txt.includes("spoed")) return "hospital";
+      if (item.itemKind === "incident") return "incident";
+      if (item.itemKind === "contact") return "contact";
+      return "appointment";
+    }
+    function getKindLabel(item){
+      if (item.itemKind === "incident") return "Gebeurtenis";
+      if (item.itemKind === "contact") return "Contactmoment";
+      if (getDotClass(item) === "hospital") return "Ziekenhuisbezoek";
+      return "Afspraak";
+    }
+    function getDisplayTitle(item){
+      return item.careType || item.org || "Zorgmoment";
+    }
+    function getDisplayMeta(item){
+      const parts = [];
+      if (item.org) parts.push(item.org);
+      if (item.provider) parts.push(item.provider);
+      if (item.subject) parts.push(item.subject);
+      return parts.join(" · ");
+    }
+    function formatMonthLabel(d){
+      return new Intl.DateTimeFormat("nl-NL", { month: "long", year: "numeric" }).format(d).toUpperCase();
+    }
+    function formatDateTime(d, time){
+      const day = new Intl.DateTimeFormat("nl-NL", { day: "numeric", month: "short" }).format(d);
+      if (!time) return day;
+      return `${day} · ${time}`;
+    }
+    function rowsFromStorage(itemsByDate){
+      const rows = [];
+      for (const iso of Object.keys(itemsByDate)){
+        const day = parseIsoDate(iso);
+        if (!day) continue;
+        for (const raw of itemsByDate[iso]){
+          const item = normalizeItem(raw);
+          const [h, m] = (item.time || "00:00").split(":").map(Number);
+          const dt = new Date(day.getFullYear(), day.getMonth(), day.getDate(), Number.isFinite(h) ? h : 0, Number.isFinite(m) ? m : 0, 0);
+          rows.push({ iso, day, dt, item });
+        }
+      }
+      rows.sort((a, b) => b.dt - a.dt);
+      return rows;
+    }
+    function matchesFilter(row){
+      if (activeFilter === "all") return true;
+      const dotClass = getDotClass(row.item);
+      if (activeFilter === "hospital") return dotClass === "hospital";
+      return row.item.itemKind === activeFilter;
+    }
+    function setFilter(filterKey){
+      activeFilter = filterKey;
+      for (const btn of filterButtons){
+        btn.classList.toggle("active", btn.dataset.filter === filterKey);
+      }
+      render();
+    }
+    function render(){
+      const rows = rowsFromStorage(loadItems()).filter(matchesFilter);
+      if (!rows.length){
+        contentEl.innerHTML = '<p class="empty">Geen resultaten voor dit filter.</p>';
+        return;
+      }
+
+      let html = "";
+      let currentMonthKey = "";
+      for (const row of rows){
+        const d = row.day;
+        const monthKey = `${d.getFullYear()}-${d.getMonth()}`;
+        if (monthKey !== currentMonthKey){
+          if (currentMonthKey) html += "</ul></section>";
+          currentMonthKey = monthKey;
+          html += `<section class="month"><h2 class="monthTitle">${formatMonthLabel(d)}</h2><ul class="timelineList">`;
+        }
+
+        const item = row.item;
+        const dotClass = getDotClass(item);
+        const q = new URLSearchParams({
+          date: row.iso,
+          time: item.time || "",
+          org: item.org || "",
+          careType: item.careType || "",
+          provider: item.provider || "",
+          subject: item.subject || "",
+          notes: item.notes || "",
+          itemKind: item.itemKind || "appointment",
+          status: item.status || "pending",
+          selected: row.iso,
+          view: `${row.day.getFullYear()}-${String(row.day.getMonth() + 1).padStart(2, "0")}-01`
+        }).toString();
+
+        html += `<li class="entry">
+          <div class="lineCol">
+            <div class="rail"></div>
+            <div class="dot ${dotClass}"></div>
+          </div>
+          <a class="card" href="appointment.html?${q}">
+            <div class="row">
+              <p class="name">${esc(getDisplayTitle(item))}</p>
+              <p class="time">${esc(formatDateTime(d, item.time))}</p>
+            </div>
+            <p class="meta">${esc(getDisplayMeta(item) || "Geen extra details")}</p>
+            <p class="kind">${esc(getKindLabel(item))}</p>
+          </a>
+        </li>`;
+      }
+      if (currentMonthKey) html += "</ul></section>";
+      contentEl.innerHTML = html;
+    }
+
+    render();
+    for (const btn of filterButtons){
+      btn.addEventListener("click", () => setFilter(btn.dataset.filter));
+    }
+  </script>
+</body>
+</html>
+
+
+

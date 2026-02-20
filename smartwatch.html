@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Smartwatch</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --surface:#fff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --primary:#2563eb;
+      --shadow:0 8px 22px rgba(15,23,42,0.05);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+    .app{min-height:100vh;max-width:520px;margin:0 auto;padding:10px 12px calc(18px + env(safe-area-inset-bottom));display:grid;gap:12px;align-content:start}
+    .topbar{position:sticky;top:0;z-index:4;padding-top:calc(4px + env(safe-area-inset-top));background:rgba(248,250,252,.92);backdrop-filter:blur(8px);display:grid;grid-template-columns:42px 1fr 42px;gap:10px;align-items:start}
+    .backBtn{width:42px;height:42px;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;background:#fff;color:var(--text);text-decoration:none;box-shadow:0 1px 2px rgba(15,23,42,.05);font-size:20px;line-height:1;padding:0}
+    .title{margin:0;font-size:22px;line-height:1.2;font-weight:700;letter-spacing:.1px}
+    .subtitle{margin:2px 0 0;color:var(--muted);font-size:13px;line-height:1.35}
+    .card{border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow);padding:12px;display:grid;gap:8px}
+    .btn{border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:10px;padding:10px;font-size:14px;font-weight:600}
+    .muted{margin:0;font-size:13px;color:var(--muted);line-height:1.35}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="backBtn" href="app-home.html" aria-label="Terug">&#8249;</a>
+      <div>
+        <h1 class="title">Smartwatch</h1>
+        <p class="subtitle">Koppel je wearable met ospii</p>
+      </div>
+      <div></div>
+    </header>
+
+    <section class="card">
+      <p class="muted">Status: nog geen smartwatch gekoppeld.</p>
+      <button class="btn" type="button">Smartwatch koppelen</button>
+      <button class="btn" type="button">Gegevens synchroniseren</button>
+    </section>
+  </main>
+</body>
+</html>
+
+
+

@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ospii | Home</title>
+  <script>
+    if (window.sessionStorage.getItem("health.auth.v1") !== "1") {
+      window.location.replace("login.html");
+    }
+  </script>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e2e8f0;
+      --primary:#2563eb;
+      --shadow:0 8px 22px rgba(15,23,42,0.05);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .app{
+      min-height:100dvh;
+      max-width:560px;
+      margin:0 auto;
+      padding:10px 10px calc(14px + env(safe-area-inset-bottom));
+      display:grid;
+      gap:10px;
+      overflow:hidden;
+    }
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding-top:calc(4px + env(safe-area-inset-top));
+      gap:10px;
+    }
+    .topLeft{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+    .avatar{
+      width:42px;height:42px;border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+      display:grid;place-items:center;
+      color:#94a3b8;
+      font-size:19px;
+      box-shadow:0 2px 6px rgba(15,23,42,0.08);
+      cursor:pointer;
+    }
+    .welcome{
+      margin:0;
+      font-size:34px;
+      font-weight:800;
+      letter-spacing:-0.02em;
+      line-height:1.08;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .menuBtn{
+      width:42px;height:42px;border-radius:12px;
+      border:1px solid var(--border);
+      background:#fff;color:var(--text);
+      display:grid;place-items:center;
+      font-size:22px;
+      box-shadow:0 2px 6px rgba(15,23,42,0.08);
+      cursor:pointer;
+    }
+
+    .board{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      grid-template-areas:
+        "appointments speak"
+        "appointments medicatie"
+        "taken documenten"
+        "vraag team";
+      align-content:start;
+      min-height:0;
+    }
+    .tile{
+      border:1.5px solid #d6e3fb;
+      border-radius:20px;
+      background:var(--card);
+      box-shadow:var(--shadow);
+      text-decoration:none;
+      color:inherit;
+      padding:14px 14px 12px;
+      display:grid;
+      align-content:space-between;
+      min-height:112px;
+      position:relative;
+      overflow:hidden;
+    }
+    .tile:active{ transform:translateY(1px); }
+    .tile h2{
+      margin:0;
+      font-size:33px;
+      font-weight:780;
+      letter-spacing:-0.02em;
+      line-height:1.06;
+    }
+    .tile p{
+      margin:6px 0 0;
+      font-size:22px;
+      color:var(--muted);
+      line-height:1.22;
+    }
+    .subtle{
+      font-size:19px;
+      color:#64748b;
+      line-height:1.26;
+    }
+    .tag{
+      justify-self:start;
+      border:1px solid #d9e5fb;
+      color:#2554b6;
+      background:#eff5ff;
+      border-radius:999px;
+      padding:5px 10px;
+      font-size:15px;
+      font-weight:700;
+      margin-top:8px;
+    }
+    .appointments{ grid-area:appointments; min-height:254px; }
+    .speak{ grid-area:speak; min-height:108px; }
+    .medicatie{ grid-area:medicatie; min-height:140px; }
+    .taken{ grid-area:taken; min-height:126px; }
+    .documenten{ grid-area:documenten; min-height:126px; }
+    .vraag{ grid-area:vraag; min-height:108px; }
+    .team{ grid-area:team; min-height:108px; }
+
+    .blue{
+      border-color:#c5d8fb;
+      background:linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    }
+
+    .menuPanel{
+      position:fixed;
+      inset:0;
+      z-index:30;
+      background:rgba(15,23,42,0.32);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 160ms ease;
+    }
+    .menuPanel.open{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .menuSheet{
+      position:absolute;
+      top:0;right:0;
+      width:min(85vw,340px);
+      height:100%;
+      background:#f8fafc;
+      border-left:1px solid var(--border);
+      padding:14px;
+      display:grid;
+      gap:10px;
+      align-content:start;
+      transform:translateX(100%);
+      transition:transform 180ms ease;
+    }
+    .menuPanel.open .menuSheet{ transform:translateX(0); }
+    .menuHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    }
+    .menuTitle{
+      margin:0;
+      font-size:20px;
+      font-weight:800;
+    }
+    .closeBtn{
+      width:40px;height:40px;border-radius:10px;
+      border:1px solid var(--border);
+      background:#fff;
+      font-size:17px;
+      display:grid;place-items:center;
+      cursor:pointer;
+    }
+    .menuLink{
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+      min-height:46px;
+      display:flex;
+      align-items:center;
+      padding:0 12px;
+      color:var(--text);
+      text-decoration:none;
+      font-size:16px;
+      font-weight:700;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="top">
+      <div class="topLeft">
+        <button class="avatar" id="logoutBtn" aria-label="Uitloggen">○</button>
+        <h1 class="welcome" id="welcomeText">Welkom</h1>
+      </div>
+      <button class="menuBtn" id="openMenuBtn" aria-label="Open menu">☰</button>
+    </header>
+
+    <section class="board" aria-label="Overzicht">
+      <a class="tile blue appointments" href="appointments.html">
+        <div>
+          <h2>Afspraken</h2>
+          <p>18 feb - 09:00</p>
+          <p class="subtle">Cardiologie</p>
+          <p class="subtle">OLVG</p>
+          <p class="subtle">Dr. E.G. van Dijk</p>
+          <p class="subtle">Hartonderzoek</p>
+        </div>
+        <span class="tag">Volgende</span>
+      </a>
+
+      <a class="tile blue speak" href="calendar.html">
+        <div>
+          <h2>Inspreken</h2>
+          <p class="subtle">Voeg snel een notitie toe</p>
+        </div>
+      </a>
+
+      <a class="tile blue medicatie" href="medicatie.html">
+        <div>
+          <h2>Medicatie</h2>
+          <p class="subtle">1 bijna op</p>
+        </div>
+      </a>
+
+      <a class="tile taken" href="todo.html">
+        <div>
+          <h2>Te doen</h2>
+          <p class="subtle">2 openstaande taken</p>
+        </div>
+      </a>
+
+      <a class="tile documenten" href="documenten.html">
+        <div>
+          <h2>Documenten</h2>
+          <p class="subtle">1 openstaande factuur</p>
+        </div>
+      </a>
+
+      <a class="tile blue vraag" href="zorgchat.html">
+        <div>
+          <h2>Stel je vraag</h2>
+          <p class="subtle">AI-zorgassistent</p>
+        </div>
+      </a>
+
+      <a class="tile team" href="zorgteam.html">
+        <div>
+          <h2>Mijn zorgteam</h2>
+          <p class="subtle">Professionals en mantelzorgers</p>
+        </div>
+      </a>
+    </section>
+  </main>
+
+  <aside class="menuPanel" id="menuPanel" aria-hidden="true">
+    <div class="menuSheet">
+      <div class="menuHead">
+        <p class="menuTitle">Menu</p>
+        <button class="closeBtn" id="closeMenuBtn" aria-label="Sluit menu">✕</button>
+      </div>
+      <a class="menuLink" href="appointments.html">Dashboard</a>
+      <a class="menuLink" href="smartwatch.html">Smartwatch</a>
+      <a class="menuLink" href="timeline.html">Tijdlijn</a>
+      <a class="menuLink" href="calendar.html">Kalender</a>
+      <a class="menuLink" href="zorgteam.html">Mijn zorgteam</a>
+    </div>
+  </aside>
+
+  <script>
+    const username = window.sessionStorage.getItem("health.username.v1") || "Ismail";
+    const welcomeText = document.getElementById("welcomeText");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const menuPanel = document.getElementById("menuPanel");
+    const openMenuBtn = document.getElementById("openMenuBtn");
+    const closeMenuBtn = document.getElementById("closeMenuBtn");
+
+    welcomeText.textContent = `Welkom ${username}`;
+
+    function openMenu(){
+      menuPanel.classList.add("open");
+      menuPanel.setAttribute("aria-hidden", "false");
+    }
+    function closeMenu(){
+      menuPanel.classList.remove("open");
+      menuPanel.setAttribute("aria-hidden", "true");
+    }
+
+    openMenuBtn.addEventListener("click", openMenu);
+    closeMenuBtn.addEventListener("click", closeMenu);
+    menuPanel.addEventListener("click", (event) => {
+      if (event.target === menuPanel) closeMenu();
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      try {
+        window.sessionStorage.removeItem("health.auth.v1");
+        window.sessionStorage.removeItem("health.username.v1");
+      } catch {}
+      window.location.href = "login.html";
+    });
+  </script>
+</body>
+</html>

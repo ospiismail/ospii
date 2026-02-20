@@ -1,0 +1,396 @@
+﻿<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Afspraak</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --surface:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e2e8f0;
+      --shadow:0 8px 22px rgba(15,23,42,0.05);
+      --active:#0f172a;
+      --accent:#2563eb;
+      --accentSoft:#dbeafe;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .app{
+      min-height:100vh;
+      max-width:520px;
+      margin:0 auto;
+      padding:10px 12px calc(18px + env(safe-area-inset-bottom));
+      display:grid;
+      gap:14px;
+    }
+    .topbar{
+      position: sticky;
+      top: 0;
+      padding-top: calc(4px + env(safe-area-inset-top));
+      background: rgba(248,250,252,0.92);
+      backdrop-filter: blur(8px);
+      z-index: 5;
+      display:grid;
+      grid-template-columns: 42px 1fr 42px;
+      align-items:start;
+      gap:10px;
+    }
+    .iconBtn{
+      width:42px;
+      height:42px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+      color:var(--text);
+      display:grid;
+      place-items:center;
+      text-decoration:none;
+      padding:0;
+      box-shadow: 0 1px 2px rgba(15,23,42,0.05);
+    }
+    .iconSvg{ width:18px; height:18px; display:block; }
+    .topTitle{
+      margin:0;
+      text-align:center;
+      font-size:22px;
+      font-weight:700;
+      letter-spacing:0.1px;
+    }
+    .meta{
+      display:grid;
+      gap:4px;
+      padding: 14px;
+      background: var(--surface);
+      border:1px solid var(--border);
+      border-radius:16px;
+      box-shadow: var(--shadow);
+    }
+    .specialism{
+      margin:0;
+      font-size:24px;
+      line-height:1.2;
+      font-weight:700;
+      letter-spacing:0.1px;
+    }
+    .subline{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.35;
+    }
+    .tabs{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border:1px solid var(--border);
+      background:var(--surface);
+      border-radius:12px;
+      padding:3px;
+      gap:4px;
+    }
+    .tab{
+      border:0;
+      background:transparent;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:600;
+      padding:9px 4px;
+      border-radius:9px;
+      text-align:center;
+    }
+    .tab.active{
+      color:var(--active);
+      background:#fff;
+      box-shadow:0 1px 2px rgba(15,23,42,0.06);
+    }
+    .panel{
+      display:none;
+      gap:14px;
+    }
+    .panel.active{
+      display:grid;
+    }
+    .panelViewport{
+      min-height: 420px;
+      display: grid;
+    }
+    .section{
+      display:grid;
+      gap:8px;
+    }
+    .sectionTitle{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+      letter-spacing:0.12px;
+      text-transform:uppercase;
+    }
+    .detailText{
+      margin:0;
+      font-size:15px;
+      line-height:1.4;
+      padding:12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:0 1px 2px rgba(15,23,42,0.04);
+    }
+    .card{
+      border:1px solid var(--border);
+      border-radius:16px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:14px;
+      display:grid;
+      gap:5px;
+    }
+    .cardTitle{
+      margin:0;
+      font-size:15px;
+      font-weight:700;
+      line-height:1.3;
+    }
+    .cardText{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.3;
+    }
+    .row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .amount{
+      font-size:15px;
+      font-weight:700;
+      text-align:right;
+      white-space:nowrap;
+      color:var(--accent);
+    }
+    .shareFeedback{
+      margin: 0 2px;
+      color: var(--muted);
+      font-size:12px;
+      min-height: 16px;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="iconBtn" id="backLink" href="calendar.html" aria-label="Terug">
+        <svg class="iconSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6"></path>
+        </svg>
+      </a>
+      <h1 class="topTitle">Afspraak</h1>
+      <button class="iconBtn" id="shareBtn" type="button" aria-label="Delen">
+        <svg class="iconSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="18" cy="5" r="3"></circle>
+          <circle cx="6" cy="12" r="3"></circle>
+          <circle cx="18" cy="19" r="3"></circle>
+          <path d="M8.6 13.5l6.8 3.9"></path>
+          <path d="M15.4 6.6L8.6 10.5"></path>
+        </svg>
+      </button>
+    </header>
+
+    <section class="meta">
+      <p class="specialism" id="specialism">Cardioloog</p>
+      <p class="subline" id="dateTime">9 mrt · 09:00</p>
+      <p class="subline" id="location">Grand River Ziekenhuis</p>
+    </section>
+
+    <nav class="tabs" aria-label="Afspraaktabs">
+      <button class="tab active" type="button" data-tab="details" aria-current="page">Details</button>
+      <button class="tab" type="button" data-tab="documenten">Documenten</button>
+      <button class="tab" type="button" data-tab="medicatie">Medicatie</button>
+      <button class="tab" type="button" data-tab="facturen">Facturen</button>
+    </nav>
+
+    <div class="panelViewport">
+      <section class="panel active" id="panel-details" data-panel="details">
+        <section class="section">
+          <p class="detailText" id="detailText">Vervolgafspraak gepland over 6 maanden</p>
+        </section>
+
+        <section class="section">
+          <h2 class="sectionTitle">Documenten</h2>
+          <article class="card">
+            <p class="cardTitle">Bezoekverslag</p>
+            <p class="cardText" id="reportDate">9 mrt 2023</p>
+          </article>
+        </section>
+
+        <section class="section">
+          <h2 class="sectionTitle">Medicatie</h2>
+          <article class="card">
+            <p class="cardTitle">Atenolol</p>
+            <p class="cardText">50 mg · 1 tablet per dag</p>
+          </article>
+        </section>
+
+        <section class="section">
+          <h2 class="sectionTitle">Facturen</h2>
+          <article class="card">
+            <div class="row">
+              <div>
+                <p class="cardTitle">Cardiologisch consult</p>
+              </div>
+              <div class="amount">&euro;100,00</div>
+            </div>
+          </article>
+        </section>
+      </section>
+
+      <section class="panel" id="panel-documenten" data-panel="documenten">
+        <section class="section">
+          <h2 class="sectionTitle">Documenten</h2>
+          <article class="card">
+            <p class="cardTitle">Bezoekverslag</p>
+            <p class="cardText" id="docsDate">9 mrt 2023</p>
+          </article>
+        </section>
+      </section>
+
+      <section class="panel" id="panel-medicatie" data-panel="medicatie">
+        <section class="section">
+          <h2 class="sectionTitle">Medicatie</h2>
+          <article class="card">
+            <p class="cardTitle">Atenolol</p>
+            <p class="cardText">50 mg · 1 tablet per dag</p>
+          </article>
+        </section>
+      </section>
+
+      <section class="panel" id="panel-facturen" data-panel="facturen">
+        <section class="section">
+          <h2 class="sectionTitle">Facturen</h2>
+          <article class="card">
+            <div class="row">
+              <div>
+                <p class="cardTitle">Cardiologisch consult</p>
+              </div>
+              <div class="amount">&euro;100,00</div>
+            </div>
+          </article>
+        </section>
+      </section>
+    </div>
+
+    <p class="shareFeedback" id="shareFeedback"></p>
+  </main>
+
+  <script>
+    const p = new URLSearchParams(window.location.search);
+
+    function parseIsoDate(iso){
+      if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+      const [y, m, d] = iso.split("-").map(Number);
+      const dt = new Date(y, m - 1, d);
+      if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return null;
+      return dt;
+    }
+
+    function fmtDateShort(dateObj){
+      if (!dateObj) return "-";
+      return new Intl.DateTimeFormat("nl-NL", {
+        day: "numeric",
+        month: "short"
+      }).format(dateObj);
+    }
+
+    function formatDateTime(dateIso, time){
+      const d = parseIsoDate(dateIso);
+      const datePart = d ? fmtDateShort(d) : "-";
+      return `${datePart} · ${time || "-"}`;
+    }
+
+    const dateIso = p.get("date") || "";
+    const time = p.get("time") || "09:00";
+
+    const careType = p.get("careType") || p.get("department") || "Cardioloog";
+    const org = p.get("org") || p.get("hospital") || "Grand River Ziekenhuis";
+    const subject = p.get("subject") || p.get("reason") || "Vervolgafspraak gepland over 6 maanden";
+
+    document.getElementById("specialism").textContent = careType;
+    document.getElementById("dateTime").textContent = formatDateTime(dateIso, time);
+    document.getElementById("location").textContent = org;
+    document.getElementById("detailText").textContent = subject;
+
+    const reportDateObj = parseIsoDate(dateIso);
+    if (reportDateObj){
+      const formatted = new Intl.DateTimeFormat("nl-NL", {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      }).format(reportDateObj);
+      document.getElementById("reportDate").textContent = formatted;
+      document.getElementById("docsDate").textContent = formatted;
+    }
+
+    const backParams = new URLSearchParams();
+    const selected = p.get("selected");
+    const view = p.get("view");
+    if (selected) backParams.set("selected", selected);
+    if (view) backParams.set("view", view);
+
+    const backHref = backParams.toString()
+      ? `calendar.html?${backParams.toString()}`
+      : "calendar.html";
+    document.getElementById("backLink").setAttribute("href", backHref);
+
+    const shareFeedbackEl = document.getElementById("shareFeedback");
+    document.getElementById("shareBtn").addEventListener("click", async () => {
+      const shareData = {
+        title: "Afspraak",
+        text: `${careType} · ${formatDateTime(dateIso, time)} · ${org}`,
+        url: window.location.href
+      };
+
+      try {
+        if (navigator.share){
+          await navigator.share(shareData);
+          shareFeedbackEl.textContent = "";
+          return;
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText){
+          await navigator.clipboard.writeText(window.location.href);
+          shareFeedbackEl.textContent = "Link gekopieerd.";
+          return;
+        }
+        shareFeedbackEl.textContent = "Delen niet beschikbaar op dit apparaat.";
+      } catch {
+        shareFeedbackEl.textContent = "Delen geannuleerd.";
+      }
+    });
+
+    const tabs = Array.from(document.querySelectorAll(".tab"));
+    const panels = Array.from(document.querySelectorAll(".panel"));
+    function setActiveTab(tabKey){
+      for (const tab of tabs){
+        const isActive = tab.dataset.tab === tabKey;
+        tab.classList.toggle("active", isActive);
+        if (isActive) tab.setAttribute("aria-current", "page");
+        else tab.removeAttribute("aria-current");
+      }
+      for (const panel of panels){
+        panel.classList.toggle("active", panel.dataset.panel === tabKey);
+      }
+    }
+    for (const tab of tabs){
+      tab.addEventListener("click", () => setActiveTab(tab.dataset.tab));
+    }
+  </script>
+</body>
+</html>

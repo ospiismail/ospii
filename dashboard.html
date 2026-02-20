@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Dashboard</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --card:#fff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e2e8f0;
+      --primary:#2563eb;
+      --shadow:0 8px 22px rgba(15,23,42,0.05);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .app{min-height:100vh;max-width:540px;margin:0 auto;padding:12px 12px calc(18px + env(safe-area-inset-bottom));display:grid;gap:12px}
+    .top{display:grid;grid-template-columns:44px 1fr 44px;gap:10px;align-items:start;padding-top:calc(4px + env(safe-area-inset-top))}
+    .iconBtn{width:44px;height:44px;border:1px solid var(--border);border-radius:14px;background:#fff;color:#334155;display:grid;place-items:center;text-decoration:none;box-shadow:0 2px 8px rgba(15,23,42,.08)}
+    .title{margin:0;font-size:48px;line-height:1.02;letter-spacing:-.02em;font-weight:800}
+    .subtitle{margin:4px 0 0;font-size:13px;color:var(--muted)}
+    .plus{font-size:34px;line-height:1;transform:translateY(-1px);color:var(--primary)}
+    .ranges{display:flex;gap:8px}
+    .chip{border:1px solid var(--border);border-radius:999px;background:#fff;padding:8px 14px;font-size:16px;font-weight:700;color:#334155}
+    .chip.active{border-color:#bfdbfe;background:#eff6ff;color:#2563eb}
+    .card{border:1px solid var(--border);border-radius:20px;background:var(--card);box-shadow:var(--shadow);padding:14px;display:grid;gap:10px}
+    .row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .name{margin:0;font-size:20px;font-weight:760}
+    .value{margin:0;font-size:20px;font-weight:760;color:var(--primary)}
+    .chart{height:175px;border:1px solid #d8e2f2;border-radius:16px;background:#f4f8ff;padding:8px}
+    .note{margin:0;font-size:16px;color:#64748b;line-height:1.3}
+    svg{width:100%;height:100%}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="top">
+      <a class="iconBtn" href="app-home.html" aria-label="Terug">&#8249;</a>
+      <div>
+        <h1 class="title">Dashboard</h1>
+        <p class="subtitle">Overzicht van metingen door de tijd</p>
+      </div>
+      <button class="iconBtn" type="button" aria-label="Nieuwe metric"><span class="plus">+</span></button>
+    </header>
+
+    <div class="ranges">
+      <button class="chip" type="button">7d</button>
+      <button class="chip active" type="button">30d</button>
+      <button class="chip" type="button">6m</button>
+    </div>
+
+    <section class="card">
+      <div class="row"><p class="name">Gewicht</p><p class="value">74,8 kg</p></div>
+      <div class="chart">
+        <svg viewBox="0 0 320 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="8" y1="24" x2="312" y2="24" stroke="#dbe7f8"/>
+          <line x1="8" y1="56" x2="312" y2="56" stroke="#dbe7f8"/>
+          <line x1="8" y1="88" x2="312" y2="88" stroke="#dbe7f8"/>
+          <path d="M8 46 C58 48, 94 56, 130 60 C174 66, 208 74, 244 80 C272 84, 295 90, 312 94" stroke="#2563eb" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M8 46 C58 48, 94 56, 130 60 C174 66, 208 74, 244 80 C272 84, 295 90, 312 94 L312 136 L8 136 Z" fill="url(#g1)" opacity=".28"/>
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#60a5fa"/><stop offset="1" stop-color="#60a5fa" stop-opacity="0"/></linearGradient></defs>
+          <text x="286" y="142" fill="#64748b" font-size="14">30d</text>
+        </svg>
+      </div>
+      <p class="note">Daling van 1,6 kg in 8 weken.</p>
+    </section>
+
+    <section class="card">
+      <div class="row"><p class="name">Hartslag (rust)</p><p class="value">67 bpm</p></div>
+      <div class="chart">
+        <svg viewBox="0 0 320 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="8" y1="24" x2="312" y2="24" stroke="#dbe7f8"/>
+          <line x1="8" y1="56" x2="312" y2="56" stroke="#dbe7f8"/>
+          <line x1="8" y1="88" x2="312" y2="88" stroke="#dbe7f8"/>
+          <path d="M8 78 C52 72, 90 74, 130 76 C170 78, 210 82, 252 84 C276 85, 294 86, 312 87" stroke="#0ea5a8" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M8 78 C52 72, 90 74, 130 76 C170 78, 210 82, 252 84 C276 85, 294 86, 312 87 L312 136 L8 136 Z" fill="url(#g2)" opacity=".28"/>
+          <defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#2dd4bf"/><stop offset="1" stop-color="#2dd4bf" stop-opacity="0"/></linearGradient></defs>
+          <text x="286" y="142" fill="#64748b" font-size="14">30d</text>
+        </svg>
+      </div>
+      <p class="note">Stabiel patroon, lichte verbetering.</p>
+    </section>
+
+    <section class="card">
+      <div class="row"><p class="name">Bloeddruk</p><p class="value">124/79</p></div>
+      <div class="chart">
+        <svg viewBox="0 0 320 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="8" y1="24" x2="312" y2="24" stroke="#dbe7f8"/>
+          <line x1="8" y1="56" x2="312" y2="56" stroke="#dbe7f8"/>
+          <line x1="8" y1="88" x2="312" y2="88" stroke="#dbe7f8"/>
+          <path d="M8 78 C56 80, 94 83, 130 86 C178 88, 220 90, 260 93 C280 94, 297 95, 312 96" stroke="#6366f1" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M8 78 C56 80, 94 83, 130 86 C178 88, 220 90, 260 93 C280 94, 297 95, 312 96 L312 136 L8 136 Z" fill="url(#g3)" opacity=".26"/>
+          <defs><linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#818cf8"/><stop offset="1" stop-color="#818cf8" stop-opacity="0"/></linearGradient></defs>
+          <text x="286" y="142" fill="#64748b" font-size="14">30d</text>
+        </svg>
+      </div>
+      <p class="note">Gemiddelde onder controle de afgelopen maand.</p>
+    </section>
+  </main>
+</body>
+</html>
+

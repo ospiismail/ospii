@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Medicatie</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --surface:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e2e8f0;
+      --primary:#2563eb;
+      --barTrack:#e2e8f0;
+      --barFill:#3b82f6;
+      --shadow:0 8px 22px rgba(15,23,42,0.05);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .app{
+      min-height:100vh;
+      max-width:520px;
+      margin:0 auto;
+      padding:10px 12px calc(18px + env(safe-area-inset-bottom));
+      display:grid;
+      gap:14px;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:4;
+      padding-top:calc(4px + env(safe-area-inset-top));
+      background:rgba(248,250,252,0.92);
+      backdrop-filter:blur(8px);
+      display:grid;
+      grid-template-columns:42px 1fr 42px;
+      align-items:start;
+      gap:10px;
+    }
+    .backBtn,.addBtn{
+      width:42px;
+      height:42px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:#fff;
+      color:var(--text);
+      text-decoration:none;
+      box-shadow:0 1px 2px rgba(15,23,42,0.05);
+      font-size:20px;
+      line-height:1;
+      padding:0;
+    }
+    .addBtn{
+      border-color:#bfdbfe;
+      color:var(--primary);
+      font-size:28px;
+      font-weight:500;
+    }
+    .addBtn > span{
+      display:block;
+      line-height:1;
+      transform:translateY(1px);
+    }
+    .title{
+      margin:0;
+      font-size:22px;
+      font-weight:700;
+      letter-spacing:0.1px;
+    }
+    .subtitle{
+      margin:2px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+    .section{
+      display:grid;
+      gap:8px;
+    }
+    .sectionHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      padding:0 2px;
+    }
+    .sectionHead h2{
+      margin:0;
+      font-size:15px;
+      font-weight:700;
+      color:#1f2937;
+    }
+    .count{
+      font-size:11px;
+      color:#334155;
+      background:#eaf2ff;
+      border:1px solid #bfdbfe;
+      border-radius:999px;
+      min-width:22px;
+      height:22px;
+      padding:0 8px;
+      display:grid;
+      place-items:center;
+      font-weight:700;
+    }
+    .list{
+      margin:0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:10px;
+    }
+    .card{
+      border:1px solid var(--border);
+      border-radius:16px;
+      background:var(--surface);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .cardLink{
+      display:grid;
+      gap:8px;
+      padding:12px;
+      text-decoration:none;
+      color:inherit;
+    }
+    .card.past{
+      opacity:0.62;
+      filter:saturate(0.75);
+      box-shadow:none;
+    }
+    .line1{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:8px;
+    }
+    .name{
+      margin:0;
+      font-size:20px;
+      font-weight:700;
+      line-height:1.2;
+    }
+    .dose{
+      margin:0;
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.3;
+    }
+    .progressRow{
+      display:grid;
+      grid-template-columns:1fr auto;
+      align-items:center;
+      gap:10px;
+    }
+    .track{
+      width:100%;
+      height:22px;
+      border-radius:8px;
+      border:1px solid #cbd5e1;
+      background:var(--barTrack);
+      overflow:hidden;
+    }
+    .fill{
+      height:100%;
+      background:var(--barFill);
+    }
+    .leftTxt{
+      font-size:12px;
+      color:#334155;
+      white-space:nowrap;
+    }
+    .meta{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      padding-top:2px;
+      border-top:1px solid #eef2f7;
+    }
+    .meta p{
+      margin:0;
+      line-height:1.25;
+    }
+    .meta .k{
+      font-size:12px;
+      color:var(--muted);
+    }
+    .meta .v{
+      font-size:14px;
+      color:#1f2937;
+      font-weight:600;
+    }
+    .empty{
+      border:1px dashed var(--border);
+      border-radius:12px;
+      background:#fff;
+      color:var(--muted);
+      padding:12px;
+      font-size:14px;
+      text-align:center;
+    }
+    .modalBackdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.38);
+      display:grid;
+      align-items:end;
+      z-index:20;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 160ms ease;
+    }
+    .modalBackdrop.open{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .modalSheet{
+      background:#fff;
+      border-radius:16px 16px 0 0;
+      padding:10px;
+      max-width:520px;
+      width:100%;
+      margin:0 auto;
+      transform:translateY(100%);
+      transition:transform 160ms ease;
+      border-top:1px solid var(--border);
+    }
+    .modalBackdrop.open .modalSheet{
+      transform:translateY(0);
+    }
+    .sheetHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .sheetHeader h3{
+      margin:0;
+      font-size:15px;
+      font-weight:700;
+    }
+    .sheetClose{
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--text);
+      border-radius:8px;
+      font-size:13px;
+      font-weight:600;
+      padding:6px 8px;
+    }
+    .addForm{
+      display:grid;
+      gap:6px;
+    }
+    .formRow{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+    }
+    .field{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:8px 9px;
+      font:inherit;
+      font-size:13px;
+      color:var(--text);
+      background:#fff;
+    }
+    .sheetActions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+      margin-top:2px;
+    }
+    .btnGhost,.btnPrimary{
+      width:100%;
+      border-radius:8px;
+      padding:8px;
+      font-size:13px;
+      font-weight:600;
+    }
+    .btnGhost{
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--text);
+    }
+    .btnPrimary{
+      border:1px solid var(--primary);
+      background:var(--primary);
+      color:#fff;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="backBtn" href="app-home.html" aria-label="Terug">&#8249;</a>
+      <div>
+        <h1 class="title">Medicatie</h1>
+        <p class="subtitle">Huidig en eerder gebruikt</p>
+      </div>
+      <button class="addBtn" type="button" id="addBtn" aria-label="Medicatie toevoegen"><span aria-hidden="true">+</span></button>
+    </header>
+
+    <section class="section">
+      <div class="sectionHead">
+        <h2>Huidig</h2>
+        <span class="count" id="currentCount">0</span>
+      </div>
+      <ul class="list" id="currentList"></ul>
+      <p class="empty" id="currentEmpty">Geen huidige medicatie.</p>
+    </section>
+
+    <section class="section">
+      <div class="sectionHead">
+        <h2>Eerder gebruikt</h2>
+        <span class="count" id="pastCount">0</span>
+      </div>
+      <ul class="list" id="pastList"></ul>
+      <p class="empty" id="pastEmpty">Geen eerdere medicatie.</p>
+    </section>
+  </main>
+  <div class="modalBackdrop" id="addModal" aria-hidden="true">
+    <div class="modalSheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <div class="sheetHeader">
+        <h3 id="sheetTitle">Medicatie toevoegen</h3>
+        <button class="sheetClose" id="closeAddBtn" type="button">Sluiten</button>
+      </div>
+      <form class="addForm" id="addForm">
+        <div class="formRow">
+          <input class="field" id="fieldName" type="text" placeholder="Naam medicijn" required />
+          <select class="field" id="fieldStatus">
+            <option value="current">Huidig</option>
+            <option value="past">Eerder gebruikt</option>
+          </select>
+        </div>
+        <div class="formRow">
+          <input class="field" id="fieldSchedule" type="text" placeholder="Schema (bijv. 1x daags · 1 tablet)" />
+          <input class="field" id="fieldDosage" type="text" placeholder="Dosering (bijv. 10 mg tablet)" />
+        </div>
+        <div class="formRow">
+          <input class="field" id="fieldUnitsLeft" type="number" min="0" placeholder="Units over" />
+          <input class="field" id="fieldTotalUnits" type="number" min="1" placeholder="Totaal units" />
+        </div>
+        <div class="formRow">
+          <input class="field" id="fieldPharmacy" type="text" placeholder="Apotheek" />
+          <input class="field" id="fieldPhone" type="text" placeholder="Telefoon" />
+        </div>
+        <div class="formRow">
+          <input class="field" id="fieldPrescriber" type="text" placeholder="Voorschrijver" />
+          <input class="field" id="fieldIndication" type="text" placeholder="Indicatie" />
+        </div>
+        <div class="formRow">
+          <input class="field" id="fieldType" type="text" placeholder="Type (bijv. Tablet)" />
+          <input class="field" id="fieldStartDate" type="text" placeholder="Startdatum (bijv. 10 jan 2024)" />
+        </div>
+        <input class="field" id="fieldNotes" type="text" placeholder="Notities (optioneel)" />
+        <input class="field" id="fieldLeaflet" type="text" placeholder="Bijsluiter-bestand (optioneel)" />
+        <div class="sheetActions">
+          <button class="btnGhost" id="cancelAddBtn" type="button">Annuleren</button>
+          <button class="btnPrimary" type="submit">Opslaan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "health.medications.v1";
+    const DEFAULT_ITEMS = [
+      { id:"m1", name:"Rivaroxaban", schedule:"1x daags · 1 tablet", unitsLeft:12, totalUnits:20, pharmacy:"Halbert's Pharmacy", phone:"(555) 123-4567", prescriber:"Dr. Smith", indication:"Trombose", dosage:"10 mg tablet", type:"Tablet", startDate:"10 jan 2024", notes:"Na ontbijt innemen", leaflet:"Rivaroxaban_Bijsluiter.pdf", status:"current" },
+      { id:"m2", name:"Omeprazol", schedule:"1x daags · 1 capsule", unitsLeft:21, totalUnits:30, pharmacy:"Halbert's Pharmacy", phone:"(555) 123-4567", prescriber:"Dr. Lee", indication:"Reflux", dosage:"20 mg capsule", type:"Capsule", startDate:"3 mrt 2024", notes:"Voor ontbijt innemen", leaflet:"Omeprazol_Bijsluiter.pdf", status:"current" },
+      { id:"m3", name:"Diclofenac", schedule:"2x daags · 1 tablet", unitsLeft:0, totalUnits:20, pharmacy:"Stadsapotheek", phone:"(555) 989-1122", prescriber:"Dr. Pat", indication:"Pijn", dosage:"25 mg tablet", type:"Tablet", startDate:"12 okt 2023", notes:"Alleen bij hevige pijn", leaflet:"Diclofenac_Bijsluiter.pdf", status:"past" },
+      { id:"m4", name:"Naproxen", schedule:"2x daags · 1 tablet", unitsLeft:0, totalUnits:30, pharmacy:"Stadsapotheek", phone:"(555) 989-1122", prescriber:"Dr. Pat", indication:"Ontsteking", dosage:"250 mg tablet", type:"Tablet", startDate:"7 nov 2023", notes:"Met voldoende water innemen", leaflet:"Naproxen_Bijsluiter.pdf", status:"past" }
+    ];
+
+    const currentListEl = document.getElementById("currentList");
+    const pastListEl = document.getElementById("pastList");
+    const currentEmptyEl = document.getElementById("currentEmpty");
+    const pastEmptyEl = document.getElementById("pastEmpty");
+    const currentCountEl = document.getElementById("currentCount");
+    const pastCountEl = document.getElementById("pastCount");
+    const addBtnEl = document.getElementById("addBtn");
+    const addModalEl = document.getElementById("addModal");
+    const closeAddBtnEl = document.getElementById("closeAddBtn");
+    const cancelAddBtnEl = document.getElementById("cancelAddBtn");
+    const addFormEl = document.getElementById("addForm");
+    const fieldNameEl = document.getElementById("fieldName");
+    const fieldStatusEl = document.getElementById("fieldStatus");
+    const fieldScheduleEl = document.getElementById("fieldSchedule");
+    const fieldDosageEl = document.getElementById("fieldDosage");
+    const fieldUnitsLeftEl = document.getElementById("fieldUnitsLeft");
+    const fieldTotalUnitsEl = document.getElementById("fieldTotalUnits");
+    const fieldPharmacyEl = document.getElementById("fieldPharmacy");
+    const fieldPhoneEl = document.getElementById("fieldPhone");
+    const fieldPrescriberEl = document.getElementById("fieldPrescriber");
+    const fieldIndicationEl = document.getElementById("fieldIndication");
+    const fieldTypeEl = document.getElementById("fieldType");
+    const fieldStartDateEl = document.getElementById("fieldStartDate");
+    const fieldNotesEl = document.getElementById("fieldNotes");
+    const fieldLeafletEl = document.getElementById("fieldLeaflet");
+
+    function esc(v){
+      return String(v || "").replace(/[&<>"']/g, (ch) => (
+        ch === "&" ? "&amp;" :
+        ch === "<" ? "&lt;" :
+        ch === ">" ? "&gt;" :
+        ch === '"' ? "&quot;" : "&#39;"
+      ));
+    }
+    function clampPct(num){
+      const n = Number(num);
+      if (!Number.isFinite(n)) return 0;
+      return Math.max(0, Math.min(100, n));
+    }
+    function normalize(raw){
+      const item = raw || {};
+      const total = Math.max(1, Number(item.totalUnits) || 1);
+      const left = Math.max(0, Number(item.unitsLeft) || 0);
+      return {
+        id: item.id || `m-${Math.random().toString(36).slice(2, 9)}`,
+        name: item.name || "Onbekend medicijn",
+        schedule: item.schedule || "-",
+        unitsLeft: left,
+        totalUnits: total,
+        pharmacy: item.pharmacy || "-",
+        prescriber: item.prescriber || "-",
+        indication: item.indication || "-",
+        dosage: item.dosage || "-",
+        phone: item.phone || "-",
+        type: item.type || "Tablet",
+        startDate: item.startDate || "-",
+        notes: item.notes || "",
+        leaflet: item.leaflet || "Bijsluiter.pdf",
+        status: item.status === "past" ? "past" : "current"
+      };
+    }
+    function loadItems(){
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (!raw) return DEFAULT_ITEMS.map(normalize);
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return DEFAULT_ITEMS.map(normalize);
+        return parsed.map(normalize);
+      } catch {
+        return DEFAULT_ITEMS.map(normalize);
+      }
+    }
+    function saveItems(items){
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items.map(normalize)));
+      } catch {
+        // Keep UI usable when storage is blocked.
+      }
+    }
+    function openAddModal(){
+      addModalEl.classList.add("open");
+      addModalEl.setAttribute("aria-hidden", "false");
+      window.setTimeout(() => fieldNameEl.focus(), 0);
+    }
+    function closeAddModal(){
+      addModalEl.classList.remove("open");
+      addModalEl.setAttribute("aria-hidden", "true");
+    }
+    function renderCard(item, past){
+      const pct = clampPct((item.unitsLeft / Math.max(1, item.totalUnits)) * 100);
+      const liClass = past ? "card past" : "card";
+      const q = new URLSearchParams({
+        id: item.id,
+        name: item.name,
+        schedule: item.schedule,
+        unitsLeft: String(item.unitsLeft),
+        totalUnits: String(item.totalUnits),
+        pharmacy: item.pharmacy,
+        phone: item.phone,
+        prescriber: item.prescriber,
+        indication: item.indication,
+        dosage: item.dosage,
+        type: item.type,
+        startDate: item.startDate,
+        notes: item.notes,
+        leaflet: item.leaflet,
+        status: item.status
+      }).toString();
+      return `<li class="${liClass}">
+        <a class="cardLink" href="medicatie-detail.html?${q}">
+        <div class="line1">
+          <p class="name">${esc(item.name)}</p>
+        </div>
+        <p class="dose">${esc(item.schedule)}</p>
+        <div class="progressRow">
+          <div class="track"><div class="fill" style="width:${pct}%"></div></div>
+          <span class="leftTxt">${esc(item.unitsLeft)} ${item.unitsLeft === 1 ? "unit" : "units"} over</span>
+        </div>
+        <div class="meta">
+          <div>
+            <p class="v">${esc(item.pharmacy)}</p>
+            <p class="k">${esc(item.dosage)}</p>
+          </div>
+          <div style="text-align:right">
+            <p class="v">${esc(item.prescriber)}</p>
+            <p class="k">${esc(item.indication)}</p>
+          </div>
+        </div>
+        </a>
+      </li>`;
+    }
+    function render(){
+      const items = loadItems();
+      const current = items.filter((i) => i.status === "current");
+      const past = items.filter((i) => i.status === "past");
+
+      currentListEl.innerHTML = current.map((i) => renderCard(i, false)).join("");
+      pastListEl.innerHTML = past.map((i) => renderCard(i, true)).join("");
+
+      currentEmptyEl.hidden = current.length > 0;
+      pastEmptyEl.hidden = past.length > 0;
+      currentCountEl.textContent = String(current.length);
+      pastCountEl.textContent = String(past.length);
+    }
+
+    addBtnEl.addEventListener("click", openAddModal);
+    closeAddBtnEl.addEventListener("click", closeAddModal);
+    cancelAddBtnEl.addEventListener("click", closeAddModal);
+    addModalEl.addEventListener("click", (event) => {
+      if (event.target === addModalEl) closeAddModal();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && addModalEl.classList.contains("open")) closeAddModal();
+    });
+    addFormEl.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const name = fieldNameEl.value.trim();
+      if (!name) return;
+
+      const newItem = normalize({
+        id: `m-${Date.now().toString(36)}`,
+        name,
+        status: fieldStatusEl.value || "current",
+        schedule: fieldScheduleEl.value.trim(),
+        dosage: fieldDosageEl.value.trim(),
+        unitsLeft: fieldUnitsLeftEl.value,
+        totalUnits: fieldTotalUnitsEl.value,
+        pharmacy: fieldPharmacyEl.value.trim(),
+        phone: fieldPhoneEl.value.trim(),
+        prescriber: fieldPrescriberEl.value.trim(),
+        indication: fieldIndicationEl.value.trim(),
+        type: fieldTypeEl.value.trim(),
+        startDate: fieldStartDateEl.value.trim(),
+        notes: fieldNotesEl.value.trim(),
+        leaflet: fieldLeafletEl.value.trim()
+      });
+
+      const items = loadItems();
+      items.push(newItem);
+      saveItems(items);
+
+      fieldNameEl.value = "";
+      fieldStatusEl.value = "current";
+      fieldScheduleEl.value = "";
+      fieldDosageEl.value = "";
+      fieldUnitsLeftEl.value = "";
+      fieldTotalUnitsEl.value = "";
+      fieldPharmacyEl.value = "";
+      fieldPhoneEl.value = "";
+      fieldPrescriberEl.value = "";
+      fieldIndicationEl.value = "";
+      fieldTypeEl.value = "";
+      fieldStartDateEl.value = "";
+      fieldNotesEl.value = "";
+      fieldLeafletEl.value = "";
+      closeAddModal();
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
+
+
+

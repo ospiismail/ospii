@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Mijn zorgteam</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --surface:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --soft:#f1f5f9;
+      --primary:#2563eb;
+      --shadow:0 8px 22px rgba(15,23,42,0.05);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .app{
+      min-height:100vh;
+      max-width:520px;
+      margin:0 auto;
+      padding:10px 12px calc(18px + env(safe-area-inset-bottom));
+      display:grid;
+      gap:14px;
+      align-content:start;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:4;
+      background:rgba(248,250,252,0.92);
+      backdrop-filter:blur(8px);
+      display:grid;
+      grid-template-columns:42px 1fr 42px;
+      gap:10px;
+      align-items:start;
+      padding-top:calc(4px + env(safe-area-inset-top));
+    }
+    .backBtn,.addBtn{
+      width:42px;
+      height:42px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:#fff;
+      color:var(--text);
+      text-decoration:none;
+      font-size:20px;
+      line-height:1;
+      padding:0;
+      box-shadow:0 1px 2px rgba(15,23,42,0.05);
+      cursor:pointer;
+    }
+    .addBtn{
+      font-size:28px;
+      font-weight:500;
+      color:var(--primary);
+      border-color:#bfdbfe;
+      background:#eff6ff;
+    }
+    .addBtn > span{
+      display:block;
+      line-height:1;
+      transform:translateY(1px);
+    }
+    .title{
+      margin:0;
+      font-size:22px;
+      line-height:1.2;
+      font-weight:700;
+      letter-spacing:0.1px;
+    }
+    .subtitle{
+      margin:2px 0 0;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .tabs{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      background:#eef2f7;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:4px;
+      gap:4px;
+    }
+    .tab{
+      border:0;
+      background:transparent;
+      border-radius:8px;
+      padding:8px 6px;
+      font-size:13px;
+      font-weight:600;
+      color:var(--muted);
+      cursor:pointer;
+    }
+    .tab.active{
+      background:#fff;
+      color:var(--text);
+      box-shadow:0 1px 2px rgba(15,23,42,0.08);
+    }
+    .list{
+      margin:0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:10px;
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--surface);
+      padding:12px;
+      box-shadow:var(--shadow);
+      display:grid;
+      gap:6px;
+    }
+    .card.former{
+      opacity:0.72;
+      box-shadow:none;
+      border-color:#e8edf5;
+      background:#fcfdff;
+    }
+    .row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .name{
+      margin:0;
+      font-size:17px;
+      line-height:1.3;
+      font-weight:700;
+    }
+    .role{
+      margin:0;
+      font-size:13px;
+      line-height:1.35;
+      color:var(--muted);
+    }
+    .meta{
+      margin:0;
+      font-size:13px;
+      line-height:1.35;
+      color:#334155;
+    }
+    .badge{
+      border:1px solid #bfdbfe;
+      background:#eff6ff;
+      color:#1d4ed8;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:700;
+      padding:3px 8px;
+      white-space:nowrap;
+      height:fit-content;
+    }
+    .badge.former{
+      border-color:#d1d5db;
+      background:#f8fafc;
+      color:#64748b;
+    }
+    .empty{
+      border:1px dashed #d1d5db;
+      border-radius:12px;
+      background:#fff;
+      color:var(--muted);
+      padding:12px;
+      font-size:14px;
+      text-align:center;
+    }
+    .share{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:12px;
+      display:grid;
+      gap:10px;
+    }
+    .shareTitle{
+      margin:0;
+      font-size:15px;
+      font-weight:700;
+      line-height:1.3;
+    }
+    .shareText{
+      margin:0;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .shareActions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+    .shareBtn{
+      border-radius:10px;
+      border:1px solid #bfdbfe;
+      background:#eff6ff;
+      color:#1d4ed8;
+      font-size:13px;
+      font-weight:600;
+      padding:9px 8px;
+      cursor:pointer;
+    }
+    .shareBtn.secondary{
+      border-color:#d1d5db;
+      background:#fff;
+      color:#334155;
+    }
+    .modalBackdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.35);
+      display:grid;
+      align-items:end;
+      z-index:20;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 160ms ease;
+    }
+    .modalBackdrop.open{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .modalSheet{
+      background:#fff;
+      border-top:1px solid var(--line);
+      border-radius:16px 16px 0 0;
+      max-width:520px;
+      width:100%;
+      margin:0 auto;
+      padding:10px;
+      transform:translateY(100%);
+      transition:transform 160ms ease;
+      display:grid;
+      gap:8px;
+    }
+    .modalBackdrop.open .modalSheet{
+      transform:translateY(0);
+    }
+    .sheetHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    }
+    .sheetTitle{
+      margin:0;
+      font-size:15px;
+      font-weight:700;
+    }
+    .sheetClose{
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:#fff;
+      color:var(--text);
+      padding:6px 8px;
+      font-size:13px;
+      font-weight:600;
+      cursor:pointer;
+    }
+    .form{
+      display:grid;
+      gap:6px;
+    }
+    .row2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+    }
+    .field{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:8px 9px;
+      font:inherit;
+      font-size:13px;
+      color:var(--text);
+      background:#fff;
+    }
+    .hint{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+      margin-top:2px;
+    }
+    .btnGhost,.btnPrimary{
+      border-radius:8px;
+      padding:8px;
+      font-size:13px;
+      font-weight:600;
+      cursor:pointer;
+    }
+    .btnGhost{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+    }
+    .btnPrimary{
+      border:1px solid var(--primary);
+      background:var(--primary);
+      color:#fff;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="backBtn" href="app-home.html" aria-label="Terug">&#8249;</a>
+      <div>
+        <h1 class="title">Mijn zorgteam</h1>
+        <p class="subtitle">Professionals en mantelzorgers</p>
+      </div>
+      <button class="addBtn" id="openInviteBtn" type="button" aria-label="Toegang delen"><span aria-hidden="true">+</span></button>
+    </header>
+
+    <nav class="tabs" aria-label="Zorgteam-tabbladen">
+      <button class="tab active" type="button" data-tab="professionals">Professionals</button>
+      <button class="tab" type="button" data-tab="mantelzorgers">Mantelzorgers</button>
+      <button class="tab" type="button" data-tab="toegang">Toegang delen</button>
+    </nav>
+
+    <ul class="list" id="teamList"></ul>
+    <p class="empty" id="emptyMsg">Nog geen personen in deze groep.</p>
+  </main>
+
+  <div class="modalBackdrop" id="inviteModal" aria-hidden="true">
+    <div class="modalSheet" role="dialog" aria-modal="true" aria-labelledby="inviteTitle">
+      <div class="sheetHead">
+        <h3 class="sheetTitle" id="inviteTitle">Toegang delen</h3>
+        <button class="sheetClose" id="closeInviteBtn" type="button">Sluiten</button>
+      </div>
+      <form class="form" id="inviteForm">
+        <div class="row2">
+          <select class="field" id="fieldGroup">
+            <option value="mantelzorgers">Mantelzorger</option>
+            <option value="professionals">Professional</option>
+          </select>
+          <input class="field" id="fieldName" type="text" placeholder="Naam" required />
+        </div>
+        <div class="row2">
+          <input class="field" id="fieldRole" type="text" placeholder="Rol (bijv. Partner / Cardioloog)" />
+          <input class="field" id="fieldOrg" type="text" placeholder="Organisatie" />
+        </div>
+        <input class="field" id="fieldContact" type="text" placeholder="Contact (e-mail of telefoon)" />
+        <p class="hint" id="permissionHint">Toegang: Kan bewerken</p>
+        <div class="actions">
+          <button class="btnGhost" id="cancelInviteBtn" type="button">Annuleren</button>
+          <button class="btnPrimary" type="submit">Uitnodigen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "health.careteam.v1";
+    const DEFAULT_TEAM = [
+      { id:"p1", group:"professionals", status:"active", name:"Dr. E.G. van Dijk", role:"Cardioloog", org:"OLVG", contact:"Polikliniek cardiologie - 020 599 9111" },
+      { id:"p2", group:"professionals", status:"active", name:"Drs. Bakker", role:"Tandarts", org:"Tandartspraktijk Centrum", contact:"Balie - 010 412 3344" },
+      { id:"p3", group:"professionals", status:"active", name:"Mw. Jansen", role:"Fysiotherapeut", org:"FysioPlus Rotterdam", contact:"Receptie - 010 622 9000" },
+      { id:"p4", group:"professionals", status:"former", name:"Dr. Smit", role:"Huisarts", org:"Huisartsenpraktijk West", contact:"Praktijklijn - 010 455 7788" },
+      { id:"p5", group:"professionals", status:"former", name:"Dr. Lee", role:"Internist", org:"Erasmus MC", contact:"Polikliniek interne - 010 704 0704" },
+      { id:"m1", group:"mantelzorgers", name:"Sanne de Vries", role:"Partner", org:"Mantelzorger", contact:"Mobiel - 06 12345678" },
+      { id:"m2", group:"mantelzorgers", name:"Jan Jansen", role:"Broer", org:"Mantelzorger", contact:"Mobiel - 06 87654321" }
+    ];
+
+    const tabs = Array.from(document.querySelectorAll(".tab"));
+    const listEl = document.getElementById("teamList");
+    const emptyEl = document.getElementById("emptyMsg");
+    const openInviteBtnEl = document.getElementById("openInviteBtn");
+    const inviteModalEl = document.getElementById("inviteModal");
+    const closeInviteBtnEl = document.getElementById("closeInviteBtn");
+    const cancelInviteBtnEl = document.getElementById("cancelInviteBtn");
+    const inviteFormEl = document.getElementById("inviteForm");
+    const fieldGroupEl = document.getElementById("fieldGroup");
+    const fieldNameEl = document.getElementById("fieldName");
+    const fieldRoleEl = document.getElementById("fieldRole");
+    const fieldOrgEl = document.getElementById("fieldOrg");
+    const fieldContactEl = document.getElementById("fieldContact");
+    const permissionHintEl = document.getElementById("permissionHint");
+    let activeTab = "professionals";
+
+    function esc(v){
+      return String(v || "").replace(/[&<>"']/g, (ch) => (
+        ch === "&" ? "&amp;" :
+        ch === "<" ? "&lt;" :
+        ch === ">" ? "&gt;" :
+        ch === '"' ? "&quot;" : "&#39;"
+      ));
+    }
+    function normalize(item){
+      const i = item || {};
+      return {
+        id: i.id || `ct-${Math.random().toString(36).slice(2,9)}`,
+        group: i.group === "mantelzorgers" ? "mantelzorgers" : "professionals",
+        status: i.status === "former" ? "former" : "active",
+        permission: i.group === "mantelzorgers" ? "edit" : "view",
+        name: i.name || "Onbekend",
+        role: i.role || "-",
+        org: i.org || "-",
+        contact: i.contact || "-"
+      };
+    }
+    function loadTeam(){
+      try{
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (!raw) return DEFAULT_TEAM.map(normalize);
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return DEFAULT_TEAM.map(normalize);
+        return parsed.map(normalize);
+      } catch {
+        return DEFAULT_TEAM.map(normalize);
+      }
+    }
+    function renderCard(person){
+      const isFormerProfessional = person.group === "professionals" && person.status === "former";
+      const badge = person.group === "professionals"
+        ? (isFormerProfessional ? "Niet in behandeling" : "In behandeling")
+        : "Mantelzorger";
+      const permLabel = person.permission === "edit" ? "Kan bewerken" : "Alleen bekijken";
+      const badgeClass = isFormerProfessional ? "badge former" : "badge";
+      const cardClass = isFormerProfessional ? "card former" : "card";
+      return `<li class="${cardClass}">
+        <div class="row">
+          <p class="name">${esc(person.name)}</p>
+          <span class="${badgeClass}">${badge}</span>
+        </div>
+        <p class="role">${esc(person.role)}</p>
+        <p class="meta">${esc(person.org)}</p>
+        <p class="meta">${esc(person.contact)}</p>
+        <p class="meta">Toegang: ${permLabel}</p>
+      </li>`;
+    }
+    function saveTeam(items){
+      try{
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items.map(normalize)));
+      } catch {}
+    }
+    function syncPermissionHint(){
+      permissionHintEl.textContent = fieldGroupEl.value === "professionals"
+        ? "Toegang: Alleen bekijken"
+        : "Toegang: Kan bewerken";
+    }
+    function openInvite(group){
+      fieldGroupEl.value = group === "professionals" ? "professionals" : "mantelzorgers";
+      fieldNameEl.value = "";
+      fieldRoleEl.value = "";
+      fieldOrgEl.value = "";
+      fieldContactEl.value = "";
+      syncPermissionHint();
+      inviteModalEl.classList.add("open");
+      inviteModalEl.setAttribute("aria-hidden", "false");
+      window.setTimeout(() => fieldNameEl.focus(), 0);
+    }
+    function closeInvite(){
+      inviteModalEl.classList.remove("open");
+      inviteModalEl.setAttribute("aria-hidden", "true");
+    }
+    function render(){
+      if (activeTab === "toegang"){
+        listEl.innerHTML = `<li class="share">
+          <h2 class="shareTitle">Toegang delen</h2>
+          <p class="shareText">Mantelzorgers kunnen bewerken. Professionals krijgen alleen kijktoegang.</p>
+          <div class="shareActions">
+            <button class="shareBtn" type="button" data-action="invite-caregiver">Deel met mantelzorger</button>
+            <button class="shareBtn secondary" type="button" data-action="invite-professional">Deel met professional</button>
+          </div>
+        </li>`;
+        emptyEl.hidden = true;
+        return;
+      }
+
+      const people = loadTeam()
+        .filter((p) => p.group === activeTab)
+        .sort((a,b) => {
+          if (a.group === "professionals" && b.group === "professionals" && a.status !== b.status){
+            return a.status === "active" ? -1 : 1;
+          }
+          return a.name.localeCompare(b.name, "nl-NL");
+        });
+      listEl.innerHTML = people.map(renderCard).join("");
+      emptyEl.hidden = people.length > 0;
+    }
+    function setTab(tab){
+      activeTab = tab;
+      for (const t of tabs){
+        t.classList.toggle("active", t.dataset.tab === tab);
+      }
+      render();
+    }
+    for (const t of tabs){
+      t.addEventListener("click", () => setTab(t.dataset.tab));
+    }
+    listEl.addEventListener("click", (event) => {
+      const btn = event.target.closest("button[data-action]");
+      if (!btn) return;
+      if (btn.dataset.action === "invite-caregiver"){
+        openInvite("mantelzorgers");
+      } else if (btn.dataset.action === "invite-professional"){
+        openInvite("professionals");
+      }
+    });
+    fieldGroupEl.addEventListener("change", syncPermissionHint);
+    openInviteBtnEl.addEventListener("click", () => openInvite(activeTab));
+    closeInviteBtnEl.addEventListener("click", closeInvite);
+    cancelInviteBtnEl.addEventListener("click", closeInvite);
+    inviteModalEl.addEventListener("click", (event) => {
+      if (event.target === inviteModalEl) closeInvite();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && inviteModalEl.classList.contains("open")) closeInvite();
+    });
+    inviteFormEl.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const name = fieldNameEl.value.trim();
+      if (!name) return;
+      const group = fieldGroupEl.value === "professionals" ? "professionals" : "mantelzorgers";
+      const items = loadTeam();
+      items.push(normalize({
+        id:`ct-${Date.now().toString(36)}`,
+        group,
+        status:"active",
+        name,
+        role: fieldRoleEl.value.trim() || (group === "professionals" ? "Zorgverlener" : "Mantelzorger"),
+        org: fieldOrgEl.value.trim() || (group === "professionals" ? "Onbekende organisatie" : "Mantelzorger"),
+        contact: fieldContactEl.value.trim() || "-",
+        permission: group === "professionals" ? "view" : "edit"
+      }));
+      saveTeam(items);
+      closeInvite();
+      setTab(group);
+    });
+
+    render();
+  </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Stel je vraag</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --surface:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --primary:#2563eb;
+      --assistant:#eff6ff;
+      --user:#f1f5f9;
+      --shadow:0 8px 22px rgba(15,23,42,0.05);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .app{
+      min-height:100vh;
+      max-width:520px;
+      margin:0 auto;
+      padding:10px 12px calc(14px + env(safe-area-inset-bottom));
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:10px;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:4;
+      padding-top:calc(4px + env(safe-area-inset-top));
+      background:rgba(248,250,252,0.92);
+      backdrop-filter:blur(8px);
+      display:grid;
+      grid-template-columns:42px 1fr 42px;
+      align-items:start;
+      gap:10px;
+    }
+    .backBtn{
+      width:42px;
+      height:42px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:#fff;
+      color:var(--text);
+      text-decoration:none;
+      box-shadow:0 1px 2px rgba(15,23,42,0.05);
+      font-size:20px;
+      line-height:1;
+      padding:0;
+    }
+    .title{
+      margin:0;
+      font-size:22px;
+      line-height:1.2;
+      font-weight:700;
+      letter-spacing:0.1px;
+    }
+    .subtitle{
+      margin:2px 0 0;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .notice{
+      border:1px solid #bfdbfe;
+      border-radius:12px;
+      background:#eff6ff;
+      color:#1e3a8a;
+      font-size:12px;
+      line-height:1.35;
+      padding:10px;
+    }
+    .chat{
+      min-height:0;
+      overflow:auto;
+      display:grid;
+      gap:8px;
+      align-content:start;
+      padding-right:2px;
+    }
+    .bubble{
+      max-width:88%;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      font-size:13px;
+      line-height:1.4;
+      box-shadow:var(--shadow);
+      word-break:break-word;
+    }
+    .bubble.assistant{
+      background:var(--assistant);
+      justify-self:start;
+      border-color:#bfdbfe;
+    }
+    .bubble.user{
+      background:var(--user);
+      justify-self:end;
+    }
+    .suggestions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin:2px 0 0;
+    }
+    .chip{
+      border:1px solid var(--line);
+      background:#fff;
+      color:#334155;
+      border-radius:999px;
+      font-size:12px;
+      padding:5px 9px;
+    }
+    .composer{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      padding:8px;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:8px;
+      align-items:center;
+    }
+    .input{
+      border:0;
+      outline:none;
+      font:inherit;
+      font-size:14px;
+      color:var(--text);
+      background:transparent;
+    }
+    .sendBtn{
+      border:1px solid var(--primary);
+      background:var(--primary);
+      color:#fff;
+      border-radius:10px;
+      font-size:13px;
+      font-weight:600;
+      padding:8px 11px;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="backBtn" href="app-home.html" aria-label="Terug">&#8249;</a>
+      <div>
+        <h1 class="title">Stel je vraag</h1>
+        <p class="subtitle">AI-zorgassistent (mockup)</p>
+      </div>
+      <div></div>
+    </header>
+
+    <p class="notice">Deze chat is een mockup. Antwoorden zijn voorbeelden en vervangen geen medisch advies van je arts.</p>
+
+    <section class="chat">
+      <div class="bubble assistant">
+        Je kunt mij vragen stellen over je zorg en gezondheid op basis van je gegevens in deze omgeving.
+      </div>
+      <div class="bubble user">
+        Ik heb de laatste dagen last van oedeem in mijn enkels.
+      </div>
+      <div class="bubble assistant">
+        Dit kan passen bij vochtophoping en kan in sommige situaties samenhangen met medicatie of hart-/nierbelasting. In jouw dossier zie ik o.a. cardiovasculaire controles. Neem voor de zekerheid contact op met je arts, zeker als je benauwd bent of snelle toename van zwelling merkt.
+      </div>
+      <div class="bubble assistant">
+        Wil je dat ik een samenvatting maak die je kunt bespreken bij je volgende afspraak?
+      </div>
+
+      <div class="suggestions">
+        <span class="chip">Kan dit door medicatie komen?</span>
+        <span class="chip">Welke alarmsignalen zijn belangrijk?</span>
+        <span class="chip">Maak een samenvatting voor mijn arts</span>
+      </div>
+    </section>
+
+    <div class="composer">
+      <input class="input" type="text" value="Typ hier je vraag..." readonly />
+      <button class="sendBtn" type="button">Verstuur</button>
+    </div>
+  </main>
+</body>
+</html>
+
+
+
