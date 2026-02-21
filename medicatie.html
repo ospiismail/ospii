@@ -1,8 +1,8 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover" />
   <title>Medicatie</title>
   <style>
     :root{
@@ -345,7 +345,7 @@
           </select>
         </div>
         <div class="formRow">
-          <input class="field" id="fieldSchedule" type="text" placeholder="Schema (bijv. 1x daags · 1 tablet)" />
+          <input class="field" id="fieldSchedule" type="text" placeholder="Schema (bijv. 1x daags Â· 1 tablet)" />
           <input class="field" id="fieldDosage" type="text" placeholder="Dosering (bijv. 10 mg tablet)" />
         </div>
         <div class="formRow">
@@ -377,10 +377,10 @@
   <script>
     const STORAGE_KEY = "health.medications.v1";
     const DEFAULT_ITEMS = [
-      { id:"m1", name:"Rivaroxaban", schedule:"1x daags · 1 tablet", unitsLeft:12, totalUnits:20, pharmacy:"Halbert's Pharmacy", phone:"(555) 123-4567", prescriber:"Dr. Smith", indication:"Trombose", dosage:"10 mg tablet", type:"Tablet", startDate:"10 jan 2024", notes:"Na ontbijt innemen", leaflet:"Rivaroxaban_Bijsluiter.pdf", status:"current" },
-      { id:"m2", name:"Omeprazol", schedule:"1x daags · 1 capsule", unitsLeft:21, totalUnits:30, pharmacy:"Halbert's Pharmacy", phone:"(555) 123-4567", prescriber:"Dr. Lee", indication:"Reflux", dosage:"20 mg capsule", type:"Capsule", startDate:"3 mrt 2024", notes:"Voor ontbijt innemen", leaflet:"Omeprazol_Bijsluiter.pdf", status:"current" },
-      { id:"m3", name:"Diclofenac", schedule:"2x daags · 1 tablet", unitsLeft:0, totalUnits:20, pharmacy:"Stadsapotheek", phone:"(555) 989-1122", prescriber:"Dr. Pat", indication:"Pijn", dosage:"25 mg tablet", type:"Tablet", startDate:"12 okt 2023", notes:"Alleen bij hevige pijn", leaflet:"Diclofenac_Bijsluiter.pdf", status:"past" },
-      { id:"m4", name:"Naproxen", schedule:"2x daags · 1 tablet", unitsLeft:0, totalUnits:30, pharmacy:"Stadsapotheek", phone:"(555) 989-1122", prescriber:"Dr. Pat", indication:"Ontsteking", dosage:"250 mg tablet", type:"Tablet", startDate:"7 nov 2023", notes:"Met voldoende water innemen", leaflet:"Naproxen_Bijsluiter.pdf", status:"past" }
+      { id:"m1", name:"Rivaroxaban", schedule:"1x daags Â· 1 tablet", unitsLeft:12, totalUnits:20, pharmacy:"Halbert's Pharmacy", phone:"(555) 123-4567", prescriber:"Dr. Smith", indication:"Trombose", dosage:"10 mg tablet", type:"Tablet", startDate:"10 jan 2024", notes:"Na ontbijt innemen", leaflet:"Rivaroxaban_Bijsluiter.pdf", status:"current" },
+      { id:"m2", name:"Omeprazol", schedule:"1x daags Â· 1 capsule", unitsLeft:21, totalUnits:30, pharmacy:"Halbert's Pharmacy", phone:"(555) 123-4567", prescriber:"Dr. Lee", indication:"Reflux", dosage:"20 mg capsule", type:"Capsule", startDate:"3 mrt 2024", notes:"Voor ontbijt innemen", leaflet:"Omeprazol_Bijsluiter.pdf", status:"current" },
+      { id:"m3", name:"Diclofenac", schedule:"2x daags Â· 1 tablet", unitsLeft:0, totalUnits:20, pharmacy:"Stadsapotheek", phone:"(555) 989-1122", prescriber:"Dr. Pat", indication:"Pijn", dosage:"25 mg tablet", type:"Tablet", startDate:"12 okt 2023", notes:"Alleen bij hevige pijn", leaflet:"Diclofenac_Bijsluiter.pdf", status:"past" },
+      { id:"m4", name:"Naproxen", schedule:"2x daags Â· 1 tablet", unitsLeft:0, totalUnits:30, pharmacy:"Stadsapotheek", phone:"(555) 989-1122", prescriber:"Dr. Pat", indication:"Ontsteking", dosage:"250 mg tablet", type:"Tablet", startDate:"7 nov 2023", notes:"Met voldoende water innemen", leaflet:"Naproxen_Bijsluiter.pdf", status:"past" }
     ];
 
     const currentListEl = document.getElementById("currentList");
@@ -586,6 +586,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 

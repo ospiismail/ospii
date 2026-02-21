@@ -1,8 +1,8 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover" />
   <title>Tijdlijn</title>
   <style>
     :root{
@@ -317,7 +317,7 @@
       if (item.org) parts.push(item.org);
       if (item.provider) parts.push(item.provider);
       if (item.subject) parts.push(item.subject);
-      return parts.join(" · ");
+      return parts.join(" Â· ");
     }
     function formatMonthLabel(d){
       return new Intl.DateTimeFormat("nl-NL", { month: "long", year: "numeric" }).format(d).toUpperCase();
@@ -325,7 +325,7 @@
     function formatDateTime(d, time){
       const day = new Intl.DateTimeFormat("nl-NL", { day: "numeric", month: "short" }).format(d);
       if (!time) return day;
-      return `${day} · ${time}`;
+      return `${day} Â· ${time}`;
     }
     function rowsFromStorage(itemsByDate){
       const rows = [];
@@ -415,6 +415,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 

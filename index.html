@@ -1,13 +1,14 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover" />
   <title>ospii | Zorg overzichtelijk op een veilige plek</title>
   <meta name="description" content="Ospii brengt afspraken, medicatie, documenten en zorgteam samen in een veilige digitale omgeving." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body data-page="landing">
@@ -35,41 +36,43 @@
     </section>
 
     <section class="section shell" id="features">
-      <h2>Wat kun je met ospii?</h2>
-      <div class="featureGrid">
-        <article class="featureCard card">
+      <h2><span class="titleBlack">Wat kun je met</span> <span class="titleBlue">ospii?</span></h2>
+      <div class="featureGrid featureSwiper swiper">
+        <div class="swiper-wrapper">
+        <article class="featureCard card swiper-slide">
           <h3>Afspraken beheren</h3>
           <p>Bekijk, voeg toe en volg al je zorgafspraken op een tijdlijn.</p>
         </article>
-        <article class="featureCard card">
+        <article class="featureCard card swiper-slide">
           <h3>Medicatie overzicht</h3>
           <p>Inzicht in huidige en eerdere medicatie met duidelijke status.</p>
         </article>
-        <article class="featureCard card">
+        <article class="featureCard card swiper-slide">
           <h3>Gezondheidsdashboard</h3>
           <p>Volg trends zoals gewicht, bloeddruk en hartslag over tijd.</p>
         </article>
-        <article class="featureCard card">
+        <article class="featureCard card swiper-slide">
           <h3>AI-zorgassistent</h3>
-          <p>Stel vragen over je zorgomgeving en krijg contextgerichte hulp.</p>
+          <p>Stel vragen over je zorgomgeving en krijg contextgerichte hulp. <span class="inlineDisclaimer">(<span class="inlineBrand">ospii</span> vervangt geen medisch advies.)</span></p>
         </article>
+        </div>
+        <div class="swiper-pagination" aria-hidden="true"></div>
       </div>
     </section>
 
     <section class="section shell" id="privacy">
-      <h2>Jouw gegevens. Jouw controle.</h2>
+      <h2><span class="titleBlue">Jouw gegevens.</span> <span class="titleBlack">Jouw controle.</span></h2>
       <article class="privacyCard card">
         <ul>
           <li>Beveiligde toegang en versleuteling</li>
           <li>Jij bepaalt wie toegang heeft</li>
           <li>Gegevens veilig opgeslagen (EU)</li>
         </ul>
-        <p class="disclaimer">Ospii vervangt geen medisch advies.</p>
       </article>
     </section>
 
     <section class="section shell" id="waarde">
-      <h2>Waarom ospii?</h2>
+      <h2><span class="titleBlack">Waarom</span> <span class="titleBlue">ospii?</span></h2>
       <div class="audienceGrid">
         <article class="card audienceCard">
           <h3>Regie bij de patient</h3>
@@ -86,8 +89,8 @@
       </div>
       <div class="featureGrid" style="margin-top:12px;">
         <article class="featureCard card">
-          <h3>Ondersteuning bij kindontwikkeling</h3>
-          <p>Ook geschikt om ontwikkeling, afspraken en zorgmomenten van je kind overzichtelijk te volgen.</p>
+          <h3>Groei van je kind.</h3>
+          <p>Volg groei, afspraken en zorgmomenten van je kind in een duidelijk en veilig overzicht.</p>
         </article>
       </div>
     </section>
@@ -113,7 +116,7 @@
 
   <footer class="footer">
     <div class="shell footerInner">
-      <p>© ospii</p>
+      <p>&copy; ospii</p>
       <nav aria-label="Footer links">
         <a href="#privacy">Privacy</a>
         <a href="mailto:contact@ospii.demo">Contact</a>
@@ -122,6 +125,8 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
+

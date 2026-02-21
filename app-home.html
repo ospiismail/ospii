@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover" />
   <title>Gezondheidsoverzicht</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -174,22 +174,6 @@
     .upcomingTile{
       position:relative;
       overflow:hidden;
-    }
-    .upcomingBrand{
-      position:absolute;
-      left:10px;
-      bottom:10px;
-      height:24px;
-      display:flex;
-      align-items:center;
-      margin:0;
-      font-size:12px;
-      line-height:1.1;
-      font-weight:800;
-      letter-spacing:0.02em;
-      color:var(--primary);
-      opacity:0.96;
-      pointer-events:none;
     }
     .upcomingIcon{
       position:absolute;
@@ -449,18 +433,20 @@
       margin:0;
       font-size:20px;
       line-height:1.3;
-      font-weight:700;
+      font-weight:500;
       color:var(--text);
     }
     .welcomeBtn{
       width:100%;
-      border:1px solid var(--primary);
-      border-radius:10px;
-      background:var(--primary);
-      color:#fff;
+      min-height:48px;
+      border:1px solid #cfe0ff;
+      border-radius:999px;
+      background:#eff5ff;
+      color:#1f5eff;
       font-size:14px;
       font-weight:600;
-      padding:10px;
+      padding:10px 14px;
+      box-shadow:0 4px 10px rgba(31,94,255,0.10);
       cursor:pointer;
     }
     .sideMenuOverlay{
@@ -921,7 +907,6 @@
         <h2 class="upcomingTitle">Afspraken</h2>
         <p class="upcomingMain" id="upcomingMain">Geen geplande afspraak</p>
         <div class="upcomingMeta" id="upcomingMeta">Voeg een afspraak toe via de kalender.</div>
-        <p class="upcomingBrand" aria-hidden="true">ospii</p>
         <span class="upcomingIcon" aria-hidden="true">
           <svg viewBox="0 0 24 24">
             <rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect>
@@ -940,7 +925,7 @@
       </button>
       <button class="quickCard medicatieTile" id="medicationTile" type="button" aria-label="Medicatie">
         <p class="quickTitle">Medicatie</p>
-        <p class="quickHint" id="medicationSummary">Geen medicatie bijna op</p>
+        <p class="quickHint" id="medicationSummary">Er is nog genoeg medicatie.</p>
         <span class="tileIcon" aria-hidden="true">
           <svg viewBox="0 0 24 24">
             <ellipse cx="12" cy="6.5" rx="6.5" ry="2.8"></ellipse>
@@ -1182,6 +1167,11 @@
         }
       ]
     };
+    const DEFAULT_TODOS = [
+      { id: "t1", completedAt: null },
+      { id: "t2", completedAt: null },
+      { id: "t3", completedAt: "2026-02-15T08:45:00.000Z" }
+    ];
     const FORCE_DEMO_UPCOMING = false;
     const DEMO_UPCOMING = {
       iso: "2026-03-09",
@@ -1198,6 +1188,12 @@
     function fmtISO(y, m, d){ return `${y}-${pad2(m + 1)}-${pad2(d)}`; }
     function monIndex(jsDay){ return (jsDay + 6) % 7; }
     function getPatientName(){
+      try {
+        const sessionName = window.sessionStorage.getItem("health.username.v1");
+        if (sessionName && sessionName.trim()) return sessionName.trim();
+      } catch {
+        // Ignore storage errors and continue to local fallback.
+      }
       try {
         const saved = window.localStorage.getItem("health.patientName.v1");
         if (saved && saved.trim()) return saved.trim();
@@ -1219,11 +1215,17 @@
       } catch {
         return;
       }
-      const name = getPatientName() || "gebruiker";
+      const name = getPatientName();
+      const topWelcomeEl = document.getElementById("welcomeText");
       const msgEl = document.getElementById("welcomeMessage");
       const overlayEl = document.getElementById("welcomeOverlay");
+      if (topWelcomeEl){
+        topWelcomeEl.textContent = name ? `Welkom ${name}` : "Welkom";
+      }
       if (msgEl){
-        msgEl.textContent = `Welkom ${name} in de testomgeving van ospii.`;
+        msgEl.textContent = name
+          ? `Welkom ${name} in de testomgeving van ospii.`
+          : "Welkom in de testomgeving van ospii.";
       }
       if (overlayEl){
         overlayEl.hidden = false;
@@ -1273,9 +1275,9 @@
     function countOpenTodos(){
       try {
         const raw = window.localStorage.getItem("health.todos.v1");
-        if (!raw) return 0;
+        if (!raw) return DEFAULT_TODOS.filter((item) => !item.completedAt).length;
         const parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed)) return 0;
+        if (!Array.isArray(parsed)) return DEFAULT_TODOS.filter((item) => !item.completedAt).length;
         let count = 0;
         for (const item of parsed){
           if (!item || item.completedAt) continue;
@@ -1283,7 +1285,7 @@
         }
         return count;
       } catch {
-        return 0;
+        return DEFAULT_TODOS.filter((item) => !item.completedAt).length;
       }
     }
     function countCurrentMedications(){
@@ -1370,7 +1372,7 @@
       if (!el) return;
       const count = countLowStockMedications();
       if (count <= 0){
-        el.textContent = "Geen medicatie bijna op";
+        el.textContent = "Er is nog genoeg medicatie.";
         return;
       }
       if (count === 1){
@@ -1902,3 +1904,5 @@
   </script>
 </body>
 </html>
+
+

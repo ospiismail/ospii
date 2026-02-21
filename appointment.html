@@ -1,8 +1,8 @@
-<!doctype html>
+ï»¿<!doctype html>
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -210,7 +210,7 @@
 
     <section class="meta">
       <p class="specialism" id="specialism">Cardioloog</p>
-      <p class="subline" id="dateTime">9 mrt · 09:00</p>
+      <p class="subline" id="dateTime">9 mrt Â· 09:00</p>
       <p class="subline" id="location">Grand River Ziekenhuis</p>
     </section>
 
@@ -239,7 +239,7 @@
           <h2 class="sectionTitle">Medicatie</h2>
           <article class="card">
             <p class="cardTitle">Atenolol</p>
-            <p class="cardText">50 mg · 1 tablet per dag</p>
+            <p class="cardText">50 mg Â· 1 tablet per dag</p>
           </article>
         </section>
 
@@ -271,7 +271,7 @@
           <h2 class="sectionTitle">Medicatie</h2>
           <article class="card">
             <p class="cardTitle">Atenolol</p>
-            <p class="cardText">50 mg · 1 tablet per dag</p>
+            <p class="cardText">50 mg Â· 1 tablet per dag</p>
           </article>
         </section>
       </section>
@@ -316,7 +316,7 @@
     function formatDateTime(dateIso, time){
       const d = parseIsoDate(dateIso);
       const datePart = d ? fmtDateShort(d) : "-";
-      return `${datePart} · ${time || "-"}`;
+      return `${datePart} Â· ${time || "-"}`;
     }
 
     const dateIso = p.get("date") || "";
@@ -357,7 +357,7 @@
     document.getElementById("shareBtn").addEventListener("click", async () => {
       const shareData = {
         title: "Afspraak",
-        text: `${careType} · ${formatDateTime(dateIso, time)} · ${org}`,
+        text: `${careType} Â· ${formatDateTime(dateIso, time)} Â· ${org}`,
         url: window.location.href
       };
 
@@ -397,4 +397,6 @@
   </script>
 </body>
 </html>
+
+
 
