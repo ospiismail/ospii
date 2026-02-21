@@ -659,8 +659,19 @@ body[data-page="login"]{
   background:#f8faff;
   background-image:none;
 }
+body[data-page="register"]{
+  font-family:"Plus Jakarta Sans","Inter","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f8faff;
+  background-image:none;
+}
 
 body[data-page="login"] .loginCard{
+  border-color:#9ab8ff;
+  border-radius:18px;
+  box-shadow:0 10px 22px rgba(31,94,255,0.08);
+  background:#fff;
+}
+body[data-page="register"] .loginCard{
   border-color:#9ab8ff;
   border-radius:18px;
   box-shadow:0 10px 22px rgba(31,94,255,0.08);
@@ -678,12 +689,23 @@ body[data-page="login"] .loginCard h1{
   color:#0f172a;
   font-weight:700;
 }
+body[data-page="register"] .loginCard h1{
+  color:#0f172a;
+  font-weight:700;
+}
 
 body[data-page="login"] .loginCard h1 .brandWord{
   color:#1f5eff;
 }
+body[data-page="register"] .loginCard h1 .brandWord{
+  color:#1f5eff;
+}
 
 body[data-page="login"] .loginForm label{
+  color:#1a2944;
+  font-weight:600;
+}
+body[data-page="register"] .loginForm label{
   color:#1a2944;
   font-weight:600;
 }
@@ -692,8 +714,16 @@ body[data-page="login"] .input{
   border-color:#cfdcf5;
   border-radius:12px;
 }
+body[data-page="register"] .input{
+  border-color:#cfdcf5;
+  border-radius:12px;
+}
 
 body[data-page="login"] .input:focus-visible{
+  outline:2px solid rgba(31,94,255,0.24);
+  border-color:#1f5eff;
+}
+body[data-page="register"] .input:focus-visible{
   outline:2px solid rgba(31,94,255,0.24);
   border-color:#1f5eff;
 }
@@ -707,8 +737,21 @@ body[data-page="login"] .btn.btnPrimary.full{
   border-color:#cfe0ff;
   box-shadow:0 4px 10px rgba(31,94,255,0.10);
 }
+body[data-page="register"] .btn.btnPrimary.full{
+  min-height:48px;
+  border-radius:999px;
+  font-weight:600;
+  background:#eff5ff;
+  color:#1f5eff;
+  border-color:#cfe0ff;
+  box-shadow:0 4px 10px rgba(31,94,255,0.10);
+}
 
 body[data-page="login"] .btn.btnPrimary.full:hover{
+  background:#e8f0ff;
+  border-color:#bed4ff;
+}
+body[data-page="register"] .btn.btnPrimary.full:hover{
   background:#e8f0ff;
   border-color:#bed4ff;
 }
@@ -719,6 +762,15 @@ body[data-page="login"] .subtleLink{
 
 body[data-page="login"] .formMsg{
   color:#1f5eff;
+}
+body[data-page="register"] .formMsg{
+  color:#1f5eff;
+}
+
+.registerLead{
+  margin:8px 0 0;
+  color:#3d4f6b;
+  line-height:1.5;
 }
 .loginCard{
   width:min(480px, 100%);

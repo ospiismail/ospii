@@ -94,11 +94,40 @@
     });
   }
 
+  function initRegisterDemo() {
+    const form = document.getElementById("registerForm");
+    const email = document.getElementById("registerEmail");
+    const msg = document.getElementById("registerMsg");
+    if (!form || !email || !msg) return;
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      msg.classList.remove("error");
+      const value = email.value.trim();
+      if (!value) {
+        msg.textContent = "Vul je e-mailadres in.";
+        msg.classList.add("error");
+        return;
+      }
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      if (!ok) {
+        msg.textContent = "Vul een geldig e-mailadres in.";
+        msg.classList.add("error");
+        return;
+      }
+      msg.textContent = "Bedankt! Je staat op de early access lijst.";
+      form.reset();
+    });
+  }
+
   if (page === "landing") {
     initSmoothScroll();
     initMobileMenu();
   }
   if (page === "login") {
     initLoginDemo();
+  }
+  if (page === "register") {
+    initRegisterDemo();
   }
 })();

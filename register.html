@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ospii | Early Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="register">
+  <main class="loginPage shell">
+    <section class="loginCard card" aria-labelledby="registerTitle">
+      <h1 id="registerTitle">Early Access - <span class="brandWord">Ospii</span></h1>
+      <p class="registerLead">We rollen gefaseerd uit.</p>
+      <p class="registerLead">Schrijf je in voor early access en krijg als eerste toegang tot jouw account.</p>
+
+      <form id="registerForm" class="loginForm" novalidate>
+        <label for="registerEmail">E-mailadres</label>
+        <input id="registerEmail" name="registerEmail" class="input" type="email" autocomplete="email" placeholder="E-mailadres" />
+        <button type="submit" class="btn btnPrimary full">Inschrijven</button>
+      </form>
+
+      <p class="formMsg" id="registerMsg" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
