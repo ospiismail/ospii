@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Gezondheidsoverzicht</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script>
     if (window.sessionStorage.getItem("health.auth.v1") !== "1"){
       window.location.replace("login.html");
@@ -11,23 +14,23 @@
   </script>
   <style>
     :root{
-      --bg:#ffffff;
+      --bg:#f8faff;
       --card:#ffffff;
-      --text:#0f172a;
-      --muted:#667085;
-      --border:#e2e8f0;
-      --borderStrong:#cbd5e1;
-      --primary:#2563eb;
-      --appointment:#2563eb;
+      --text:#07162f;
+      --muted:#617086;
+      --border:#dce7fb;
+      --borderStrong:#bfd2ff;
+      --primary:#1f5eff;
+      --appointment:#1f5eff;
       --appointmentSoft:#eff6ff;
-      --ring:rgba(37,99,235,0.14);
-      --shadow:0 6px 16px rgba(15,23,42,0.05);
+      --ring:rgba(31,94,255,0.14);
+      --shadow:0 6px 16px rgba(31,94,255,0.08);
       --shadowPress:0 3px 8px rgba(15,23,42,0.08);
     }
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{
       margin:0;
-      font-family: "SF Pro Text","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-family:"Plus Jakarta Sans","Inter","SF Pro Text","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;
       background:var(--bg);
       color:var(--text);
       overflow:hidden;
@@ -98,6 +101,22 @@
       cursor:pointer;
       transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
     }
+    .avatarBtn{
+      color:#b8c3d4;
+      background:#fff;
+      border-color:#e2e8f0;
+      font-size:0;
+    }
+    .avatarBtn svg{
+      width:22px;
+      height:22px;
+      display:block;
+      stroke:currentColor;
+      fill:none;
+      stroke-width:1.45;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
     .avatarBtn:active,
     .menuBtn:active{
       transform: translateY(1px);
@@ -155,6 +174,22 @@
     .upcomingTile{
       position:relative;
       overflow:hidden;
+    }
+    .upcomingBrand{
+      position:absolute;
+      left:10px;
+      bottom:10px;
+      height:24px;
+      display:flex;
+      align-items:center;
+      margin:0;
+      font-size:12px;
+      line-height:1.1;
+      font-weight:800;
+      letter-spacing:0.02em;
+      color:var(--primary);
+      opacity:0.96;
+      pointer-events:none;
     }
     .upcomingIcon{
       position:absolute;
@@ -459,6 +494,72 @@
     }
     .sideMenuOverlay.open .sideMenu{
       transform:translateX(0);
+    }
+    .profileOverlay{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.22);
+      z-index:46;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 160ms ease;
+    }
+    .profileOverlay.open{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .profilePanel{
+      position:absolute;
+      top:0;
+      left:0;
+      width:min(280px, 80vw);
+      height:100%;
+      background:#fff;
+      border-right:1px solid var(--border);
+      box-shadow:10px 0 24px rgba(15,23,42,0.12);
+      transform:translateX(-100%);
+      transition:transform 180ms ease;
+      padding:calc(12px + env(safe-area-inset-top)) 12px 12px;
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:10px;
+    }
+    .profileOverlay.open .profilePanel{
+      transform:translateX(0);
+    }
+    .profileTitle{
+      margin:0;
+      font-size:16px;
+      font-weight:700;
+      color:var(--text);
+    }
+    .profileAction{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+      color:var(--text);
+      text-align:left;
+      padding:11px 12px;
+      font:inherit;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .profileAction.logout{
+      color:#b42318;
+      border-color:#f3d0cd;
+      background:#fff8f7;
+    }
+    .profileBrand{
+      margin:0;
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:0.01em;
+      color:var(--primary);
+      opacity:0.95;
+      align-self:end;
+      padding-bottom:4px;
     }
     .sideMenuTitle{
       margin:0;
@@ -804,7 +905,12 @@
   <main class="app">
     <section class="hero">
       <div class="heroLeft">
-        <button class="avatarBtn" id="avatarBtn" type="button" aria-label="Profiel">&#128100;</button>
+        <button class="avatarBtn" id="avatarBtn" type="button" aria-label="Profiel">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="8.5" r="3.3"></circle>
+            <path d="M5 18c0-3 2.9-5.2 7-5.2s7 2.2 7 5.2"></path>
+          </svg>
+        </button>
         <h1 class="welcome" id="welcomeText">Welkom</h1>
       </div>
       <button class="menuBtn" id="menuBtn" type="button" aria-label="Menu">&#9776;</button>
@@ -815,6 +921,7 @@
         <h2 class="upcomingTitle">Afspraken</h2>
         <p class="upcomingMain" id="upcomingMain">Geen geplande afspraak</p>
         <div class="upcomingMeta" id="upcomingMeta">Voeg een afspraak toe via de kalender.</div>
+        <p class="upcomingBrand" aria-hidden="true">ospii</p>
         <span class="upcomingIcon" aria-hidden="true">
           <svg viewBox="0 0 24 24">
             <rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect>
@@ -916,6 +1023,13 @@
         <strong>Tijdlijn</strong>
         <span>Chronologisch overzicht van je zorg</span>
       </button>
+    </aside>
+  </div>
+  <div class="profileOverlay" id="profileOverlay" aria-hidden="true">
+    <aside class="profilePanel" role="dialog" aria-label="Profiel">
+      <p class="profileTitle">Profiel</p>
+      <button class="profileAction logout" id="logoutBtn" type="button">Uitloggen</button>
+      <p class="profileBrand" aria-hidden="true">ospii</p>
     </aside>
   </div>
   <section class="healthOverlay" id="healthOverlay" aria-hidden="true">
@@ -1055,6 +1169,16 @@
           org: "Huisartsenpraktijk West",
           provider: "Telefonisch contact",
           subject: "Klachten besproken buiten kantooruren"
+        }
+      ],
+      "2026-03-05": [
+        {
+          time: "10:40",
+          itemKind: "appointment",
+          careType: "Tandarts",
+          org: "Tandartspraktijk Centrum",
+          provider: "Drs. Bakker",
+          subject: "Vulling controle"
         }
       ]
     };
@@ -1411,6 +1535,8 @@
     const closeWelcomeBtnEl = document.getElementById("closeWelcomeBtn");
     const menuBtnEl = document.getElementById("menuBtn");
     const sideMenuOverlayEl = document.getElementById("sideMenuOverlay");
+    const profileOverlayEl = document.getElementById("profileOverlay");
+    const logoutBtnEl = document.getElementById("logoutBtn");
     const openDashboardBtnEl = document.getElementById("openDashboardBtn");
     const openSmartwatchBtnEl = document.getElementById("openSmartwatchBtn");
     const openTimelineBtnEl = document.getElementById("openTimelineBtn");
@@ -1433,12 +1559,12 @@
     const CUSTOM_METRICS_KEY = "health.custom.metrics.v1";
     let activeRange = 30;
     let editingMetricId = null;
-    function logoutToLogin(){
+    function logoutToLanding(){
       try{
         window.sessionStorage.removeItem("health.auth.v1");
         window.sessionStorage.removeItem("health.justLoggedIn.v1");
       } catch {}
-      window.location.replace("login.html");
+      window.location.replace("index.html");
     }
     function showAiToolNotice(){
       window.alert("Deze functie is in deze browserdemo nog niet beschikbaar.");
@@ -1450,6 +1576,14 @@
     function closeMenu(){
       sideMenuOverlayEl.classList.remove("open");
       sideMenuOverlayEl.setAttribute("aria-hidden", "true");
+    }
+    function openProfilePanel(){
+      profileOverlayEl.classList.add("open");
+      profileOverlayEl.setAttribute("aria-hidden", "false");
+    }
+    function closeProfilePanel(){
+      profileOverlayEl.classList.remove("open");
+      profileOverlayEl.setAttribute("aria-hidden", "true");
     }
     function openHealthDashboard(){
       closeMenu();
@@ -1729,7 +1863,15 @@
       });
     }
     if (avatarBtnEl){
-      avatarBtnEl.addEventListener("click", logoutToLogin);
+      avatarBtnEl.addEventListener("click", openProfilePanel);
+    }
+    if (profileOverlayEl){
+      profileOverlayEl.addEventListener("click", (event) => {
+        if (event.target === profileOverlayEl) closeProfilePanel();
+      });
+    }
+    if (logoutBtnEl){
+      logoutBtnEl.addEventListener("click", logoutToLanding);
     }
     if (closeWelcomeBtnEl){
       closeWelcomeBtnEl.addEventListener("click", () => {
@@ -1744,6 +1886,7 @@
     document.addEventListener("keydown", (event) => {
       if (event.key !== "Escape") return;
       closeMenu();
+      closeProfilePanel();
       closeHealthDashboard();
       closeMetricModal();
     });

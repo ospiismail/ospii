@@ -1,16 +1,19 @@
-ï»¿<!doctype html>
+<!doctype html>
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <title>Afspraak</title>
   <style>
     :root{
-      --bg:#f8fafc;
+      --bg:#f8faff;
       --surface:#ffffff;
-      --text:#0f172a;
-      --muted:#64748b;
-      --border:#e2e8f0;
+      --text:#07162f;
+      --muted:#617086;
+      --border:#dce7fb;
       --shadow:0 8px 22px rgba(15,23,42,0.05);
       --active:#0f172a;
       --accent:#2563eb;
@@ -19,7 +22,7 @@
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{
       margin:0;
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      font-family:"Plus Jakarta Sans","Inter","SF Pro Text","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;
       background:var(--bg);
       color:var(--text);
     }
@@ -207,7 +210,7 @@
 
     <section class="meta">
       <p class="specialism" id="specialism">Cardioloog</p>
-      <p class="subline" id="dateTime">9 mrt Â· 09:00</p>
+      <p class="subline" id="dateTime">9 mrt · 09:00</p>
       <p class="subline" id="location">Grand River Ziekenhuis</p>
     </section>
 
@@ -236,7 +239,7 @@
           <h2 class="sectionTitle">Medicatie</h2>
           <article class="card">
             <p class="cardTitle">Atenolol</p>
-            <p class="cardText">50 mg Â· 1 tablet per dag</p>
+            <p class="cardText">50 mg · 1 tablet per dag</p>
           </article>
         </section>
 
@@ -268,7 +271,7 @@
           <h2 class="sectionTitle">Medicatie</h2>
           <article class="card">
             <p class="cardTitle">Atenolol</p>
-            <p class="cardText">50 mg Â· 1 tablet per dag</p>
+            <p class="cardText">50 mg · 1 tablet per dag</p>
           </article>
         </section>
       </section>
@@ -313,7 +316,7 @@
     function formatDateTime(dateIso, time){
       const d = parseIsoDate(dateIso);
       const datePart = d ? fmtDateShort(d) : "-";
-      return `${datePart} Â· ${time || "-"}`;
+      return `${datePart} · ${time || "-"}`;
     }
 
     const dateIso = p.get("date") || "";
@@ -354,7 +357,7 @@
     document.getElementById("shareBtn").addEventListener("click", async () => {
       const shareData = {
         title: "Afspraak",
-        text: `${careType} Â· ${formatDateTime(dateIso, time)} Â· ${org}`,
+        text: `${careType} · ${formatDateTime(dateIso, time)} · ${org}`,
         url: window.location.href
       };
 
@@ -394,3 +397,4 @@
   </script>
 </body>
 </html>
+
