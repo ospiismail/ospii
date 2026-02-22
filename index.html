@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body data-page="landing">
@@ -36,7 +37,74 @@
     </section>
 
     <section class="section shell" id="features">
-      <h2><span class="titleBlack">Wat kun je met</span> <span class="titleBlue">ospii?</span></h2>
+      <h2><span class="titleGray">Wat kun je met</span> <span class="titleBlue">ospii</span></h2>
+      <div class="featureDesktopGrid featureDesktopSwiper swiper" aria-hidden="true">
+        <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <article class="card featureDesktopCard featureDesktopCard--base">
+          <div class="featureDesktopList">
+            <div class="featureItem">
+              <div class="featureItemHeader">
+                <h3>Afspraken beheren</h3>
+              </div>
+              <p class="featureItemContent">Bekijk, voeg toe en volg al je zorgafspraken op een tijdlijn.</p>
+            </div>
+            <div class="featureItem">
+              <div class="featureItemHeader">
+                <h3>Gezondheidsdashboard</h3>
+              </div>
+              <p class="featureItemContent">Volg trends zoals slaap, bloeddruk en hartslag over tijd.</p>
+            </div>
+            <div class="featureItem">
+              <div class="featureItemHeader">
+                <h3>Medicatie overzicht</h3>
+              </div>
+              <p class="featureItemContent">Inzicht in huidige en eerdere medicatie met duidelijke status.</p>
+            </div>
+            <div class="featureItem">
+              <div class="featureItemHeader">
+                <h3>AI-zorgassistent</h3>
+              </div>
+              <p class="featureItemContent">Stel vragen over je zorgomgeving en krijg persoonsgerichte hulp. <span class="inlineDisclaimer">(<span class="inlineBrand">ospii</span> vervangt geen medisch advies.)</span></p>
+            </div>
+          </div>
+        </article>
+        </div>
+        <div class="swiper-slide">
+        <article class="card featureDesktopCard featureDesktopCard--soft">
+          <div class="chatPreview">
+            <div class="chatPreviewHead">
+              <p class="chatPreviewTitle" style="color: #1f5eff;">Stel je vraag</p>
+              <p class="chatPreviewSub">AI-zorgassistent</p>
+            </div>
+            <div class="chatPreviewNotice">
+              Antwoorden zijn voorbeelden en vervangen geen medisch advies van je arts.
+            </div>
+            <div class="chatPreviewThread">
+              <div class="chatBubble chatBubble--user">
+                Ik heb de laatste dagen last van oedeem in mijn enkels.
+              </div>
+              <div class="chatBubble chatBubble--assistant">
+                Dit kan passen bij vochtophoping en soms samenhangen met medicatie of hart-/nierbelasting. Neem voor de zekerheid contact op met je arts.
+              </div>
+              <div class="chatBubble chatBubble--assistant">
+                Wil je dat ik een samenvatting maak die je kunt bespreken bij je volgende afspraak?
+              </div>
+            </div>
+            <div class="chatPreviewChips">
+              <span class="chatChip">Kan dit door medicatie komen?</span>
+              <span class="chatChip">Welke alarmsignalen zijn belangrijk?</span>
+            </div>
+            <div class="chatPreviewComposer">
+              <div class="chatPreviewInput">Typ hier je vraag...</div>
+              <button class="chatPreviewSend" type="button">Verstuur</button>
+            </div>
+          </div>
+        </article>
+        </div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
       <div class="featureGrid featureSwiper swiper">
         <div class="swiper-wrapper">
         <article class="featureCard card swiper-slide">
@@ -53,50 +121,111 @@
         </article>
         <article class="featureCard card swiper-slide">
           <h3>AI-zorgassistent</h3>
-          <p>Stel vragen over je zorgomgeving en krijg contextgerichte hulp. <span class="inlineDisclaimer">(<span class="inlineBrand">ospii</span> vervangt geen medisch advies.)</span></p>
+          <p>Stel vragen over je zorgomgeving en krijg persoonsgerichte hulp. <span class="inlineDisclaimer">(<span class="inlineBrand">ospii</span> vervangt geen medisch advies.)</span></p>
         </article>
         </div>
         <div class="swiper-pagination" aria-hidden="true"></div>
       </div>
     </section>
 
-    <section class="section shell" id="privacy">
-      <h2><span class="titleBlue">Jouw gegevens.</span> <span class="titleBlack">Jouw controle.</span></h2>
-      <article class="privacyCard card">
-        <ul>
-          <li>Beveiligde toegang en versleuteling</li>
-          <li>Jij bepaalt wie toegang heeft</li>
-          <li>Gegevens veilig opgeslagen (EU)</li>
-        </ul>
-      </article>
-    </section>
-
     <section class="section shell" id="waarde">
-      <h2><span class="titleBlack">Waarom</span> <span class="titleBlue">ospii?</span></h2>
-      <div class="audienceGrid">
-        <article class="card audienceCard">
-          <h3>Regie bij de patient</h3>
-          <p>Jij bepaalt wie toegang krijgt en houdt grip op je eigen medisch dossier.</p>
+      <h2><span class="titleGray">Waarom</span> <span class="titleBlue">ospii</span></h2>
+      <div class="waardeGrid waardeSwiper swiper">
+        <div class="swiper-wrapper">
+        <article class="card featureDesktopCard featureDesktopCard--soft waardeEmpty swiper-slide">
+          <div class="waardePreview">
+            <h3 class="waardePreviewTitle">Recente gebeurtenissen</h3>
+            <ul class="timelineList mini">
+              <li class="entry">
+                <div class="lineCol">
+                  <div class="rail"></div>
+                  <div class="dot appointment"></div>
+                </div>
+                <div class="miniContent">
+                  <p class="name">Nieuwe medicatie</p>
+                  <p class="time">13:15</p>
+                </div>
+              </li>
+              <li class="entry">
+                <div class="lineCol">
+                  <div class="rail"></div>
+                  <div class="dot contact"></div>
+                </div>
+                <div class="miniContent">
+                  <p class="name">Huisarts afspraak</p>
+                  <p class="time">10:00</p>
+                </div>
+              </li>
+              <li class="entry">
+                <div class="lineCol">
+                  <div class="rail"></div>
+                  <div class="dot hospital"></div>
+                </div>
+                <div class="miniContent">
+                  <p class="name">Lab uitslag</p>
+                  <p class="time">Gisteren</p>
+                </div>
+              </li>
+              <li class="entry">
+                <div class="lineCol">
+                  <div class="rail"></div>
+                  <div class="dot contact"></div>
+                </div>
+                <div class="miniContent">
+                  <p class="name">Telefonisch contact</p>
+                  <p class="time">20 feb</p>
+                </div>
+              </li>
+              <li class="entry">
+                <div class="lineCol">
+                  <div class="rail"></div>
+                  <div class="dot incident"></div>
+                </div>
+                <div class="miniContent">
+                  <p class="name">SEH</p>
+                  <p class="time">18 feb</p>
+                </div>
+              </li>
+              <li class="entry">
+                <div class="lineCol">
+                  <div class="rail"></div>
+                  <div class="dot incident"></div>
+                </div>
+                <div class="miniContent">
+                  <p class="name">Incident</p>
+                  <p class="time">12 feb</p>
+                </div>
+              </li>
+            </ul>
+          </div>
         </article>
-        <article class="card audienceCard">
-          <h3>Zorgcoordinatie op een plek</h3>
-          <p>Plan afspraken, volg taken op en werk samen met mantelzorgers en professionals.</p>
+        <article class="card featureDesktopCard featureDesktopCard--soft waardeEmpty waardeInfoCard swiper-slide">
+          <div class="waardeInfoList">
+            <section class="waardeInfoItem">
+              <h3>Regie bij de patient</h3>
+              <p>Jij bepaalt wie toegang krijgt en houdt grip op je eigen medisch dossier.</p>
+            </section>
+            <section class="waardeInfoItem">
+              <h3>Zorgcoordinatie op een plek</h3>
+              <p>Plan afspraken, volg taken op en werk samen met mantelzorgers en professionals.</p>
+            </section>
+            <section class="waardeInfoItem">
+              <h3>Altijd mee te nemen</h3>
+              <p>Je gegevens zijn veilig en direct beschikbaar, thuis en onderweg.</p>
+            </section>
+            <section class="waardeInfoItem">
+              <h3>Groei van je kind.</h3>
+              <p>Volg groei, afspraken en zorgmomenten van je kind in een duidelijk en veilig overzicht.</p>
+            </section>
+          </div>
         </article>
-        <article class="card audienceCard">
-          <h3>Altijd mee te nemen</h3>
-          <p>Je gegevens zijn veilig en direct beschikbaar, thuis en onderweg.</p>
-        </article>
-      </div>
-      <div class="featureGrid" style="margin-top:12px;">
-        <article class="featureCard card">
-          <h3>Groei van je kind.</h3>
-          <p>Volg groei, afspraken en zorgmomenten van je kind in een duidelijk en veilig overzicht.</p>
-        </article>
+        </div>
+        <div class="swiper-pagination" aria-hidden="true"></div>
       </div>
     </section>
 
     <section class="section shell" id="voor-wie">
-      <h2>Voor wie?</h2>
+      <h2><span class="titleGray">Voor wie?</span></h2>
       <div class="audienceGrid">
         <article class="card audienceCard">
           <h3>Patienten</h3>
@@ -111,6 +240,15 @@
           <p>Toegang op maat met heldere informatie en view-rechten.</p>
         </article>
       </div>
+    </section>
+
+    <section class="section shell" id="privacy">
+      <h2><span class="titleBlue">Jouw gegevens.</span> <span class="titleBlack">Jouw controle.</span></h2>
+      <ul class="privacyTrustList" aria-label="Privacy en veiligheid">
+        <li>Beveiligde toegang en versleuteling</li>
+        <li>Jij bepaalt wie toegang heeft</li>
+        <li>Gegevens veilig opgeslagen (EU)</li>
+      </ul>
     </section>
   </main>
 
@@ -129,4 +267,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-

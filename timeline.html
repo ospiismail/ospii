@@ -317,7 +317,7 @@
       if (item.org) parts.push(item.org);
       if (item.provider) parts.push(item.provider);
       if (item.subject) parts.push(item.subject);
-      return parts.join(" Â· ");
+      return parts.join(" · ");
     }
     function formatMonthLabel(d){
       return new Intl.DateTimeFormat("nl-NL", { month: "long", year: "numeric" }).format(d).toUpperCase();
@@ -325,7 +325,7 @@
     function formatDateTime(d, time){
       const day = new Intl.DateTimeFormat("nl-NL", { day: "numeric", month: "short" }).format(d);
       if (!time) return day;
-      return `${day} Â· ${time}`;
+      return `${day} · ${time}`;
     }
     function rowsFromStorage(itemsByDate){
       const rows = [];

@@ -95,53 +95,166 @@
   }
 
   function initFeatureSwiper() {
-    const root = document.querySelector(".featureSwiper");
-    if (!root || typeof window.Swiper !== "function") return () => {};
-    const wrapper = root.querySelector(".swiper-wrapper");
-    const slides = Array.from(root.querySelectorAll(".swiper-slide"));
+    const ensureInit = () => {
+      const root = document.querySelector(".featureSwiper");
+      if (!root) return () => {};
+      if (typeof window.Swiper !== "function") {
+        window.setTimeout(ensureInit, 100);
+        return () => {};
+      }
 
-    let instance = null;
-    const shouldEnable = () => window.matchMedia("(max-width: 880px)").matches;
-    const cleanupDesktopState = () => {
-      root.classList.remove("swiper-initialized", "swiper-horizontal", "swiper-backface-hidden");
-      root.style.removeProperty("overflow");
-      if (wrapper) {
-        wrapper.style.removeProperty("transform");
-        wrapper.style.removeProperty("transition-duration");
-        wrapper.style.removeProperty("width");
-      }
-      for (const slide of slides) {
-        slide.style.removeProperty("width");
-        slide.style.removeProperty("margin-right");
-      }
+      const wrapper = root.querySelector(".swiper-wrapper");
+      const slides = Array.from(root.querySelectorAll(".swiper-slide"));
+      let instance = null;
+      const shouldEnable = () => window.matchMedia("(max-width: 880px)").matches;
+      const cleanupDesktopState = () => {
+        root.classList.remove("swiper-initialized", "swiper-horizontal", "swiper-backface-hidden");
+        root.style.removeProperty("overflow");
+        if (wrapper) {
+          wrapper.style.removeProperty("transform");
+          wrapper.style.removeProperty("transition-duration");
+          wrapper.style.removeProperty("width");
+        }
+        for (const slide of slides) {
+          slide.style.removeProperty("width");
+          slide.style.removeProperty("margin-right");
+        }
+      };
+
+      const sync = () => {
+        if (shouldEnable()) {
+          if (instance) return;
+          instance = new window.Swiper(root, {
+            slidesPerView: 1.12,
+            spaceBetween: 12,
+            grabCursor: true,
+            pagination: {
+              el: root.querySelector(".swiper-pagination"),
+              clickable: true
+            }
+          });
+          return;
+        }
+        if (instance) {
+          instance.destroy(true, true);
+          instance = null;
+        }
+        cleanupDesktopState();
+      };
+
+      sync();
+      window.addEventListener("resize", sync);
+      return () => window.removeEventListener("resize", sync);
     };
 
-    const sync = () => {
-      if (shouldEnable()) {
-        if (instance) return;
+    return ensureInit();
+  }
+
+  function initFeatureDesktopSwiper() {
+    const ensureInit = () => {
+      const root = document.querySelector("#features .featureDesktopSwiper");
+      if (!root) return;
+      
+      // Wait for Swiper to be available
+      if (typeof window.Swiper !== "function") {
+        window.setTimeout(ensureInit, 100);
+        return;
+      }
+
+      let instance = null;
+
+      const init = () => {
+        if (instance) {
+          instance.destroy();
+        }
         instance = new window.Swiper(root, {
-          slidesPerView: 1.12,
-          spaceBetween: 12,
+          slidesPerView: 1,
+          spaceBetween: 20,
           grabCursor: true,
           pagination: {
             el: root.querySelector(".swiper-pagination"),
-            clickable: true
+            clickable: true,
+            bulletClass: "swiper-pagination-bullet",
+            bulletActiveClass: "swiper-pagination-bullet-active"
           }
         });
-        return;
-      }
-      if (instance) {
-        instance.destroy(true, true);
-        instance = null;
-      }
-      cleanupDesktopState();
+      };
+
+      const onResize = () => {
+        const isSmall = window.matchMedia("(max-width: 1023px)").matches;
+        if (isSmall) {
+          if (!instance) init();
+        } else {
+          if (instance) {
+            instance.destroy();
+            instance = null;
+          }
+        }
+      };
+
+      onResize();
+      window.addEventListener("resize", onResize);
     };
 
-    sync();
-    window.addEventListener("resize", sync);
-    return () => window.removeEventListener("resize", sync);
+    ensureInit();
   }
 
+  function initWaardeSwiper() {
+    const ensureInit = () => {
+      const root = document.querySelector("#waarde .waardeSwiper");
+      if (!root) return;
+
+      if (typeof window.Swiper !== "function") {
+        window.setTimeout(ensureInit, 100);
+        return;
+      }
+
+      const wrapper = root.querySelector(".swiper-wrapper");
+      const slides = Array.from(root.querySelectorAll(".swiper-slide"));
+      let instance = null;
+
+      const cleanup = () => {
+        root.classList.remove("swiper-initialized", "swiper-horizontal", "swiper-backface-hidden");
+        root.style.removeProperty("overflow");
+        if (wrapper) {
+          wrapper.style.removeProperty("transform");
+          wrapper.style.removeProperty("transition-duration");
+          wrapper.style.removeProperty("width");
+        }
+        for (const slide of slides) {
+          slide.style.removeProperty("width");
+          slide.style.removeProperty("margin-right");
+        }
+      };
+
+      const sync = () => {
+        const isSmall = window.matchMedia("(max-width: 1023px)").matches;
+        if (isSmall) {
+          if (instance) return;
+          instance = new window.Swiper(root, {
+            slidesPerView: 1.04,
+            spaceBetween: 14,
+            grabCursor: true,
+            pagination: {
+              el: root.querySelector(".swiper-pagination"),
+              clickable: true
+            }
+          });
+          return;
+        }
+        if (instance) {
+          instance.destroy(true, true);
+          instance = null;
+        }
+        cleanup();
+      };
+
+      sync();
+      window.addEventListener("resize", sync);
+    };
+
+    ensureInit();
+  }
   function initLandingOrbRandomWalk() {
     if (page !== "landing") return;
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -195,11 +308,11 @@
     initSmoothScroll();
     initMobileMenu();
     initFeatureSwiper();
+    initFeatureDesktopSwiper();
+    initWaardeSwiper();
     initLandingOrbRandomWalk();
   }
   if (page === "login") {
     initLoginDemo();
   }
 })();
-
-

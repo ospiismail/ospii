@@ -36,7 +36,7 @@ body{
 body[data-page="landing"]{
   --bg:#f8faff;
   --surface:#ffffff;
-  --text:#07162f;
+  --text:#142a55;
   --muted:#617086;
   --line:#e4ebf6;
   --primary:#1f5eff;
@@ -168,13 +168,13 @@ body[data-page="landing"] .heroContent p{
   font-size:clamp(20px, 3.8vw, 32px);
   line-height:1.2;
   letter-spacing:-0.01em;
-  color:#0b1220;
+  color:#142a55;
   font-weight:400;
   max-width:18ch;
   text-shadow:0 2px 10px rgba(15,23,42,0.08);
 }
 body[data-page="landing"] .heroWhiteText{
-  color:#0b1220;
+  color:#142a55;
   text-shadow:none;
 }
 
@@ -242,7 +242,10 @@ body[data-page="landing"] .section h2 .titleBlue{
   color:var(--primary);
 }
 body[data-page="landing"] .section h2 .titleBlack{
-  color:#0b1220;
+  color:#142a55;
+}
+body[data-page="landing"] .section h2 .titleGray{
+  color:#8a96a8;
 }
 
 body[data-page="landing"] .card{
@@ -263,6 +266,9 @@ body[data-page="landing"] .audienceCard h3{
   line-height:1.05;
   letter-spacing:-0.02em;
   font-weight:500;
+}
+body[data-page="landing"] .featureCard h3{
+  color:#173269;
 }
 
 body[data-page="landing"] .featureCard p,
@@ -555,6 +561,198 @@ a{color:inherit;text-decoration:none}
 .featureSwiper .swiper-pagination{
   display:none;
 }
+.featureDesktopGrid{
+  display:none;
+}
+.featureDesktopCard{
+  min-height:160px;
+  padding:20px 24px;
+  border-radius:28px;
+}
+.featureDesktopCard h3{
+  margin:0 0 8px;
+  font-size:22px;
+  line-height:1.15;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  color:#142a55;
+}
+.featureDesktopCard p{
+  margin:0;
+  font-size:15px;
+  line-height:1.45;
+  color:#5c6f8e;
+  max-width:48ch;
+}
+.featureDesktopList{
+  display:grid;
+  gap:14px;
+}
+.featureDesktopItem{
+  display:grid;
+  gap:4px;
+}
+.featureDesktopItem + .featureDesktopItem{
+  padding-top:12px;
+  border-top:1px solid rgba(154,184,255,0.28);
+}
+.featureDesktopItem h3{
+  margin:0;
+  font-size:20px;
+  line-height:1.15;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  color:#142a55;
+}
+.featureDesktopItem p{
+  margin:0;
+  font-size:14px;
+  line-height:1.4;
+  color:#5c6f8e;
+  max-width:none;
+}
+.featureDesktopCard--base{
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border-color:#9ab8ff;
+  box-shadow:0 8px 18px rgba(15,23,42,0.04), inset 0 1px 1px rgba(255,255,255,0.4);
+}
+.featureDesktopCard--soft{
+  background:rgba(239,245,255,0.6);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:2px solid rgba(159,194,255,1);
+  box-shadow:0 6px 14px rgba(31,94,255,0.06), inset 0 1px 2px rgba(255,255,255,0.5);
+}
+.featureItem{
+  padding:10px 0;
+  border-bottom:1px solid rgba(158,184,255,0.5);
+}
+.featureItem:last-child{
+  border-bottom:none;
+}
+.featureItemHeader{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.featureItemHeader h3{
+  margin:0;
+  font-size:14px;
+  line-height:1.3;
+  font-weight:600;
+  color:#173269;
+}
+.featureItemContent{
+  margin:0;
+  margin-top:8px;
+  font-size:13px;
+  line-height:1.5;
+  color:#5c6f8e;
+}
+.chatPreview{
+  display:grid;
+  gap:10px;
+}
+.chatPreviewHead{
+  display:grid;
+  gap:2px;
+}
+.chatPreviewTitle{
+  margin:0;
+  font-size:20px;
+  line-height:1.1;
+  font-weight:700;
+  color:#142a55;
+}
+.chatPreviewSub{
+  margin:0;
+  font-size:12px;
+  line-height:1.35;
+  color:#64748b;
+}
+.chatPreviewNotice{
+  border:1px solid #bfdbfe;
+  background:#eff6ff;
+  color:#1e3a5f;
+  border-radius:14px;
+  padding:9px 11px;
+  font-size:12px;
+  line-height:1.35;
+}
+.chatPreviewThread{
+  display:grid;
+  gap:8px;
+}
+.chatBubble{
+  border-radius:14px;
+  padding:10px 12px;
+  font-size:13px;
+  line-height:1.35;
+  border:1px solid #dbe6fb;
+  max-width:88%;
+}
+.chatBubble--assistant{
+  background:#eef6ff;
+  color:#203a5d;
+  justify-self:start;
+  border-color:#bfdbfe;
+}
+.chatBubble--user{
+  background:#ffffff;
+  color:#142a55;
+  border-color:#dbe5f1;
+  justify-self:end;
+}
+.chatPreviewChips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:2px;
+}
+.chatChip{
+  display:inline-flex;
+  align-items:center;
+  min-height:26px;
+  padding:0 10px;
+  border-radius:999px;
+  border:1px solid #dbe5f1;
+  background:#ffffff;
+  color:#334155;
+  font-size:12px;
+  line-height:1;
+  white-space:nowrap;
+}
+.chatPreviewComposer{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px;
+}
+.chatPreviewInput{
+  min-height:36px;
+  border-radius:999px;
+  border:1px solid #dbe5f1;
+  background:#ffffff;
+  color:#90a0b8;
+  font-size:13px;
+  display:flex;
+  align-items:center;
+  padding:0 12px;
+}
+.chatPreviewSend{
+  min-height:36px;
+  border-radius:999px;
+  border:1px solid #cfe0ff;
+  background:#eff5ff;
+  color:#1f5eff;
+  font:inherit;
+  font-size:12px;
+  font-weight:600;
+  padding:0 12px;
+  cursor:pointer;
+}
 .featureCard{
   padding:16px;
   min-height:136px;
@@ -643,7 +841,7 @@ a{color:inherit;text-decoration:none}
   margin:0;
   font-size:14px;
   font-weight:800;
-  color:#0f172a;
+  color:#142a55;
 }
 .previewText{
   margin:0;
@@ -715,9 +913,27 @@ a{color:inherit;text-decoration:none}
 }
 .privacyCard ul{
   margin:0;
-  padding-left:20px;
+  padding-left:0;
+  list-style:none;
   color:#2d3c56;
   line-height:1.75;
+}
+.privacyTrustList{
+  margin:4px 0 0;
+  padding:0;
+  list-style:none;
+  display:grid;
+  gap:0;
+}
+.privacyTrustList li{
+  margin:0;
+  padding:10px 0;
+  color:#2d3c56;
+  line-height:1.55;
+  font-size:16px;
+}
+.privacyTrustList li + li{
+  border-top:1px solid rgba(159,194,255,0.32);
 }
 .disclaimer{
   margin:8px 0 0;
@@ -746,6 +962,23 @@ a{color:inherit;text-decoration:none}
   margin:8px 0 0;
   color:var(--muted);
   line-height:1.5;
+}
+body[data-page="landing"] .audienceCard{
+  border-radius:20px;
+  background:rgba(255,255,255,0.9);
+  border:1px solid #9ab8ff;
+  box-shadow:0 8px 18px rgba(15,23,42,0.04);
+}
+body[data-page="landing"] .audienceCard:hover{
+  border-color:#9ab8ff;
+  box-shadow:0 10px 20px rgba(31,94,255,0.08);
+}
+body[data-page="landing"] .audienceCard h3{
+  color:#173269;
+  font-weight:600;
+}
+body[data-page="landing"] .audienceCard p{
+  color:#4f6486;
 }
 
 .footer{
@@ -1004,7 +1237,7 @@ body[data-page="register"] .formMsg{
 
 @media (max-width: 640px){
   body[data-page="landing"] .heroWhiteText{
-    color:#0b1220;
+    color:#142a55;
     text-shadow:none;
   }
   body[data-page="landing"] .heroContent{
@@ -1054,7 +1287,7 @@ body[data-page="register"] .formMsg{
     line-height:1.34;
     max-width:100%;
     text-wrap:pretty;
-    color:#0b1220;
+    color:#142a55;
     text-shadow:0 2px 8px rgba(255,255,255,0.35);
   }
 
@@ -1112,11 +1345,82 @@ body[data-page="register"] .formMsg{
     width:auto !important;
     max-width:none !important;
     margin:0 32px !important;
+    position:relative;
   }
 
-  body[data-page="landing"] #features .featureSwiper{
-    display:block !important;
-    width:100%;
+  body[data-page="landing"] #features .featureDesktopGrid{
+    display:grid !important;
+    grid-template-columns:1fr 1fr;
+    gap:28px;
+    margin-top:6px;
+  }
+  body[data-page="landing"] #features .featureDesktopGrid.swiper{
+    overflow:visible !important;
+  }
+  body[data-page="landing"] #features .featureDesktopGrid .swiper-wrapper{
+    display:contents !important;
+    transform:none !important;
+  }
+  body[data-page="landing"] #features .featureDesktopGrid .swiper-slide{
+    display:contents !important;
+    width:auto !important;
+  }
+  body[data-page="landing"] #features .featureDesktopGrid .swiper-pagination{
+    display:none !important;
+  }
+  body[data-page="landing"] #features .featureDesktopCard{
+    min-height:142px;
+    padding:18px 22px;
+  }
+  body[data-page="landing"] #features .featureDesktopCard--base{
+    min-height:360px;
+    align-self:stretch;
+  }
+  body[data-page="landing"] #features .featureDesktopCard h3{
+    font-size:22px;
+  }
+  body[data-page="landing"] #features .featureDesktopCard p{
+    font-size:15px;
+    max-width:52ch;
+  }
+  body[data-page="landing"] #features .featureDesktopCard--base .featureDesktopItem h3{
+    font-size:20px;
+  }
+  body[data-page="landing"] #features .featureDesktopCard--base .featureDesktopItem p{
+    font-size:14px;
+    max-width:none;
+  }
+  body[data-page="landing"] #features .featureDesktopCard--base .featureItemHeader h3{
+    font-size:18px;
+  }
+  body[data-page="landing"] #features .featureDesktopCard--base .featureItemContent{
+    font-size:14px;
+  }
+  body[data-page="landing"] #features .featureDesktopCard--soft{
+    min-height:100%;
+    align-self:stretch;
+    background:rgba(239,245,255,0.5);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border:2px solid rgba(159,194,255,1);
+    box-shadow:0 6px 14px rgba(31,94,255,0.06), inset 0 1px 2px rgba(255,255,255,0.6);
+  }
+  body[data-page="landing"] #features .featureDesktopCard--soft .chatPreview{
+    height:100%;
+    align-content:start;
+  }
+  body[data-page="landing"] #features .featureDesktopCard--soft .chatPreviewThread{
+    gap:7px;
+  }
+  body[data-page="landing"] #features .featureDesktopCard--soft .chatBubble{
+    font-size:12.5px;
+    line-height:1.32;
+    padding:9px 11px;
+  }
+
+  body[data-page="landing"] #features .featureSwiper,
+  body[data-page="landing"] #features .featurePhoneFrame{
+    display:none !important;
   }
 
   body[data-page="landing"] .topbarInner{
@@ -1219,38 +1523,80 @@ body[data-page="register"] .formMsg{
   body[data-page="landing"] #features .featureSwiper .swiper-wrapper{
     width:100% !important;
     display:grid !important;
-    grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
-    gap:28px !important;
+    grid-template-columns:minmax(0, 1fr) 260px minmax(0, 1fr) !important;
+    gap:64px 28px !important;
     transform:none !important;
+    align-items:stretch;
   }
 
   body[data-page="landing"] #features .featureSwiper .swiper-slide{
     width:auto !important;
     margin:0 !important;
   }
+  body[data-page="landing"] #features .featureSwiper .swiper-slide:nth-child(1){ grid-column:1; grid-row:1; }
+  body[data-page="landing"] #features .featureSwiper .swiper-slide:nth-child(2){ grid-column:3; grid-row:1; }
+  body[data-page="landing"] #features .featureSwiper .swiper-slide:nth-child(3){ grid-column:1; grid-row:2; }
+  body[data-page="landing"] #features .featureSwiper .swiper-slide:nth-child(4){ grid-column:3; grid-row:2; }
 
   body[data-page="landing"] #features .featureCard{
     height:auto;
-    min-height:152px;
-    padding:20px 24px;
+    min-height:138px;
+    padding:16px 20px;
     border-radius:28px;
+    background:#eff5ff;
+    border-color:#cfe0ff;
+    box-shadow:0 6px 14px rgba(31,94,255,0.06);
+  }
+  body[data-page="landing"] #features .featureCard:hover{
+    background:#e8f0ff;
+    border-color:#bed4ff;
+    box-shadow:0 10px 20px rgba(31,94,255,0.10);
+  }
+  body[data-page="landing"] #features .featureSwiper .swiper-slide:nth-child(1) .featureCard,
+  body[data-page="landing"] #features .featureSwiper .swiper-slide:nth-child(3) .featureCard{
+    padding-right:28px;
+  }
+  body[data-page="landing"] #features .featureSwiper .swiper-slide:nth-child(2) .featureCard,
+  body[data-page="landing"] #features .featureSwiper .swiper-slide:nth-child(4) .featureCard{
+    padding-left:28px;
+  }
+
+  body[data-page="landing"] #features .featurePhoneFrame{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%, -39%);
+    width:226px;
+    pointer-events:none;
+    z-index:5;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    filter:drop-shadow(0 18px 34px rgba(15,23,42,0.18));
+  }
+  body[data-page="landing"] #features .featurePhoneFrame img{
+    display:block;
+    width:100%;
+    height:auto;
   }
 
   body[data-page="landing"] .featureCard h3{
-    font-size:24px;
+    font-size:22px;
   }
 
   body[data-page="landing"] .featureCard p{
-    font-size:16px;
+    font-size:15px;
     max-width:40ch;
   }
 
   body[data-page="landing"] .audienceCard h3{
-    font-size:22px;
+    font-size:19px;
   }
 
   body[data-page="landing"] .audienceCard p{
-    font-size:16px;
+    margin-top:6px;
+    font-size:14px;
+    line-height:1.35;
   }
 
   body[data-page="landing"] .audienceGrid{
@@ -1258,16 +1604,655 @@ body[data-page="register"] .formMsg{
   }
 
   body[data-page="landing"] .audienceCard{
-    padding:20px;
+    padding:14px 16px;
   }
 
-  body[data-page="landing"] .privacyCard{
-    padding:24px;
+  body[data-page="landing"] #privacy{
+    position:relative;
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) minmax(320px, 460px);
+    grid-template-areas:
+      "title title"
+      "list list";
+    row-gap:14px;
+    align-items:start;
+    overflow:visible;
+  }
+  body[data-page="landing"] #privacy h2{
+    grid-area:title;
+    width:min(100%, 560px);
+    justify-self:end;
+    padding-left:0;
+    text-align:left;
+    margin-bottom:0;
+  }
+  body[data-page="landing"] #privacy > *{
+    position:relative;
+    z-index:1;
+  }
+  body[data-page="landing"] #privacy .privacyTrustList{
+    grid-area:list;
+    width:min(100%, 560px);
+    justify-self:end;
+    margin-top:8px;
+    text-align:left;
+  }
+  body[data-page="landing"] #privacy .privacyTrustList li{
+    font-size:17px;
+    line-height:1.5;
+    color:#4f6486;
+    padding:12px 0;
+  }
+  body[data-page="landing"] #privacy::before{
+    content:"";
+    position:absolute;
+    left:28%;
+    top:8px;
+    width:260px;
+    height:260px;
+    transform:translateX(-50%);
+    border-radius:999px;
+    background:url("blob2.gif") center / cover no-repeat;
+    box-shadow:
+      0 22px 44px rgba(31,94,255,0.10),
+      0 0 44px rgba(101,155,238,0.14);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  @media (min-width: 1024px){
+    body[data-page="landing"] #waarde h2{
+      width:min(100%, calc(420px * 2 + 28px));
+      margin-left:auto;
+      margin-right:auto;
+      padding-left:0;
+    }
+    /* Two-column layout for 'Waarom ospii?' */
+    body[data-page="landing"] #waarde .waardeGrid{
+      overflow:visible !important;
+    }
+    body[data-page="landing"] #waarde .waardeGrid .swiper-wrapper{
+      display:grid !important;
+      grid-template-columns:repeat(2, minmax(0, 420px));
+      gap:28px;
+      align-items:stretch;
+      justify-content:center;
+      transform:none !important;
+      width:auto !important;
+    }
+    body[data-page="landing"] #waarde .waardeGrid .swiper-slide{
+      width:auto !important;
+      height:auto;
+      margin-right:0 !important;
+    }
+    body[data-page="landing"] #waarde .waardeGrid .swiper-pagination{
+      display:none !important;
+    }
+    body[data-page="landing"] #waarde .waardeEmpty{
+      min-height:320px;
+      height:100%;
+      align-self:stretch;
+      background:transparent;
+    }
+    body[data-page="landing"] #waarde .waardeGrid .swiper-wrapper > .waardeEmpty:first-child{
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+      background:linear-gradient(
+        180deg,
+        rgba(255,255,255,0.40) 0%,
+        rgba(245,249,255,0.26) 52%,
+        rgba(236,244,255,0.20) 100%
+      );
+      border:1px solid rgba(184,210,255,0.55);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.28),
+        0 14px 34px rgba(31,94,255,0.12),
+        inset 0 1px 0 rgba(255,255,255,0.78),
+        inset 0 0 0 1px rgba(159,194,255,0.24);
+      backdrop-filter:blur(18px) saturate(1.22);
+      -webkit-backdrop-filter:blur(18px) saturate(1.22);
+    }
+    /* Soft halo around the edges to make the frame feel less hard */
+    body[data-page="landing"] #waarde .waardeGrid .swiper-wrapper > .waardeEmpty:first-child::before{
+      content:"";
+      position:absolute;
+      inset:-8px;
+      border-radius:inherit;
+      background:
+        radial-gradient(82% 64% at 18% 16%, rgba(255,255,255,0.38), transparent 62%),
+        radial-gradient(58% 44% at 88% 18%, rgba(111,157,255,0.24), transparent 74%),
+        radial-gradient(88% 76% at 52% 100%, rgba(167,198,255,0.18), transparent 72%);
+      filter:blur(14px);
+      opacity:0.95;
+      z-index:0;
+      pointer-events:none;
+    }
+    /* Brush-like sheen for a liquid glass feel */
+    body[data-page="landing"] #waarde .waardeGrid .swiper-wrapper > .waardeEmpty:first-child::after{
+      content:"";
+      position:absolute;
+      inset:8% -10% 10% -14%;
+      border-radius:40px;
+      background:
+        linear-gradient(
+          104deg,
+          rgba(255,255,255,0) 7%,
+          rgba(255,255,255,0.34) 18%,
+          rgba(255,255,255,0.08) 30%,
+          rgba(101,155,238,0.18) 43%,
+          rgba(255,255,255,0.06) 55%,
+          rgba(255,255,255,0.24) 67%,
+          rgba(255,255,255,0) 82%
+        ),
+        linear-gradient(
+          96deg,
+          rgba(255,255,255,0) 18%,
+          rgba(255,255,255,0.18) 34%,
+          rgba(255,255,255,0) 56%
+        );
+      filter:blur(11px);
+      opacity:0.7;
+      transform:rotate(-5deg) translateY(-2px);
+      z-index:0;
+      pointer-events:none;
+    }
+    /* Compact timeline preview inside the left waarde tile */
+    body[data-page="landing"] #waarde .waardeEmpty .waardePreview{
+      padding:14px 12px;
+      position:relative;
+      z-index:1;
+    }
+    body[data-page="landing"] #waarde .waardeEmpty .timelineList.mini{
+      list-style:none;
+      margin:0;
+      padding:0;
+      display:grid;
+      gap:8px;
+    }
+    body[data-page="landing"] #waarde .waardeEmpty .entry{
+      display:grid;
+      grid-template-columns:22px 1fr;
+      gap:10px;
+      align-items:center;
+    }
+    body[data-page="landing"] #waarde .waardeEmpty .lineCol{
+      position:relative;
+      min-height:44px;
+    }
+    body[data-page="landing"] #waarde .waardeEmpty .rail{
+      position:absolute;
+      left:10px;
+      top:0;
+      bottom:0;
+      width:2px;
+      background:var(--line, #e2e8f0);
+      opacity:0.9;
+    }
+    body[data-page="landing"] #waarde .waardeEmpty .dot{
+      position:absolute;
+      left:6px;
+      top:14px;
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      border:2px solid #fff;
+      box-shadow:0 0 0 1px rgba(203,213,225,1);
+      background:#94a3b8;
+    }
+    body[data-page="landing"] #waarde .waardeEmpty .miniContent .name{
+      margin:0; font-size:13px; font-weight:700;
+    }
+    body[data-page="landing"] #waarde .waardeEmpty .miniContent .time{
+      margin:0; font-size:12px; color:var(--muted, #64748b);
+    }
+    body[data-page="landing"] #waarde .waardeEmpty .waardePreviewTitle{
+      margin:0 0 8px;
+      font-size:15px;
+      font-weight:700;
+      color:#1f5eff;
+      padding-left:2px;
+      transform:translateY(-8px);
+    }
+    body[data-page="landing"] #waarde .waardeInfoCard{
+      background:rgba(239,245,255,0.62);
+    }
+    body[data-page="landing"] #waarde .waardeInfoList{
+      display:grid;
+      gap:0;
+      position:relative;
+      z-index:1;
+    }
+    body[data-page="landing"] #waarde .waardeInfoItem{
+      padding:10px 2px 12px;
+      border-bottom:1px solid rgba(159,194,255,0.38);
+    }
+    body[data-page="landing"] #waarde .waardeInfoItem:last-child{
+      border-bottom:none;
+      padding-bottom:4px;
+    }
+    body[data-page="landing"] #waarde .waardeInfoItem h3{
+      margin:0;
+      font-size:16px;
+      line-height:1.15;
+      font-weight:700;
+      color:#173269;
+      letter-spacing:-0.01em;
+    }
+    body[data-page="landing"] #waarde .waardeInfoItem p{
+      margin:6px 0 0;
+      font-size:13px;
+      line-height:1.4;
+      color:#4f6486;
+      max-width:36ch;
+    }
+    body[data-page="landing"] #waarde .waardeRight .audienceGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:20px;
+    }
+    body[data-page="landing"] #waarde .waardeRight .featureGrid{
+      margin-top:12px;
+    }
+    body[data-page="landing"] #waarde .waardeRight{
+      min-width:0;
+    }
+    body[data-page="landing"] #waarde .waardeLeftCard{
+      display:block;
+      text-decoration:none;
+      color:inherit;
+      cursor:pointer;
+      transition:transform .14s ease, box-shadow .14s ease;
+    }
+    body[data-page="landing"] #waarde .waardeLeftCard:hover{
+      transform:translateY(-4px);
+      box-shadow:0 10px 30px rgba(31,94,255,0.08);
+    }
+    body[data-page="landing"] #waarde .waardeLeftCard .timelineItem{
+      font-size:13px;
+      padding:8px 10px;
+      background:rgba(255,255,255,0.35);
+      border-radius:8px;
+      margin-bottom:8px;
+    }
+    /* Compact timeline preview styles removed (timeline card deleted) */
+    /* Additional desktop tweaks: placeholder containment */
+    body[data-page="landing"] #waarde .waardeLeftCard .empty{
+      border:2px dashed rgba(159,194,255,0.45);
+      border-radius:14px;
+      height:100%;
+      min-height:320px;
+      background:transparent;
+    }
+  }
+  body[data-page="landing"] #waarde .waardeLeftCard .smallCard .time{
+    font-size:12px;
+    color:var(--muted, #64748b);
+  }
+  body[data-page="landing"] #waarde .waardeLeftCard .smallCard .meta{
+    font-size:12px;
+    color:#334155;
+    margin-top:6px;
+  }
+
+  /* Final desktop override: use 2-card layout instead of swiper/frame */
+  body[data-page="landing"] #features .featureDesktopGrid{
+    display:grid !important;
+  }
+  body[data-page="landing"] #features .featureSwiper,
+  body[data-page="landing"] #features .featurePhoneFrame{
+    display:none !important;
   }
 
   body[data-page="landing"] .footer{
     margin-top:44px;
     padding-top:22px;
+  }
+}
+
+@media (max-width: 1023px){
+  body[data-page="landing"] #features .featureDesktopGrid{
+    display:block !important;
+    overflow:auto !important;
+    scrollbar-width:none;
+  }
+  body[data-page="landing"] #features .featureDesktopGrid::-webkit-scrollbar{
+    display:none;
+  }
+  body[data-page="landing"] #features .featureDesktopGrid.swiper:not(.swiper-initialized){
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    -webkit-overflow-scrolling:touch;
+  }
+  body[data-page="landing"] #features .featureDesktopGrid:not(.swiper-initialized) .swiper-wrapper{
+    display:flex !important;
+    width:100% !important;
+    transform:translate3d(0, 0, 0) !important;
+  }
+  body[data-page="landing"] #features .featureDesktopGrid:not(.swiper-initialized) .swiper-slide{
+    flex-shrink:0 !important;
+    width:100% !important;
+    display:flex !important;
+    margin-right:16px;
+  }
+  body[data-page="landing"] #features .featureDesktopCard{
+    padding:12px 16px;
+    width:100%;
+  }
+  body[data-page="landing"] #features .featureDesktopCard--base{
+    min-height:auto;
+  }
+  body[data-page="landing"] #features .featureDesktopList{
+    gap:4px;
+  }
+  body[data-page="landing"] #features .featureItem{
+    padding:6px 0;
+  }
+  body[data-page="landing"] #features .featureDesktopGrid .swiper-pagination{
+    display:flex !important;
+    position:static !important;
+    justify-content:center;
+    gap:8px;
+    margin-top:24px;
+    padding-bottom:8px;
+  }
+  body[data-page="landing"] #features .featureDesktopGrid .swiper-pagination-bullet{
+    width:8px;
+    height:8px;
+    background:#c5d3e8;
+    border-radius:50%;
+    cursor:pointer;
+    opacity:1 !important;
+  }
+  body[data-page="landing"] #features .featureDesktopGrid .swiper-pagination-bullet-active{
+    background:#1f5eff;
+  }
+  body[data-page="landing"] #features .featureSwiper{
+    display:none !important;
+  }
+  body[data-page="landing"] #features .featurePhoneFrame{
+    display:none;
+  }
+
+  body[data-page="landing"] #waarde .waardeSwiper{
+    display:block;
+    overflow:visible;
+  }
+  body[data-page="landing"] #waarde .waardeSwiper .swiper-wrapper{
+    align-items:stretch;
+  }
+  body[data-page="landing"] #waarde .waardeSwiper .swiper-slide{
+    height:auto;
+    display:block;
+  }
+  body[data-page="landing"] #waarde .waardeSwiper .waardeEmpty{
+    width:100%;
+    min-height:320px;
+    height:100%;
+    background:transparent;
+    padding:14px 16px;
+    border-radius:22px;
+  }
+  body[data-page="landing"] #waarde .waardeSwiper .swiper-wrapper > .waardeEmpty:first-child{
+    position:relative;
+    overflow:hidden;
+    isolation:isolate;
+    background:linear-gradient(
+      180deg,
+      rgba(255,255,255,0.40) 0%,
+      rgba(245,249,255,0.26) 52%,
+      rgba(236,244,255,0.20) 100%
+    );
+    border:1px solid rgba(184,210,255,0.55);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.28),
+      0 14px 34px rgba(31,94,255,0.10),
+      inset 0 1px 0 rgba(255,255,255,0.78),
+      inset 0 0 0 1px rgba(159,194,255,0.24);
+    backdrop-filter:blur(14px) saturate(1.16);
+    -webkit-backdrop-filter:blur(14px) saturate(1.16);
+  }
+  body[data-page="landing"] #waarde .waardeSwiper .swiper-wrapper > .waardeEmpty:first-child::before{
+    content:"";
+    position:absolute;
+    inset:-8px;
+    border-radius:inherit;
+    background:
+      radial-gradient(82% 64% at 18% 16%, rgba(255,255,255,0.38), transparent 62%),
+      radial-gradient(58% 44% at 88% 18%, rgba(111,157,255,0.24), transparent 74%),
+      radial-gradient(88% 76% at 52% 100%, rgba(167,198,255,0.18), transparent 72%);
+    filter:blur(14px);
+    opacity:0.92;
+    z-index:0;
+    pointer-events:none;
+  }
+  body[data-page="landing"] #waarde .waardeSwiper .swiper-wrapper > .waardeEmpty:first-child::after{
+    content:"";
+    position:absolute;
+    inset:8% -10% 10% -14%;
+    border-radius:40px;
+    background:
+      linear-gradient(
+        104deg,
+        rgba(255,255,255,0) 7%,
+        rgba(255,255,255,0.34) 18%,
+        rgba(255,255,255,0.08) 30%,
+        rgba(101,155,238,0.18) 43%,
+        rgba(255,255,255,0.06) 55%,
+        rgba(255,255,255,0.24) 67%,
+        rgba(255,255,255,0) 82%
+      ),
+      linear-gradient(
+        96deg,
+        rgba(255,255,255,0) 18%,
+        rgba(255,255,255,0.18) 34%,
+        rgba(255,255,255,0) 56%
+      );
+    filter:blur(10px);
+    opacity:0.62;
+    transform:rotate(-5deg) translateY(-2px);
+    z-index:0;
+    pointer-events:none;
+  }
+  body[data-page="landing"] #waarde .waardeEmpty .waardePreview{
+    padding:4px 2px 2px;
+    position:relative;
+    z-index:1;
+  }
+  body[data-page="landing"] #waarde .waardeEmpty .waardePreviewTitle{
+    margin:0 0 8px;
+    font-size:15px;
+    font-weight:700;
+    color:#1f5eff;
+    padding-left:2px;
+    transform:none;
+  }
+  body[data-page="landing"] #waarde .waardeEmpty .timelineList.mini{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:grid;
+    gap:6px;
+  }
+  body[data-page="landing"] #waarde .waardeEmpty .entry{
+    display:grid;
+    grid-template-columns:20px 1fr;
+    gap:10px;
+    align-items:center;
+  }
+  body[data-page="landing"] #waarde .waardeEmpty .lineCol{
+    position:relative;
+    min-height:38px;
+  }
+  body[data-page="landing"] #waarde .waardeEmpty .rail{
+    position:absolute;
+    left:9px;
+    top:0;
+    bottom:0;
+    width:2px;
+    background:var(--line, #e2e8f0);
+    opacity:0.9;
+  }
+  body[data-page="landing"] #waarde .waardeEmpty .dot{
+    position:absolute;
+    left:5px;
+    top:12px;
+    width:10px;
+    height:10px;
+    border-radius:999px;
+    border:2px solid #fff;
+    box-shadow:0 0 0 1px rgba(203,213,225,1);
+    background:#94a3b8;
+  }
+  body[data-page="landing"] #waarde .waardeEmpty .miniContent .name{
+    margin:0;
+    font-size:12px;
+    font-weight:700;
+    color:#51688e;
+  }
+  body[data-page="landing"] #waarde .waardeEmpty .miniContent .time{
+    margin:0;
+    font-size:11px;
+    color:var(--muted, #64748b);
+  }
+  body[data-page="landing"] #waarde .waardeInfoCard{
+    background:rgba(239,245,255,0.62);
+  }
+  body[data-page="landing"] #waarde .waardeInfoList{
+    display:grid;
+    gap:0;
+    position:relative;
+    z-index:1;
+  }
+  body[data-page="landing"] #waarde .waardeInfoItem{
+    padding:8px 0 10px;
+    border-bottom:1px solid rgba(159,194,255,0.38);
+  }
+  body[data-page="landing"] #waarde .waardeInfoItem:last-child{
+    border-bottom:none;
+    padding-bottom:2px;
+  }
+  body[data-page="landing"] #waarde .waardeInfoItem h3{
+    margin:0;
+    font-size:15px;
+    line-height:1.18;
+    font-weight:700;
+    color:#173269;
+    letter-spacing:-0.01em;
+  }
+  body[data-page="landing"] #waarde .waardeInfoItem p{
+    margin:5px 0 0;
+    font-size:13px;
+    line-height:1.35;
+    color:#4f6486;
+    max-width:none;
+  }
+  body[data-page="landing"] #waarde .waardeSwiper .swiper-pagination{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-top:12px;
+    position:static;
+  }
+  body[data-page="landing"] #waarde .waardeSwiper .swiper-pagination-bullet{
+    width:8px;
+    height:8px;
+    background:#c5d3e8;
+    border-radius:50%;
+    opacity:1;
+  }
+  body[data-page="landing"] #waarde .waardeSwiper .swiper-pagination-bullet-active{
+    background:#1f5eff;
+  }
+
+  /* Mobile/tablet: render "Voor wie?" as one combined card */
+  body[data-page="landing"] #voor-wie .audienceGrid{
+    grid-template-columns:1fr;
+    gap:0;
+    border:1px solid #9ab8ff;
+    border-radius:20px;
+    background:rgba(255,255,255,0.9);
+    box-shadow:0 8px 18px rgba(15,23,42,0.04);
+    padding:14px 16px;
+    overflow:hidden;
+  }
+  body[data-page="landing"] #voor-wie .audienceCard{
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    border-radius:0;
+    padding:10px 0 12px;
+    min-height:0;
+    transition:none;
+  }
+  body[data-page="landing"] #voor-wie .audienceCard:hover{
+    transform:none;
+    box-shadow:none;
+  }
+  body[data-page="landing"] #voor-wie .audienceCard + .audienceCard{
+    border-top:1px solid rgba(159,194,255,0.38);
+  }
+  body[data-page="landing"] #voor-wie .audienceCard:last-child{
+    padding-bottom:4px;
+  }
+  body[data-page="landing"] #voor-wie .audienceCard h3{
+    font-size:17px;
+    line-height:1.18;
+    font-weight:700;
+    color:#173269;
+    letter-spacing:-0.01em;
+  }
+  body[data-page="landing"] #voor-wie .audienceCard p{
+    margin-top:6px;
+    font-size:14px;
+    line-height:1.35;
+    color:#4f6486;
+  }
+
+  /* Mobile/tablet: show blob2 behind the privacy section */
+  body[data-page="landing"] #privacy{
+    position:relative;
+    overflow:visible;
+  }
+  body[data-page="landing"] #privacy > *{
+    position:relative;
+    z-index:2;
+  }
+  body[data-page="landing"] #privacy .privacyTrustList{
+    padding-inline:16px;
+  }
+  body[data-page="landing"] #privacy::before{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:22px;
+    width:150px;
+    height:150px;
+    transform:translateX(-50%);
+    border-radius:999px;
+    background:url("blob2.gif") center / cover no-repeat;
+    opacity:0.85;
+    box-shadow:
+      0 14px 28px rgba(31,94,255,0.08),
+      0 0 30px rgba(101,155,238,0.12);
+    pointer-events:none;
+    z-index:0;
+  }
+  body[data-page="landing"] #privacy::after{
+    content:"";
+    position:absolute;
+    inset:6px 0 0 0;
+    border-radius:18px;
+    background:linear-gradient(
+      180deg,
+      rgba(248,250,255,0.40) 0%,
+      rgba(248,250,255,0.30) 45%,
+      rgba(248,250,255,0.24) 100%
+    );
+    backdrop-filter:blur(2px);
+    -webkit-backdrop-filter:blur(2px);
+    pointer-events:none;
+    z-index:1;
   }
 }
 
