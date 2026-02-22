@@ -1646,7 +1646,7 @@ body[data-page="register"] .formMsg{
   body[data-page="landing"] #privacy::before{
     content:"";
     position:absolute;
-    left:28%;
+    left:22%;
     top:8px;
     width:260px;
     height:260px;
@@ -1661,6 +1661,32 @@ body[data-page="register"] .formMsg{
   }
 
   @media (min-width: 1024px){
+    body[data-page="landing"] #waarde{
+      position:relative;
+      isolation:isolate;
+      overflow:visible;
+    }
+    body[data-page="landing"] #waarde::before{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:-120px;
+      width:430px;
+      height:430px;
+      transform:translateX(-50%);
+      border-radius:999px;
+      background:url("blob3.gif") center / cover no-repeat;
+      opacity:0.72;
+      box-shadow:
+        0 18px 40px rgba(31,94,255,0.10),
+        0 0 50px rgba(101,155,238,0.12);
+      pointer-events:none;
+      z-index:0;
+    }
+    body[data-page="landing"] #waarde > *{
+      position:relative;
+      z-index:1;
+    }
     body[data-page="landing"] #waarde h2{
       width:min(100%, calc(420px * 2 + 28px));
       margin-left:auto;
@@ -1701,17 +1727,17 @@ body[data-page="register"] .formMsg{
       background:linear-gradient(
         180deg,
         rgba(255,255,255,0.40) 0%,
-        rgba(245,249,255,0.26) 52%,
-        rgba(236,244,255,0.20) 100%
+        rgba(247,249,252,0.26) 52%,
+        rgba(241,244,249,0.20) 100%
       );
-      border:1px solid rgba(184,210,255,0.55);
+      border:1px solid rgba(218,226,238,0.62);
       box-shadow:
         0 0 0 1px rgba(255,255,255,0.28),
-        0 14px 34px rgba(31,94,255,0.12),
+        0 14px 34px rgba(15,23,42,0.08),
         inset 0 1px 0 rgba(255,255,255,0.78),
-        inset 0 0 0 1px rgba(159,194,255,0.24);
-      backdrop-filter:blur(18px) saturate(1.22);
-      -webkit-backdrop-filter:blur(18px) saturate(1.22);
+        inset 0 0 0 1px rgba(203,213,225,0.22);
+      backdrop-filter:blur(18px) saturate(1.06);
+      -webkit-backdrop-filter:blur(18px) saturate(1.06);
     }
     /* Soft halo around the edges to make the frame feel less hard */
     body[data-page="landing"] #waarde .waardeGrid .swiper-wrapper > .waardeEmpty:first-child::before{
@@ -1721,8 +1747,8 @@ body[data-page="register"] .formMsg{
       border-radius:inherit;
       background:
         radial-gradient(82% 64% at 18% 16%, rgba(255,255,255,0.38), transparent 62%),
-        radial-gradient(58% 44% at 88% 18%, rgba(111,157,255,0.24), transparent 74%),
-        radial-gradient(88% 76% at 52% 100%, rgba(167,198,255,0.18), transparent 72%);
+        radial-gradient(58% 44% at 88% 18%, rgba(226,232,240,0.24), transparent 74%),
+        radial-gradient(88% 76% at 52% 100%, rgba(203,213,225,0.18), transparent 72%);
       filter:blur(14px);
       opacity:0.95;
       z-index:0;
@@ -1740,7 +1766,7 @@ body[data-page="register"] .formMsg{
           rgba(255,255,255,0) 7%,
           rgba(255,255,255,0.34) 18%,
           rgba(255,255,255,0.08) 30%,
-          rgba(101,155,238,0.18) 43%,
+          rgba(226,232,240,0.16) 43%,
           rgba(255,255,255,0.06) 55%,
           rgba(255,255,255,0.24) 67%,
           rgba(255,255,255,0) 82%
@@ -1974,6 +2000,37 @@ body[data-page="register"] .formMsg{
     display:none;
   }
 
+  body[data-page="landing"] #waarde{
+    position:relative;
+    isolation:isolate;
+    overflow:visible;
+  }
+  body[data-page="landing"] #waarde::before{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:110px;
+    width:240px;
+    height:240px;
+    transform:translateX(-50%);
+    border-radius:999px;
+    background:url("blob3.gif") center / cover no-repeat;
+    opacity:0.72;
+    box-shadow:
+      0 14px 32px rgba(15,23,42,0.10),
+      0 0 44px rgba(148,163,184,0.18);
+    pointer-events:none;
+    z-index:0;
+    transition:opacity 180ms ease;
+  }
+  body[data-page="landing"] #waarde.waarde-blob3-hidden::before{
+    opacity:0;
+  }
+  body[data-page="landing"] #waarde > *{
+    position:relative;
+    z-index:1;
+  }
+
   body[data-page="landing"] #waarde .waardeSwiper{
     display:block;
     overflow:visible;
@@ -2000,17 +2057,17 @@ body[data-page="register"] .formMsg{
     background:linear-gradient(
       180deg,
       rgba(255,255,255,0.40) 0%,
-      rgba(245,249,255,0.26) 52%,
-      rgba(236,244,255,0.20) 100%
+      rgba(247,249,252,0.26) 52%,
+      rgba(241,244,249,0.20) 100%
     );
-    border:1px solid rgba(184,210,255,0.55);
+    border:1px solid rgba(218,226,238,0.62);
     box-shadow:
       0 0 0 1px rgba(255,255,255,0.28),
-      0 14px 34px rgba(31,94,255,0.10),
+      0 14px 34px rgba(15,23,42,0.08),
       inset 0 1px 0 rgba(255,255,255,0.78),
-      inset 0 0 0 1px rgba(159,194,255,0.24);
-    backdrop-filter:blur(14px) saturate(1.16);
-    -webkit-backdrop-filter:blur(14px) saturate(1.16);
+      inset 0 0 0 1px rgba(203,213,225,0.22);
+    backdrop-filter:blur(14px) saturate(1.05);
+    -webkit-backdrop-filter:blur(14px) saturate(1.05);
   }
   body[data-page="landing"] #waarde .waardeSwiper .swiper-wrapper > .waardeEmpty:first-child::before{
     content:"";
@@ -2019,8 +2076,8 @@ body[data-page="register"] .formMsg{
     border-radius:inherit;
     background:
       radial-gradient(82% 64% at 18% 16%, rgba(255,255,255,0.38), transparent 62%),
-      radial-gradient(58% 44% at 88% 18%, rgba(111,157,255,0.24), transparent 74%),
-      radial-gradient(88% 76% at 52% 100%, rgba(167,198,255,0.18), transparent 72%);
+      radial-gradient(58% 44% at 88% 18%, rgba(226,232,240,0.24), transparent 74%),
+      radial-gradient(88% 76% at 52% 100%, rgba(203,213,225,0.18), transparent 72%);
     filter:blur(14px);
     opacity:0.92;
     z-index:0;
@@ -2037,7 +2094,7 @@ body[data-page="register"] .formMsg{
         rgba(255,255,255,0) 7%,
         rgba(255,255,255,0.34) 18%,
         rgba(255,255,255,0.08) 30%,
-        rgba(101,155,238,0.18) 43%,
+        rgba(226,232,240,0.16) 43%,
         rgba(255,255,255,0.06) 55%,
         rgba(255,255,255,0.24) 67%,
         rgba(255,255,255,0) 82%

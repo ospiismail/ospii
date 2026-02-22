@@ -203,6 +203,7 @@
     const ensureInit = () => {
       const root = document.querySelector("#waarde .waardeSwiper");
       if (!root) return;
+      const section = document.getElementById("waarde");
 
       if (typeof window.Swiper !== "function") {
         window.setTimeout(ensureInit, 100);
@@ -212,6 +213,15 @@
       const wrapper = root.querySelector(".swiper-wrapper");
       const slides = Array.from(root.querySelectorAll(".swiper-slide"));
       let instance = null;
+      const syncBlobVisibility = () => {
+        if (!section) return;
+        const isSmall = window.matchMedia("(max-width: 1023px)").matches;
+        if (!isSmall || !instance) {
+          section.classList.remove("waarde-blob3-hidden");
+          return;
+        }
+        section.classList.toggle("waarde-blob3-hidden", instance.activeIndex > 0);
+      };
 
       const cleanup = () => {
         root.classList.remove("swiper-initialized", "swiper-horizontal", "swiper-backface-hidden");
@@ -224,6 +234,9 @@
         for (const slide of slides) {
           slide.style.removeProperty("width");
           slide.style.removeProperty("margin-right");
+        }
+        if (section) {
+          section.classList.remove("waarde-blob3-hidden");
         }
       };
 
@@ -240,6 +253,8 @@
               clickable: true
             }
           });
+          instance.on("slideChange", syncBlobVisibility);
+          syncBlobVisibility();
           return;
         }
         if (instance) {
@@ -247,6 +262,7 @@
           instance = null;
         }
         cleanup();
+        syncBlobVisibility();
       };
 
       sync();
