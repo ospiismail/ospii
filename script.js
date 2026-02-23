@@ -53,6 +53,93 @@
     }
   }
 
+  function initCookieBanner() {
+    const banner = document.getElementById("cookieBanner");
+    if (!banner) return;
+    const panel = document.getElementById("cookiePrefsPanel");
+    const prefsBtn = document.getElementById("cookieBannerPrefsBtn");
+    const closeButtons = Array.from(banner.querySelectorAll("[data-cookie-close]"));
+    const acceptAllBtn = banner.querySelector("[data-cookie-accept-all]");
+    const onlyNecessaryBtn = banner.querySelector("[data-cookie-only-necessary]");
+    const switches = Array.from(banner.querySelectorAll("[data-cookie-toggle]"));
+    const chips = Array.from(banner.querySelectorAll("[data-cookie-chip]"));
+    if (closeButtons.length === 0) return;
+
+    const closeBanner = () => {
+      banner.hidden = true;
+      banner.setAttribute("aria-hidden", "true");
+    };
+
+    const findSwitch = (key) => banner.querySelector(`[data-cookie-toggle="${key}"]`);
+    const findChip = (key) => banner.querySelector(`[data-cookie-chip="${key}"]`);
+    const setCookieState = (key, checked) => {
+      const toggle = findSwitch(key);
+      if (toggle && !toggle.disabled) {
+        toggle.setAttribute("aria-checked", checked ? "true" : "false");
+        toggle.classList.toggle("is-on", checked);
+      }
+      const chip = findChip(key);
+      if (chip) {
+        chip.setAttribute("aria-pressed", checked ? "true" : "false");
+        chip.classList.toggle("is-active", checked);
+      }
+    };
+    const setAllOptional = (checked) => {
+      setCookieState("preferences", checked);
+      setCookieState("statistics", checked);
+      setCookieState("marketing", checked);
+    };
+    const togglePanel = (forceOpen) => {
+      if (!panel || !prefsBtn) return;
+      const open = typeof forceOpen === "boolean" ? forceOpen : panel.hidden;
+      panel.hidden = !open;
+      prefsBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      prefsBtn.classList.toggle("is-active", open);
+    };
+
+    for (const button of closeButtons) {
+      button.addEventListener("click", closeBanner);
+    }
+    if (prefsBtn && panel) {
+      prefsBtn.addEventListener("click", () => togglePanel());
+    }
+    if (acceptAllBtn) {
+      acceptAllBtn.addEventListener("click", () => {
+        setAllOptional(true);
+        closeBanner();
+      });
+    }
+    if (onlyNecessaryBtn) {
+      onlyNecessaryBtn.addEventListener("click", () => {
+        setAllOptional(false);
+        closeBanner();
+      });
+    }
+    for (const toggle of switches) {
+      if (toggle.disabled) continue;
+      toggle.addEventListener("click", () => {
+        const key = toggle.getAttribute("data-cookie-toggle");
+        const checked = toggle.getAttribute("aria-checked") !== "true";
+        if (!key) return;
+        setCookieState(key, checked);
+      });
+    }
+    for (const chip of chips) {
+      chip.addEventListener("click", () => {
+        const key = chip.getAttribute("data-cookie-chip");
+        if (!key || key === "necessary") {
+          togglePanel(true);
+          return;
+        }
+        const toggle = findSwitch(key);
+        if (!toggle) return;
+        const checked = toggle.getAttribute("aria-checked") !== "true";
+        setCookieState(key, checked);
+        togglePanel(true);
+      });
+    }
+  }
+
   function initLoginDemo() {
     const form = document.getElementById("loginForm");
     const msg = document.getElementById("formMsg");
@@ -323,6 +410,7 @@
   if (page === "landing") {
     initSmoothScroll();
     initMobileMenu();
+    // initCookieBanner(); // tijdelijk uitgeschakeld
     initFeatureSwiper();
     initFeatureDesktopSwiper();
     initWaardeSwiper();

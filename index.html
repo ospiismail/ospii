@@ -243,25 +243,89 @@
     </section>
 
     <section class="section shell" id="privacy">
-      <h2><span class="titleBlue">Jouw gegevens.</span> <span class="titleBlack">Jouw controle.</span></h2>
-      <ul class="privacyTrustList" aria-label="Privacy en veiligheid">
-        <li>Beveiligde toegang en versleuteling</li>
-        <li>Jij bepaalt wie toegang heeft</li>
-        <li>Gegevens veilig opgeslagen (EU)</li>
-      </ul>
+      <div class="privacyGlassCard">
+        <h2><span class="titleBlue">Jouw gegevens.</span> <span class="titleBlack">Jouw controle.</span></h2>
+        <ul class="privacyTrustList" aria-label="Privacy en veiligheid">
+          <li>Beveiligde toegang en versleuteling</li>
+          <li>Jij bepaalt wie toegang heeft</li>
+          <li>Gegevens veilig opgeslagen (EU)</li>
+        </ul>
+      </div>
     </section>
   </main>
 
   <footer class="footer">
     <div class="shell footerInner">
       <p>&copy; ospii</p>
-      <nav aria-label="Footer links">
-        <a href="#privacy">Privacy</a>
-        <a href="mailto:contact@ospii.demo">Contact</a>
-        <a href="login.html">Inloggen</a>
-      </nav>
     </div>
   </footer>
+
+  <!-- Cookie banner tijdelijk uitgeschakeld
+  <section class="cookieBanner" id="cookieBanner" role="dialog" aria-label="Cookie voorkeuren" aria-live="polite">
+    <div class="cookieBannerInner">
+      <div class="cookieBannerHead">
+        <p class="cookieBannerTitle">Wij gebruiken cookies</p>
+        <button class="cookieBannerIconBtn" type="button" id="cookieBannerClose" aria-label="Sluiten" data-cookie-close>
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <p class="cookieBannerText">We gebruiken cookies om de website goed te laten werken en, met jouw toestemming, om inhoud en functionaliteit te verbeteren. Je kunt je voorkeuren op elk moment aanpassen.</p>
+      <div class="cookieBannerMeta" role="group" aria-label="Cookie categorieen">
+        <button class="cookieTag cookieTagRequired" type="button" data-cookie-chip="necessary" aria-pressed="true">Noodzakelijk</button>
+        <button class="cookieTag" type="button" data-cookie-chip="preferences" aria-pressed="false">Voorkeuren</button>
+        <button class="cookieTag" type="button" data-cookie-chip="statistics" aria-pressed="false">Statistieken</button>
+        <button class="cookieTag" type="button" data-cookie-chip="marketing" aria-pressed="false">Marketing</button>
+      </div>
+      <div class="cookiePrefsPanel" id="cookiePrefsPanel" hidden>
+        <div class="cookiePrefRow cookiePrefRowLocked">
+          <div class="cookiePrefInfo">
+            <p class="cookiePrefTitle">Noodzakelijke cookies</p>
+            <p class="cookiePrefText">Vereist voor basisfunctionaliteit en beveiliging van de website.</p>
+          </div>
+          <button class="cookieSwitch is-on is-disabled" type="button" role="switch" aria-checked="true" aria-label="Noodzakelijke cookies ingeschakeld" disabled data-cookie-toggle="necessary">
+            <span class="cookieSwitchThumb" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="cookiePrefRow">
+          <div class="cookiePrefInfo">
+            <p class="cookiePrefTitle">Voorkeuren</p>
+            <p class="cookiePrefText">Onthoudt taal, interface-instellingen en andere voorkeuren.</p>
+          </div>
+          <button class="cookieSwitch" type="button" role="switch" aria-checked="false" aria-label="Voorkeuren cookies" data-cookie-toggle="preferences">
+            <span class="cookieSwitchThumb" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="cookiePrefRow">
+          <div class="cookiePrefInfo">
+            <p class="cookiePrefTitle">Statistieken</p>
+            <p class="cookiePrefText">Helpt ons begrijpen hoe de website wordt gebruikt.</p>
+          </div>
+          <button class="cookieSwitch" type="button" role="switch" aria-checked="false" aria-label="Statistieken cookies" data-cookie-toggle="statistics">
+            <span class="cookieSwitchThumb" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="cookiePrefRow">
+          <div class="cookiePrefInfo">
+            <p class="cookiePrefTitle">Marketing</p>
+            <p class="cookiePrefText">Voor relevante content en campagnes op basis van gebruik.</p>
+          </div>
+          <button class="cookieSwitch" type="button" role="switch" aria-checked="false" aria-label="Marketing cookies" data-cookie-toggle="marketing">
+            <span class="cookieSwitchThumb" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="cookiePrefsPanelActions">
+          <button class="btn btnOutline" type="button" data-cookie-close>Voorkeuren opslaan</button>
+        </div>
+      </div>
+      <div class="cookieBannerActions">
+        <button class="btn btnGhost" type="button" id="cookieBannerPrefsBtn" aria-controls="cookiePrefsPanel" aria-expanded="false">Voorkeuren</button>
+        <button class="btn btnOutline" type="button" id="cookieBannerNecessary" data-cookie-only-necessary>Alleen noodzakelijk</button>
+        <button class="btn btnPrimary" type="button" id="cookieBannerAcceptAll" data-cookie-accept-all>Alles accepteren</button>
+      </div>
+      <p class="cookieBannerNote">Meer informatie in onze <a href="#privacy">privacy-informatie</a>.</p>
+    </div>
+  </section>
+  -->
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="script.js"></script>
